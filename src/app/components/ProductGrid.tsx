@@ -23,8 +23,8 @@ function getSlugFromLink(link: string) {
 
 export default function ProductGrid({ products }: ProductGridProps) {
   return (
-    <section className="w-full max-w-[1600px] mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section className="w-full max-w-[1320px] mx-auto mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {products.map((product, idx) => (
           <ProductCard
             key={idx}
