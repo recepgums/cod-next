@@ -15,10 +15,16 @@ type ProductGridProps = {
   products: Product[];
 };
 
+function getSlugFromLink(link: string) {
+  // Extract slug from productLink (e.g., /product/slug)
+  const match = link.match(/\/product\/([^/]+)/);
+  return match ? match[1] : '';
+}
+
 export default function ProductGrid({ products }: ProductGridProps) {
   return (
-    <section className="w-full max-w-[1400px] mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+    <section className="w-full max-w-[1600px] mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product, idx) => (
           <ProductCard
             key={idx}
@@ -27,7 +33,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
             rating={product.rating ? parseFloat(product.rating) : null}
             price={product.priceCurrent}
             oldPrice={product.priceOriginal}
-            productLink={product.productLink}
+            slug={getSlugFromLink(product.productLink)}
             imgName={product.imgName}
           />
         ))}
