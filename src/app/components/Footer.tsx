@@ -11,12 +11,6 @@ const footerLinks = [
   { label: 'Yasal Bildirim', href: '#' },
 ];
 
-function scrollToTop() {
-  if (typeof window !== 'undefined') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
 export default function Footer() {
   return (
     <footer className="bg-[#232323] w-full py-10 mt-10 relative">
@@ -46,14 +40,6 @@ export default function Footer() {
           ))}
         </ul>
       </div>
-      {/* Scroll to top button: rounded square */}
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-lg w-10 h-10 flex items-center justify-center shadow-lg transition"
-        aria-label="Sayfanın başına dön"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" /></svg>
-      </button>
     </footer>
   );
 } 

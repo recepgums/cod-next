@@ -8,7 +8,7 @@ type ProductCardProps = {
   rating?: number | null;
   price: string;
   oldPrice?: string | null;
-  productLink: string;
+  slug: string;
   imgName: string;
 };
 
@@ -41,11 +41,11 @@ export default function ProductCard({
   rating,
   price,
   oldPrice,
-  productLink,
+  slug,
   imgName,
 }: ProductCardProps) {
   return (
-    <Link href={productLink} target="_blank" rel="noopener noreferrer" className="block">
+    <Link href={`/product/${slug}`} className="block">
       <article className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full border border-gray-100 w-[320px] mx-auto hover:shadow-lg transition">
         <div className="w-full h-48 relative">
           <Image

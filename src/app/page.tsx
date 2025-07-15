@@ -1,6 +1,9 @@
-import Header from './Header';
-import ProductGrid from './ProductGrid';
-import Footer from './Footer';
+'use client';
+
+import Header from './components/Header';
+import ProductGrid from './components/ProductGrid';
+import Footer from './components/Footer';
+import React from 'react';
 
 const products = [
   {"name":"MagnoGlow Lamba","imgName":"1.webp","imgSrc":"https://trendygoods.com.tr/storage/1/1.webp","productLink":"https://trendygoods.com.tr/product/miknatisli-lamba","rating":"4.9","priceCurrent":"499.00 TL","priceOriginal":"700.00 TL"},
@@ -38,6 +41,11 @@ const products = [
 ];
 
 export default function Home() {
+  function scrollToTop() {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
@@ -45,6 +53,13 @@ export default function Home() {
         <ProductGrid products={products} />
       </main>
       <Footer />
+      <button
+        onClick={scrollToTop}
+        className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-lg w-10 h-10 flex items-center justify-center shadow-lg transition"
+        aria-label="Sayfanın başına dön"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" /></svg>
+      </button>
     </div>
   );
 }
