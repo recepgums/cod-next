@@ -4,10 +4,10 @@ import Link from 'next/link';
 
 export default function Header() {
   return (
-    <header className="w-full bg-white py-6 flex flex-col items-center shadow-sm">
-      <div className="w-full max-w-6xl flex flex-col md:flex-row items-center justify-between px-4">
+    <header className="w-full h-[81px] flex justify-center items-center bg-white px-6">
+      <div className="w-full max-w-[1320px] flex flex-row items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center mb-4 md:mb-0 select-none">
+        <Link href="/" className="flex items-center select-none">
           <Image
             src="/images/logo.png"
             alt="TrendyGoods Logo"
@@ -17,12 +17,18 @@ export default function Header() {
             priority
           />
         </Link>
-        {/* Navigation */}
+        {/* Navbar */}
         <nav>
-          <ul className="flex space-x-6 text-gray-700 font-medium text-lg">
-            <li><a href="#" className="hover:text-pink-600 transition">Anasayfa</a></li>
-            <li><a href="#" className="hover:text-pink-600 transition">Kargo Takip</a></li>
-            <li><a href="#" className="hover:text-pink-600 transition">İletişim</a></li>
+          <ul className="flex navbar-nav">
+            <li className="nav-item">
+              <a className="nav-link block px-3 py-2 text-[14px] font-medium no-underline text-[#0000008C] hover:text-black transition-colors" style={{ fontFamily: 'Lato, sans-serif' }} href="https://trendygoods.com.tr">Anasayfa</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link block px-3 py-2 text-[14px] font-medium no-underline text-[#0000008C] hover:text-black transition-colors" style={{ fontFamily: 'Lato, sans-serif' }} href="https://trendygoods.com.tr/kargo-takip">Kargo Takip</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link block px-3 py-2 text-[14px] font-medium no-underline text-[#0000008C] hover:text-black transition-colors" style={{ fontFamily: 'Lato, sans-serif' }} href="#contact-section">İletişim</a>
+            </li>
           </ul>
         </nav>
       </div>
