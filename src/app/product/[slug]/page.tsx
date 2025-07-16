@@ -2,12 +2,8 @@
 
 import React, { useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import ProductGrid from '../../components/ProductGrid';
-import ProductCard from '../../components/ProductCard';
 import BuyMoreOptions from '../../components/BuyMoreOptions';
-import ReviewCard from '../../components/ReviewCard';
 import ReviewGrid from '../../components/ReviewGrid';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -95,52 +91,52 @@ export default function ProductPage() {
     <div className="min-h-screen bg-white flex flex-col items-center">
       <div className="w-[600px] mx-auto flex flex-col min-h-screen">
         {/* Top Info Bar with marquee */}
-        <div className="w-full bg-black text-white text-sm py-2 overflow-hidden relative">
-          <div className="whitespace-nowrap flex items-center gap-8 animate-marquee">
+        <div className="announcement-bar flex items-center">
+          <div className="scrolling-text flex items-center gap-8">
             {marqueeText}
             {marqueeText}
             {marqueeText}
           </div>
         </div>
-        {/* Centered Logo */}
-        <div className="flex justify-center items-center py-4">
-          <Image src="/images/logo.png" alt="TrendyGoods Logo" width={180} height={50} className="object-contain" priority />
-        </div>
         <main className="flex-1">
-          {/* Gallery */}
-          <div className="flex flex-col items-center w-full">
-            {/* Main Image */}
-            <div className="w-full h-[375px] bg-gray-100 flex items-center justify-center mb-2">
-              <Image src={product.images[mainImg]} alt={product.name} width={600} height={375} className="object-cover w-full h-full" />
-            </div>
-            {/* Thumbnails with arrows and scrollable container */}
-            <div className="flex items-center justify-center w-full mb-4" style={{height: 120}}>
-              <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(-1)}>❮</span>
-              <div
-                className="flex overflow-x-auto whitespace-nowrap gap-4 scrollbar-hide items-center w-full"
-                ref={thumbnailRef}
-                style={{ scrollBehavior: 'smooth' }}
-              >
-                {product.images.map((img, idx) => (
-                  <img
-                    key={img+idx}
-                    src={img}
-                    alt="thumbnail image"
-                    height={100}
-                    width={100}
-                    onClick={() => setMainImg(idx)}
-                    className="inline-block w-24 h-24 rounded-xl object-cover cursor-pointer border border-gray-200 transition-all"
-                  />
-                ))}
+          <div>
+            {/* Gallery Section */}
+            <div className="gallery-container">
+              <div className="header text-center">
+                <a href="/">
+                  <Image src="/images/logo.png" alt="TrendyGoods" height={50} width={180} className="object-contain" priority />
+                </a>
               </div>
-              <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(1)}>❯</span>
+              <div className="main-image-container">
+                <Image id="mainImage" src={product.images[mainImg]} alt="product image" height={375} width={600} className="object-cover w-full h-[375px] bg-gray-100" />
+              </div>
+              <div className="thumbnail-wrapper flex items-center justify-center w-full mb-4" style={{height: 120}}>
+                <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(-1)}>❮</span>
+                <div
+                  className="thumbnail-container flex overflow-x-auto whitespace-nowrap gap-4 scrollbar-hide items-center w-full"
+                  ref={thumbnailRef}
+                  style={{ scrollBehavior: 'smooth' }}
+                >
+                  {product.images.map((img, idx) => (
+                    <Image
+                      key={img+idx}
+                      src={img}
+                      alt="thumbnail image"
+                      height={100}
+                      width={100}
+                      onClick={() => setMainImg(idx)}
+                      className="inline-block w-24 h-24 rounded-xl object-cover cursor-pointer border border-gray-200 transition-all"
+                    />
+                  ))}
+                </div>
+                <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(1)}>❯</span>
+              </div>
             </div>
             {/* Flash Sale Bar - pixel-perfect gradient, rounded, bold white text */}
             <div className="w-[500px] mx-auto rounded-2xl shadow-lg px-6 py-3 mb-4 flex justify-between items-center" style={{background: 'linear-gradient(90deg, #ff6600 0%, #ff0080 100%)'}}>
-            <img src="/images/assets/flash.png" alt="clock" width={60} height={60} className="mr-1" />
+              <img src="/images/assets/flash.png" alt="clock" width={60} height={60} className="mr-1" />
               {/* Left column */}
               <div className="flex flex-col items-start">
-              
                 <span className="font-bold text-white text-base mb-1">Flaş İndirim</span>
                 <span className="bg-white text-black font-mono px-3 py-1 rounded text-base">01:31:52</span>
               </div>
@@ -152,83 +148,109 @@ export default function ProductPage() {
                 </div>
               </div>
             </div>
-          </div>
-          {/* Product Info - left-aligned, tight spacing */}
-          <div className="w-full px-1 mb-4">
-            <h1 className="text-2xl font-bold mb-1 text-gray-900">{product.name}</h1>
-            <div className="flex items-center mb-1">
-              <span className="text-green-700 font-bold text-lg mr-1">4.8</span>
-              <StarRating rating={product.rating} />
-              <span className="ml-2 text-gray-500 text-sm">({product.reviewCount} değerlendirme)</span>
+            {/* Product Info - left-aligned, tight spacing */}
+            <div className="w-full px-1 mb-4">
+              <h1 className="text-2xl font-bold mb-1 text-gray-900">{product.name}</h1>
+              <div className="flex items-center mb-1">
+                <span className="text-green-700 font-bold text-lg mr-1">4.8</span>
+                <StarRating rating={product.rating} />
+                <span className="ml-2 text-gray-500 text-sm">({product.reviewCount} değerlendirme)</span>
+              </div>
+              <div className="flex items-center gap-3 mb-1">
+                <span className="text-2xl font-bold text-green-600">{product.price}</span>
+                <span className="text-lg text-gray-400 line-through">{product.oldPrice}</span>
+                <span className="bg-pink-500 text-white px-2 py-1 rounded text-sm font-semibold">29% indirim</span>
+              </div>
             </div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-2xl font-bold text-green-600">{product.price}</span>
-              <span className="text-lg text-gray-400 line-through">{product.oldPrice}</span>
-              <span className="bg-pink-500 text-white px-2 py-1 rounded text-sm font-semibold">29% indirim</span>
+            {/* Features List */}
+            <ul className="mb-6 space-y-2 w-full px-1">
+              {product.features.map((f, i) => (
+                <li key={i} className="flex items-center text-base text-gray-800 font-semibold">
+                  <span className="mr-2 text-xl">{f.split(' ')[0]}</span>
+                  <span className="font-bold">{f.split(' ').slice(1).join(' ')}</span>
+                </li>
+              ))}
+            </ul>
+            <hr className="border-t border-gray-200 mb-6" />
+            {/* ÇOK AL & AZ ÖDE Section */}
+            <div className="w-full mb-6">
+              <div className="flex items-center mb-4">
+                <div className="flex-1 h-px bg-red-500" />
+                <span className="mx-4 text-lg font-bold text-gray-700">ÇOK AL & AZ ÖDE</span>
+                <div className="flex-1 h-px bg-red-500" />
+              </div>
+              <BuyMoreOptions />
             </div>
-          </div>
-          {/* Features List */}
-          <ul className="mb-6 space-y-2 w-full px-1">
-            {product.features.map((f, i) => (
-              <li key={i} className="flex items-center text-base text-gray-800 font-semibold">
-                <span className="mr-2 text-xl">{f.split(' ')[0]}</span>
-                <span className="font-bold">{f.split(' ').slice(1).join(' ')}</span>
-              </li>
-            ))}
-          </ul>
-          <hr className="border-t border-gray-200 mb-6" />
-          {/* ÇOK AL & AZ ÖDE Section */}
-          <div className="w-full mb-6">
-            <div className="flex items-center mb-4">
+            {/* Order Info and Buttons */}
+            <div className="w-full flex flex-col items-center mb-6">
+              <div className="flex flex-col items-center text-center mb-4">
+                <span className="text-2xl text-gray-700 mb-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mx-auto">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5V19a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 19v-2.5M3 16.5V8.25A2.25 2.25 0 015.25 6h13.5A2.25 2.25 0 0121 8.25v8.25M3 16.5l2.25-2.25m0 0l2.25 2.25m-2.25-2.25V19m13.5-2.25l2.25 2.25m-2.25-2.25l-2.25 2.25m2.25-2.25V19" />
+                  </svg>
+                </span>
+                <span className="text-sm text-gray-700">Şimdi sipariş verirsen</span>
+                <span className="font-bold text-sm text-gray-900">16 Temmuz Çarşamba - 18 Temmuz Cuma</span>
+                <span className="text-sm text-gray-700 mb-1">tarihleri arasında siparişin kapında!</span>
+              </div>
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mb-2 text-lg transition">Kapıda Ödemeli Sipariş Ver</button>
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg text-lg transition">Şimdi Sipariş Ver</button>
+            </div>
+            {/* Reviews Section Title */}
+            <div className="flex items-center w-full mb-4 mt-8">
               <div className="flex-1 h-px bg-red-500" />
-              <span className="mx-4 text-lg font-bold text-gray-700">ÇOK AL & AZ ÖDE</span>
+              <span className="mx-4 text-lg font-bold text-gray-700">Tüm Değerlendirmeler ({product.reviewCount})</span>
               <div className="flex-1 h-px bg-red-500" />
             </div>
-            <BuyMoreOptions />
-          </div>
-          {/* Order Info and Buttons */}
-          <div className="w-full flex flex-col items-center mb-6">
-            <div className="flex flex-col items-center text-center mb-4">
-              <span className="text-2xl text-gray-700 mb-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mx-auto">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5V19a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 19v-2.5M3 16.5V8.25A2.25 2.25 0 015.25 6h13.5A2.25 2.25 0 0121 8.25v8.25M3 16.5l2.25-2.25m0 0l2.25 2.25m-2.25-2.25V19m13.5-2.25l2.25 2.25m-2.25-2.25l-2.25 2.25m2.25-2.25V19" />
-                </svg>
-              </span>
-              <span className="text-sm text-gray-700">Şimdi sipariş verirsen</span>
-              <span className="font-bold text-sm text-gray-900">16 Temmuz Çarşamba - 18 Temmuz Cuma</span>
-              <span className="text-sm text-gray-700 mb-1">tarihleri arasında siparişin kapında!</span>
+            {/* Reviews */}
+            <ReviewGrid reviews={product.reviews} />
+            {/* Order Summary Card Divider */}
+            <div className="flex items-center w-full mb-2">
+              <div className="flex-1 h-px bg-red-500" />
             </div>
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mb-2 text-lg transition">Kapıda Ödemeli Sipariş Ver</button>
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg text-lg transition">Şimdi Sipariş Ver</button>
-          </div>
-          {/* Reviews Section Title */}
-          <div className="flex items-center w-full mb-4 mt-8">
-            <div className="flex-1 h-px bg-red-500" />
-            <span className="mx-4 text-lg font-bold text-gray-700">Tüm Değerlendirmeler ({product.reviewCount})</span>
-            <div className="flex-1 h-px bg-red-500" />
-          </div>
-          {/* Reviews */}
-          <ReviewGrid reviews={product.reviews} />
-          {/* Order Summary Card Divider */}
-          <div className="flex items-center w-full mb-2">
-            <div className="flex-1 h-px bg-red-500" />
-          </div>
-          {/* Order Summary Card */}
-          <div className="w-full bg-gray-50 rounded shadow p-3 flex items-center">
-            <span className="font-bold text-gray-800 mr-2">MagnoGlow Lamba</span>
-            <span className="text-gray-400 line-through mr-2">700.00TL</span>
-            <span className="text-pink-600 font-bold">499.00TL</span>
+            {/* Order Summary Card */}
+            <div className="w-full bg-gray-50 rounded shadow p-3 flex items-center">
+              <span className="font-bold text-gray-800 mr-2">MagnoGlow Lamba</span>
+              <span className="text-gray-400 line-through mr-2">700.00TL</span>
+              <span className="text-pink-600 font-bold">499.00TL</span>
+            </div>
           </div>
         </main>
         <Footer />
       </div>
       <style jsx global>{`
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-33.333%); }
+        .announcement-bar {
+          width: 100%;
+          overflow: hidden;
+          background-color: #000;
+          color: #fff;
+          padding: 10px;
         }
-        .animate-marquee {
-          animation: marquee 18s linear infinite;
+        .header {
+          text-align: center !important;
+        }
+        .header img, .header :global(img) {
+          display: block !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+        .scrolling-text {
+          display: inline-block;
+          white-space: nowrap;
+          animation: scroll 30s linear infinite;
+        }
+        .scrolling-text span {
+          display: inline-block;
+          padding: 0 2rem;
+          font-size: 1.2rem;
+        }
+        @keyframes scroll {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-100%);
+          }
         }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
