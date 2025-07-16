@@ -39,11 +39,20 @@ export default function BuyMoreOptions() {
           <img src={opt.img} alt="option" className="w-16 h-16 rounded-lg object-cover mr-3 border border-gray-200" />
           <div className="flex-1">
             <div className="flex items-center mb-1">
-              <span className="font-bold text-base mr-2">{opt.qty} Adet</span>
+              <span className="font-bold text-[#212529] mr-2" style={{ fontSize: '18px', fontFamily: 'Roboto, sans-serif' }}>{opt.qty} Adet</span>
               <span className="bg-gray-100 border border-gray-400 text-xs px-2 py-0.5 rounded ml-1 text-gray-700">{opt.badge}</span>
             </div>
-            {opt.perItem && (
-              <span className="bg-pink-500 text-white text-xs px-2 py-0.5 rounded font-semibold mr-2">{opt.perItem}</span>
+                        {opt.perItem && (
+              <span className="text-white rounded font-semibold mr-2" style={{ 
+                background: 'linear-gradient(90deg, #FF6A00 0%, #EE0979 100%)',
+                color: 'white',
+                padding: '2px 5px',
+                borderRadius: '3px',
+                fontFamily: 'Roboto, sans-serif',
+                fontSize: '14px',
+                marginTop: '5px',
+                maxWidth: '115px'
+              }}>{opt.perItem}</span>
             )}
           </div>
           <div className="flex flex-col items-end">

@@ -110,7 +110,7 @@ export default function ProductPage() {
               <div className="main-image-container">
                 <Image id="mainImage" src={product.images[mainImg]} alt="product image" height={375} width={600} className="object-cover w-full h-[375px] bg-gray-100" />
               </div>
-              <div className="thumbnail-wrapper flex items-center justify-center w-full mb-4" style={{height: 120}}>
+              <div className="thumbnail-wrapper flex items-center justify-center w-full" style={{height: 120}}>
                 <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(-1)}>❮</span>
                 <div
                   className="thumbnail-container flex overflow-x-auto whitespace-nowrap gap-4 scrollbar-hide items-center w-full"
@@ -133,7 +133,7 @@ export default function ProductPage() {
               </div>
             </div>
             {/* Flash Sale Bar - pixel-perfect gradient, rounded, bold white text */}
-            <div className="w-[500px] mx-auto rounded-2xl shadow-lg px-6 py-3 mb-4 flex justify-between items-center" style={{background: 'linear-gradient(90deg, #ff6600 0%, #ff0080 100%)'}}>
+            <div className="w-[500px] mx-auto shadow-lg px-6 py-3 mb-4 flex justify-between items-center" style={{background: 'linear-gradient(90deg, #FF6A00 0%, #EE0979 100%)', borderRadius: '8px'}}>
               <img src="/images/assets/flash.png" alt="clock" width={60} height={60} className="mr-1" />
               {/* Left column */}
               <div className="flex flex-col items-start">
@@ -149,17 +149,24 @@ export default function ProductPage() {
               </div>
             </div>
             {/* Product Info - left-aligned, tight spacing */}
-            <div className="w-full px-1 mb-4">
-              <h1 className="text-2xl font-bold mb-1 text-gray-900">{product.name}</h1>
-              <div className="flex items-center mb-1">
-                <span className="text-green-700 font-bold text-lg mr-1">4.8</span>
-                <StarRating rating={product.rating} />
-                <span className="ml-2 text-gray-500 text-sm">({product.reviewCount} değerlendirme)</span>
+            <div className="w-full px-1 top-0 py-2">
+              <div className="flex flex-col mb-1">
+                <h1 className="font-bold text-[#212529]" style={{ fontSize: '32px', fontFamily: 'Spartan, sans-serif', fontWeight: 700, marginBottom: '24px 0 0', lineHeight: '1.2' }}>{product.name}</h1>
+                <div className="flex items-center gap-2">
+                  <span className="text-green-700 font-bold text-lg mr-1">4.8</span>
+                  <StarRating rating={product.rating} />
+                  <span className="ml-2 text-gray-500 text-sm">({product.reviewCount} değerlendirme)</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3 mb-1">
-                <span className="text-2xl font-bold text-green-600">{product.price}</span>
-                <span className="text-lg text-gray-400 line-through">{product.oldPrice}</span>
-                <span className="bg-pink-500 text-white px-2 py-1 rounded text-sm font-semibold">29% indirim</span>
+              <div className="flex items-center gap-3 mb-1" style={{ 
+                borderTop: '1px solid #e0e0e0',
+                borderBottom: '1px solid #e0e0e0',
+                margin: '16px 0px',
+                padding: '15px 0px'
+              }}>
+                <span className="font-bold text-[#088178]" style={{ fontSize: '30px', fontFamily: 'Roboto, sans-serif' }}>{product.price}</span>
+                <span className="text-lg text-gray-400 line-through" style={{ fontSize: '18px', fontFamily: 'Roboto, sans-serif' }}>{product.oldPrice}</span>
+                <span className="bg-[#dc3545] text-white px-2 py-1 rounded text-sm" style={{ fontSize: '16px', fontFamily: 'Roboto, sans-serif', padding: '4px 8px' }}>29% indirim</span>
               </div>
             </div>
             {/* Features List */}
@@ -209,10 +216,19 @@ export default function ProductPage() {
               <div className="flex-1 h-px bg-red-500" />
             </div>
             {/* Order Summary Card */}
-            <div className="w-full bg-gray-50 rounded shadow p-3 flex items-center">
-              <span className="font-bold text-gray-800 mr-2">MagnoGlow Lamba</span>
-              <span className="text-gray-400 line-through mr-2">700.00TL</span>
-              <span className="text-pink-600 font-bold">499.00TL</span>
+            <div className="w-full bg-white flex flex-col" style={{
+              position: 'fixed',
+              bottom: 0,
+              zIndex: 2,
+              boxShadow: '0 -2px 5px rgba(0,0,0,0.1)',
+              padding: '10px',
+              borderTop: '1px solid #e0e0e0'
+            }}>
+              <span className="font-bold text-gray-800" style={{ fontSize: '18px', fontFamily: 'Roboto, sans-serif' }}>MagnoGlow Lamba</span>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 line-through" style={{ fontSize: '16px', fontFamily: 'Roboto, sans-serif' }}>700.00TL</span>
+                <span className="text-[#dc3545] font-bold" style={{ fontSize: '17.6px', fontFamily: 'Roboto, sans-serif' }}>499.00TL</span>
+              </div>
             </div>
           </div>
         </main>
