@@ -25,7 +25,7 @@ export default function Footer() {
                 href={link.href}
                 className={`flex items-center gap-2 transition-colors text-gray-200 hover:text-orange-400 ${link.highlight ? 'hover:font-bold' : ''}`}
               >
-                <svg className={`w-3 h-3 mr-2 text-orange-400 group-hover:text-orange-500`} fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" /></svg>
+                <svg className={`w-5 h-5 mr-2 text-orange-400 group-hover:text-orange-500`} fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" /></svg>
                 <span className="text-[14px] text-gray-500 group-hover:text-orange-400 transition-colors" style={{ fontFamily: 'Lato, sans-serif' }}>{link.label}</span>
               </a>
               {/* Right icon, synchronized hover */}
