@@ -9,7 +9,6 @@ type ProductCardProps = {
   price: string;
   oldPrice?: string | null;
   slug: string;
-  imgName: string;
 };
 
 function StarRating({ rating }: { rating: number }) {
@@ -42,7 +41,6 @@ export default function ProductCard({
   price,
   oldPrice,
   slug,
-  imgName,
 }: ProductCardProps) {
   return (
    
@@ -50,7 +48,7 @@ export default function ProductCard({
          <Link href={`/product/${slug}`} className="block">
         <div className="w-[320px] h-[200px] relative" style={{ background: '#f3f3f3', borderRadius: '10px', overflow: 'hidden' }}>
           <Image
-            src={`/images/${imgName}`}
+            src={image}
             alt={title}
             fill
             className="object-cover"

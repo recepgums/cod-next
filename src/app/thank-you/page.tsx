@@ -6,54 +6,66 @@ import { FaCheckCircle, FaHome, FaShoppingBag } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function ThankYouPage() {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // set initial state
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  function scrollToTop() {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <main className="flex-1 mt-10 pt-10 text-[#212529]">
-        <div className="max-w-[600px] mx-auto px-4 py-16">
+      <main className="flex-1 mt-[20px] pb-16">
+        <div className="max-w-[800px] mx-auto px-4 py-16">
+          {/* Success Icon */}
+          <div className="flex justify-center mb-8">
+            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
+              <FaCheckCircle className="text-6xl text-green-600" />
+            </div>
+          </div>
+
           {/* Thank You Message */}
-          <div>
-            <h1 className="font-bold mb-4" style={{ fontFamily: 'Spartan, sans-serif', fontSize: '40px' }}>
-              Teşekkür Ederiz!
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-800 mb-4" style={{ fontFamily: 'Spartan, sans-serif' }}>
+              Teşekkürler!
             </h1>
-            <p className="mb-4" style={{ fontFamily: 'Roboto, sans-serif', fontSize: '16px' }}>
-              Siparişiniz başarıyla alınmıştır ve en kısa sürede sizinle iletişime geçip kargoya vereceğiz 😊
+            <p className="text-xl text-gray-600 mb-6" style={{ fontFamily: 'Spartan, sans-serif' }}>
+              Siparişiniz başarıyla alındı
+            </p>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto" style={{ fontFamily: 'Spartan, sans-serif' }}>
+              Siparişiniz için teşekkür ederiz. Siparişiniz işleme alınmıştır ve en kısa sürede kargoya verilecektir. 
+              Sipariş durumunuzu takip etmek için e-posta adresinizi kontrol edin.
             </p>
           </div>
 
-          {/* Order Details */}
-          <div className="mb-8">
-            <h3 className="font-bold" style={{ fontFamily: 'Spartan, sans-serif', fontSize: '28px', marginBottom: '15px' }}>
+          {/* Order Details Card */}
+          <div className="w-full bg-[#fafbfc] text-[#212529] rounded-xl shadow-sm px-6 py-8 mb-10">
+            <h3 className="font-bold text-center mb-6" style={{ fontFamily: 'Spartan, sans-serif', fontSize: '24px' }}>
               Sipariş Detayları
             </h3>
-            <ul className="space-y-2 text-left">
-              <li><strong>Alıcı Adı:</strong> Recep Gümüş</li>
-              <li><strong>Sipariş Numarası:</strong> #100014458</li>
-              <li><strong>Sipariş İçeriği:</strong> ["10"] 1 X Cosmos Yıldız Yağmuru 1 X Duvara Yapışan Tuvalet Fırçası</li>
-              <li><strong>Toplam Tutar:</strong> 1371₺</li>
-              <li><strong>Adres:</strong> EYMÜR Silahtarağa mahallesi- Lala Mehmet Paşa sokağı numara 1 Daire 20 DEMİRÖZÜ/BAYBURT</li>
-            </ul>
+            <div className="bg-white rounded-lg border border-gray-200 p-6 text-base" style={{ fontFamily: 'Roboto, sans-serif' }}>
+              <div className="flex justify-between mb-2">
+                <span className="font-semibold">Alıcı Adı:</span>
+                <span>Recep Gümüş</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="font-semibold">Sipariş Numarası:</span>
+                <span className="font-bold text-black">#100014458</span>
+              </div>
+              <div className="flex mb-2">
+                <span className="font-semibold min-w-[120px]">Sipariş İçeriği:</span>
+                <span className="text-right">[10] 1 X Cosmos Yıldız Yağmuru 1 X Duvara Yapışan Tuvalet Fırçası</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="font-semibold">Toplam Tutar:</span>
+                <span className="font-bold">1371₺</span>
+              </div>
+              <div className="flex mb-2">
+                <span className="font-semibold min-w-[120px]">Adres:</span>
+                <span className="text-right">EYMÜR Silahtarağa mahallesi- Lala Mehmet Paşa sokağı numara 1<br />Daire 20 DEMİRÖZÜ/BAYBURT</span>
+              </div>
+            </div>
           </div>
+
           <Footer />
         </div>
       </main>
+      
     
     </div>
   );
-} 
+}

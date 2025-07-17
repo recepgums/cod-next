@@ -3,23 +3,17 @@ import ProductCard from './ProductCard';
 
 export type Product = {
   name: string;
-  imgName: string;
   imgSrc: string;
   productLink: string;
   rating?: string | null;
   priceCurrent: string;
   priceOriginal?: string | null;
+  slug: string;
 };
 
 type ProductGridProps = {
   products: Product[];
 };
-
-function getSlugFromLink(link: string) {
-  // Extract slug from productLink (e.g., /product/slug)
-  const match = link.match(/\/product\/([^/]+)/);
-  return match ? match[1] : '';
-}
 
 export default function ProductGrid({ products }: ProductGridProps) {
   return (
@@ -33,8 +27,8 @@ export default function ProductGrid({ products }: ProductGridProps) {
             rating={product.rating ? parseFloat(product.rating) : null}
             price={product.priceCurrent}
             oldPrice={product.priceOriginal}
-            slug={getSlugFromLink(product.productLink)}
-            imgName={product.imgName}
+            slug={product.slug}
+            productLink={product.productLink}
           />
         ))}
       </div>
