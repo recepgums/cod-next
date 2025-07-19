@@ -11,6 +11,10 @@ interface ProductOption {
   original?: number;
   discount: number;
   badge: string;
+  isCampaign?: boolean;
+  unit?: string;
+  displayText?: string;
+  finalDiscount?: number;
 }
 
 interface ProductComment {
@@ -302,13 +306,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               <div className="details">
                 <div className="info">
                   <span className="title">
-                    {opt.quantity} Adet <small className="kargo-bedava">{opt.badge}</small>
-                    {opt.discount > 0 && <div className="discount" style={{maxWidth: 115}}>{opt.badge}</div>}
+                    {opt.displayText || `${opt.quantity} Adet`}
+                    
+                    {opt.isCampaign && (
+                      <p style={{color: 'red', fontWeight: 'bold', fontSize: '.9rem'}}>
+                        {opt.quantity} {opt.unit || 'Adet'} BEDAVA
+                      </p>
+                    )}
+                    
+                    <small className="kargo-bedava">Ücretsiz Kargo</small>
+                    
+                    {opt.original && opt.original > opt.price && (
+                      <div className="discount" style={{maxWidth: 115}}>
+                        Tanesi {Math.round(opt.price / opt.quantity)}TL
+                      </div>
+                    )}
                   </span>
                   <span className="price">
                     {opt.price.toFixed(2)}TL
                     <br />
-                    {opt.discount > 0 && <div className="original-price">{opt.original?.toFixed(2) || opt.original}TL</div>}
+                    {opt.original && opt.original > opt.price && (
+                      <div className="original-price">{opt.original.toFixed(2)}TL</div>
+                    )}
                   </span>
                 </div>
               </div>
@@ -403,14 +422,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                       <div className="details">
                         <div className="info">
                           <span className="title">
-                            {opt.quantity} Adet
+                            {opt.displayText || `${opt.quantity} Adet`}
+                            
+                            {opt.isCampaign && (
+                              <p style={{color: 'red', fontWeight: 'bold', fontSize: '.9rem'}}>
+                                {opt.quantity} {opt.unit || 'Adet'} BEDAVA
+                              </p>
+                            )}
+                            
                             <small className="kargo-bedava">Ücretsiz Kargo</small>
-                            {opt.discount > 0 && <div className="discount" style={{maxWidth: 115}}>{opt.badge}</div>}
+                            
+                            {opt.discount > 0 && (
+                              <div className="discount" style={{maxWidth: 115}}>
+                                Tanesi {Math.round(opt.price / opt.quantity)}TL
+                              </div>
+                            )}
                           </span>
                           <span className="price">
                             {opt.price.toFixed(2)}TL
                             <br />
-                            {opt.discount > 0 && <div className="original-price">{opt.original?.toFixed(2) || opt.original}TL</div>}
+                            {opt.original && opt.original > opt.price && (
+                              <div className="original-price">{opt.original.toFixed(2)}TL</div>
+                            )}
                           </span>
                         </div>
                       </div>

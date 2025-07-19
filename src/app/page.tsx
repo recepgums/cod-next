@@ -12,9 +12,9 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/merchant/products`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`);
         const data = await res.json();
-        const productsArray = data.data || [];
+        const productsArray = data.products || [];
         const mapped = productsArray.map((item: any) => ({
           name: item.name,
           imgSrc: item.productImg,
