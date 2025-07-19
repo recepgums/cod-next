@@ -1,276 +1,489 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { useParams } from 'next/navigation';
-import Footer from '../../components/Footer';
-import BuyMoreOptions from '../../components/BuyMoreOptions';
-import ReviewGrid from '../../components/ReviewGrid';
-import { notFound } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import '../custom.css'
 
-// Dummy product data (to be replaced with real data source)
-const products = [
-  {
-    slug: 'miknatisli-lamba',
-    name: 'MagnoGlow Lamba',
-    images: [
-      '/images/1.webp',
-      '/images/1.webp',
-      '/images/1.webp',
-      '/images/1.webp',
-      '/images/1.webp',
-      '/images/1.webp',
-      '/images/1.webp',
-      '/images/1.webp',
-    ],
-    rating: 4.8,
-    reviewCount: 9,
-    price: '499.00₺',
-    oldPrice: '700.00₺',
-    discount: '29%',
-    sold: 43,
-    features: [
-      '💡 Üç Farklı Işık Rengi',
-      '🔋 Kablosuz ve Şarj Edilebilir',
-      '🧲 Her yere kolayca yapışır',
-      '🏠 Kolay Kurulum ve Taşınabilir',
-      '🔌 USB ile Hızlı Şarj',
-      '📏 30 cm uzunluğunda',
-      '📦 Hızlı Teslimat ve Kapıda Ödeme',
-    ],
-    reviews: [
-      { name: 'Zeynep B.', comment: 'Ürünü gece 1 gibi sipariş ettim 13 saat sonra elime ulaştı. Çok sağlam bir şekilde paketlenmişti. Çok kaliteli, çocukların ilgisini çeken bir ürün', image: '/images/reviews/1.webp' },
-      { name: 'Şevval T.', comment: 'Çok pratik kesinlikle tavsiye ediyorum kızımın masasına aldım.Şarjı da çok iyi bir kaç kademesi var.göz yormuyor çok faydalı.kutudan usb şarj kablosu çıkıyor.Biz çok sevdik.Pişman olmazsınız.', image: '/images/reviews/2.webp' },
-      { name: 'Ahmet K.', comment: 'Hafif bir ürün. Yapıştırması çok kolay. Işığı yeterli geldi bize. Şarjı 5 saat kadar gidiyor parlaklığını ayarlayabiliyorsunuz. Sarı ve beyaz ışık fotoğraflarını ekledim. Biz memnun kaldık, teşekkür ederiz.', image: '/images/reviews/3.webp' },
-      { name: 'Elif Y.', comment: 'Kızımın çalışma masası için aldık, çok beğendi. Kurulumu çok kolaydı ve ışığı göz yormuyor. Tavsiye ederim.', image: '/images/reviews/4.webp' },
-      { name: 'Murat D.', comment: 'Ürün beklediğimden hızlı geldi. Paketleme çok iyiydi. Işık seviyesi gayet yeterli. Fiyat performans ürünü.', image: '/images/reviews/5.webp' },
-      { name: 'Emre T.', comment: 'Ürün anlatıldığı gibi, kurulumu çok kolay. Işık seçenekleri çok kullanışlı. Memnun kaldık.' },
-      { name: 'Fatma Z.', comment: 'Çalışma masam için aldım, çok memnunum. Göz yormayan ışığı var. Tavsiye ederim.' },
-      { name: 'Selim P.', comment: 'Siparişim hızlıca elime ulaştı. Ürün kaliteli ve kullanışlı. Fiyatı da uygun.' },
-    ],
-  },
-  // ... other products ...
+// --- DATA OBJECTS ---
+const product = {
+  id: 1,
+  name: 'MagnoGlow Lamba',
+  price: 499,
+  oldPrice: 700,
+  discount: '29%',
+  images: [
+    'https://trendygoods.com.tr/storage/1/1.webp',
+    'https://trendygoods.com.tr/storage/13/amzn.jpg',
+    'https://trendygoods.com.tr/storage/14/usage.gif',
+    'https://trendygoods.com.tr/storage/10/6.webp',
+    'https://trendygoods.com.tr/storage/11/7.webp',
+    'https://trendygoods.com.tr/storage/9/5.webp',
+    '/storage/3/1_org_zoom-(2).webp',
+    '/storage/6/2.webp',
+    '/storage/7/3.webp',
+    '/storage/2/1_org_zoom-(1).webp',
+    '/storage/8/4.webp',
+  ],
+  options: [
+    { quantity: 1, price: 499, original: 499, discount: 0, badge: 'Ücretsiz Kargo' },
+    { quantity: 2, price: 699, original: 998, discount: 299, badge: 'Tanesi 350TL' },
+    { quantity: 3, price: 899, original: 1497, discount: 598, badge: 'Tanesi 300TL' },
+  ],
+  features: [
+    '💡 Üç Farklı Işık Rengi',
+    '🔋 Kablosuz ve Şarj Edilebilir',
+    '🧲 Her yere kolayca yapışır',
+    '🏠 Kolay Kurulum ve Taşınabilir',
+    '🔌 USB ile Hızlı Şarj',
+    '📏 30 cm uzunluğunda',
+    '📦 Hızlı Teslimat ve Kapıda Ödeme',
+  ],
+  rating: 4.8,
+  reviewCount: 9,
+  reviews: [
+    { name: 'Zeynep B.', rating: 5, text: 'Ürünü gece 1 gibi sipariş ettim 13 saat sonra elime ulaştı. Çok sağlam bir şekilde paketlenmişti. Çok kaliteli, çocukların ilgisini çeken bir ürün', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
+    { name: '***** *', rating: 5, text: 'Hafif bir ürün. Yapıştırması çok kolay. Işığı yeterli geldi bize. Şarjı 5 saat kadar gidiyor parlaklığını ayarlayabiliyorsunuz Sarı ve beyaz ışıklı fotoğraflarını ekledim. Biz memnun kaldık, teşekkür ederiz.', img: '/assets/imgs/products/miknatisli-lamba/reviews/1.webp' },
+    { name: 'Şevval T.', rating: 5, text: 'Çok pratik kesinlikle tavsiye ediyorum kızımın masasına aldım.Şarjı da çok iyi bir kaç kademesi var.göz yormuyor çok faydalı.kutudan usb şarj kablosu çıkıyor.Biz çok sevdik.Pişman olmazsınız.', img: '/assets/imgs/products/miknatisli-lamba/reviews/6.webp' },
+    { name: 'Bahri K.', rating: 5, text: 'Ürün çok iyi kaliteli düşünmeden alabilirsiniz çift taraflı yapışkanı var 30cm civarı gerek ışık kalitesi gerek görüntüsü ışık modları beyaz,sarı,beyaz-sarı ve Çakar şeklinde yanıp sönen beyaz sarı ışık hepsinin aydınlatması çok güzel asla pişman etmez', img: '/assets/imgs/products/miknatisli-lamba/reviews/9.webp' },
+    { name: 'Ayşegül T. Ü.', rating: 4, text: 'çok beğendim tam yerini buldu', img: '/assets/imgs/products/miknatisli-lamba/reviews/7.webp' },
+    { name: 'hilal ö.', rating: 4, text: 'Mutfağa çok iyi oldu. Çok beğendik. 3 tane daha sipariş vereceğim.', img: '/assets/imgs/products/miknatisli-lamba/reviews/3.webp' },
+    { name: 'F** A**', rating: 5, text: 'alıp tekrar sipariş verdim çok güzel bir ürün', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
+    { name: 'Ş** K**', rating: 5, text: 'Makyaj aynama taktım , artık rahatlıkla makyaj yapabiliyorum 🧡💓💗', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
+    { name: 'S** K**', rating: 5, text: 'çok memnun kaldım. Çok yeterli ışik veriyor tavsiye ederim', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
+  ],
+};
+
+const announcementTexts = [
+  '💰 Kapıda Ödeme Seçeneği 💰',
+  '❤️ Şeffaf Kargolu ❤️',
+  '⭐ +10.000 Mutlu Müşteri ⭐',
 ];
 
-function StarRating({ rating }: { rating: number }) {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    if (rating >= i) {
-      stars.push(<svg key={i} className="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>);
-    } else if (rating > i - 1) {
-      stars.push(<svg key={i} className="w-4 h-4 text-yellow-400 inline" viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#facc15"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>);
-    } else {
-      stars.push(<svg key={i} className="w-4 h-4 text-gray-300 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>);
-    }
-  }
-  return <span>{stars}</span>;
-}
-
-const marqueeText = [
-  <span key="1" className="text-yellow-400">💰 Kapıda Ödeme Seçeneği</span>,
-  <span key="2" className="text-red-400">❤️ Şeffaf Kargolu ❤️</span>,
-  <span key="3" className="text-yellow-400">⭐ +10.000 Mutlu Müşteri ⭐</span>,
-];
-
-export default function ProductPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const product = products.find(p => p.slug === slug);
-  if (!product) return notFound();
-
+export default function ProductDetailPage() {
+  // State for gallery
   const [mainImg, setMainImg] = useState(0);
   const thumbnailRef = useRef<HTMLDivElement>(null);
+  const [timer, setTimer] = useState({ hours: '00', minutes: '00', seconds: '00' });
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(product.options[0]);
+  const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
 
-  function scrollThumbnails(dir: number) {
+
+
+  // Timer state
+  useEffect(() => {
+    let countdownEndTime = Math.floor(Date.now() / 1000) + 2 * 60 * 60 + Math.floor(Math.random() * 59 + 1) * 60;
+    const updateTimer = () => {
+      let now = Math.floor(Date.now() / 1000);
+      let timeLeft = countdownEndTime - now;
+      if (timeLeft <= 0) {
+        const randomMinutes = Math.floor(Math.random() * 59) + 1;
+        countdownEndTime = now + (2 * 60 * 60) + (randomMinutes * 60);
+        timeLeft = countdownEndTime - now;
+      }
+      const hours = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
+      const seconds = String(timeLeft % 60).padStart(2, '0');
+      setTimer({ hours, minutes, seconds });
+    };
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Calculate delivery dates
+  useEffect(() => {
+    const calculateDeliveryDates = () => {
+      const now = new Date();
+      const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+      const monthNames = [
+        'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+      ];
+
+      // Calculate start date (3 business days from now)
+      let startDate = new Date(now);
+      let businessDaysAdded = 0;
+      while (businessDaysAdded < 3) {
+        startDate.setDate(startDate.getDate() + 1);
+        if (startDate.getDay() !== 0 && startDate.getDay() !== 6) { // Skip weekends
+          businessDaysAdded++;
+        }
+      }
+
+      // Calculate end date (5 business days from now)
+      let endDate = new Date(now);
+      businessDaysAdded = 0;
+      while (businessDaysAdded < 5) {
+        endDate.setDate(endDate.getDate() + 1);
+        if (endDate.getDay() !== 0 && endDate.getDay() !== 6) { // Skip weekends
+          businessDaysAdded++;
+        }
+      }
+
+      const formatDate = (date: Date) => {
+        const day = date.getDate();
+        const month = monthNames[date.getMonth()];
+        const dayName = dayNames[date.getDay()];
+        return `${day} ${month} ${dayName}`;
+      };
+
+      setDeliveryDates({
+        start: formatDate(startDate),
+        end: formatDate(endDate)
+      });
+    };
+
+    calculateDeliveryDates();
+  }, []);
+
+  // Gallery scroll
+  const scrollThumbnails = (direction: 'left' | 'right') => {
     if (thumbnailRef.current) {
-      thumbnailRef.current.scrollBy({ left: dir * 100, behavior: 'smooth' });
+      const scrollAmount = 200;
+      const currentScroll = thumbnailRef.current.scrollLeft;
+      const newScroll = direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount;
+      thumbnailRef.current.scrollTo({ left: newScroll, behavior: 'smooth' });
     }
-  }
+  };
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const selectOption = (option: any) => {
+    setSelectedOption(option);
+  };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center">
-      <div className="w-[600px] mx-auto flex flex-col min-h-screen">
-        {/* Top Info Bar with marquee */}
-        <div className="announcement-bar flex items-center">
-          <div className="scrolling-text flex items-center gap-8">
-            {marqueeText}
-            {marqueeText}
-            {marqueeText}
-          </div>
+    <div>
+      {/* Announcement Bar */}
+      <div className="announcement-bar">
+        <div className="scrolling-text">
+          {announcementTexts.map((t, i) => <span key={i}>{t}</span>)}
+          {announcementTexts.map((t, i) => <span key={i + 10}>{t}</span>)}
+          {announcementTexts.map((t, i) => <span key={i + 20}>{t}</span>)}
         </div>
-        <main className="flex-1">
-          <div>
-            {/* Gallery Section */}
-            <div className="gallery-container">
-              <div className="header text-center">
-                <a href="/">
-                  <Image src="/images/logo.png" alt="TrendyGoods" height={50} width={180} className="object-contain" priority />
-                </a>
+      </div>
+      {/* Gallery */}
+      <div className="gallery-container mt-1">
+        <div className="header text-center mx-auto">
+          <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
               </div>
               <div className="main-image-container">
-                <Image id="mainImage" src={product.images[mainImg]} alt="product image" height={375} width={600} className="object-cover w-full h-[375px] bg-gray-100" />
+          <img id="mainImage" src={product.images[mainImg]} height={375} alt="product image" loading="lazy" />
               </div>
-              <div className="thumbnail-wrapper flex items-center justify-center w-full" style={{height: 120}}>
-                <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(-1)}>❮</span>
-                <div
-                  className="thumbnail-container flex overflow-x-auto whitespace-nowrap gap-4 scrollbar-hide items-center w-full"
-                  ref={thumbnailRef}
-                  style={{ scrollBehavior: 'smooth' }}
-                >
-                  {product.images.map((img, idx) => (
-                    <Image
-                      key={img+idx}
-                      src={img}
-                      alt="thumbnail image"
-                      height={100}
-                      width={100}
-                      onClick={() => setMainImg(idx)}
-                      className="inline-block w-24 h-24 rounded-xl object-cover cursor-pointer border border-gray-200 transition-all"
-                    />
-                  ))}
-                </div>
-                <span className="arrow cursor-pointer text-3xl px-3 select-none text-gray-700" style={{lineHeight: '100px'}} onClick={() => scrollThumbnails(1)}>❯</span>
-              </div>
+        <div className="thumbnail-wrapper">
+          <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>
+          <div className="thumbnail-container" ref={thumbnailRef}>
+            {product.images.map((img, idx) => (
+              <img
+                key={img + idx}
+                        src={img}
+                height={100}
+                        alt="thumbnail image"
+                        onClick={() => setMainImg(idx)}
+                style={{cursor: 'pointer'}}
+                      />
+                    ))}
+                  </div>
+          <span className="arrow" onClick={() => scrollThumbnails('right')}>&#10095;</span>
+        </div>
+      </div>
+      {/* Flash Sale Bar with Timer */}
+      <div className="flash-urunler">
+        <div className="flash-header">
+          <div className="icon">
+            <img src="/images/assets/flash.png" alt="Flash Icon" />
+          </div>
+          <div className="title-timer">
+            <div className="title">Flaş İndirim</div>
+            <div className="timer">
+              <span>{timer.hours}</span>:<span>{timer.minutes}</span>:<span>{timer.seconds}</span>
             </div>
-            {/* Flash Sale Bar - pixel-perfect gradient, rounded, bold white text */}
-            <div className="w-[500px] mx-auto shadow-lg px-6 py-3 mb-4 flex justify-between items-center" style={{background: 'linear-gradient(90deg, #FF6A00 0%, #EE0979 100%)', borderRadius: '8px'}}>
-              <img src="/images/assets/flash.png" alt="clock" width={60} height={60} className="mr-1" />
-              {/* Left column */}
-              <div className="flex flex-col items-start">
-                <span className="font-bold text-white text-base mb-1">Flaş İndirim</span>
-                <span className="bg-white text-black font-mono px-3 py-1 rounded text-base">01:31:52</span>
-              </div>
-              {/* Right column */}
-              <div className="flex flex-col items-end flex-1">
-                <span className="font-bold text-white text-base mb-1">58 adet satıldı</span>
-                <div className="w-40 h-2 bg-pink-300 rounded-full overflow-hidden">
-                  <div className="h-2 bg-blue-500 rounded-full" style={{ width: '50%' }} />
                 </div>
-              </div>
+          <div className="sales-info">
+            <span>57 adet satıldı</span>
+            <div className="progress-bar">
+              <div className="progress" />
             </div>
-            {/* Product Info - left-aligned, tight spacing */}
-            <div className="w-full px-1 top-0 py-2">
-              <div className="flex flex-col mb-1">
-                <h1 className="font-bold text-[#212529]" style={{ fontSize: '32px', fontFamily: 'Spartan, sans-serif', fontWeight: 700, marginBottom: '24px 0 0', lineHeight: '1.2' }}>{product.name}</h1>
-                <div className="flex items-center gap-2">
-                  <span className="text-green-700 font-bold text-lg mr-1">4.8</span>
-                  <StarRating rating={product.rating} />
-                  <span className="ml-2 text-gray-500 text-sm">({product.reviewCount} değerlendirme)</span>
+              </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 mb-1" style={{ 
-                borderTop: '1px solid #e0e0e0',
-                borderBottom: '1px solid #e0e0e0',
-                margin: '16px 0px',
-                padding: '15px 0px'
-              }}>
-                <span className="font-bold text-[#088178]" style={{ fontSize: '30px', fontFamily: 'Roboto, sans-serif' }}>{product.price}</span>
-                <span className="text-lg text-gray-400 line-through" style={{ fontSize: '18px', fontFamily: 'Roboto, sans-serif' }}>{product.oldPrice}</span>
-                <span className="bg-[#dc3545] text-white px-2 py-1 rounded text-sm" style={{ fontSize: '16px', fontFamily: 'Roboto, sans-serif', padding: '4px 8px' }}>29% indirim</span>
-              </div>
-            </div>
-            {/* Features List */}
-            <ul className="mb-6 space-y-2 w-full px-1">
-              {product.features.map((f, i) => (
-                <li key={i} className="flex items-center text-base text-gray-800 font-semibold">
-                  <span className="mr-2 text-xl">{f.split(' ')[0]}</span>
-                  <span className="font-bold">{f.split(' ').slice(1).join(' ')}</span>
-                </li>
+
+      {/* Product Info Section */}
+      <div className="container-fluid mt-4">
+        <h2 className="title-detail" style={{marginBottom: 0}}>{product.name}</h2>
+        <div className="product-detail-rating d-flex justify-content-between align-items-center mb-3">
+          <div className="product-rate-cover text-end d-flex align-items-center">
+            <span className="font-small ml-1 text-muted"><strong>{product.rating}</strong></span>
+            <div className="star-rating d-inline-block mx-2">
+              {[...Array(5)].map((_, starIndex) => (
+                <i 
+                  key={starIndex}
+                  className={`fas fa-star${starIndex < product.rating ? '' : '-o'}`}
+                  style={{ 
+                    color: starIndex < product.rating ? '#F27A1A' : '#ccc',
+                    fontSize: '14px',
+                    marginRight: '1px'
+                  }}
+                />
               ))}
-            </ul>
-            <hr className="border-t border-gray-200 mb-6" />
-            {/* ÇOK AL & AZ ÖDE Section */}
-            <div className="w-full mb-6">
-              <div className="flex items-center mb-4">
-                <div className="flex-1 h-px bg-red-500" />
-                <span className="mx-4 text-lg font-bold text-gray-700">ÇOK AL & AZ ÖDE</span>
-                <div className="flex-1 h-px bg-red-500" />
-              </div>
-              <BuyMoreOptions />
             </div>
-            {/* Order Info and Buttons */}
-            <div className="w-full flex flex-col items-center mb-6">
-              <div className="flex flex-col items-center text-center mb-4">
-                <span className="text-2xl text-gray-700 mb-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 mx-auto">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5V19a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 19v-2.5M3 16.5V8.25A2.25 2.25 0 015.25 6h13.5A2.25 2.25 0 0121 8.25v8.25M3 16.5l2.25-2.25m0 0l2.25 2.25m-2.25-2.25V19m13.5-2.25l2.25 2.25m-2.25-2.25l-2.25 2.25m2.25-2.25V19" />
-                  </svg>
-                </span>
-                <span className="text-sm text-gray-700">Şimdi sipariş verirsen</span>
-                <span className="font-bold text-sm text-gray-900">16 Temmuz Çarşamba - 18 Temmuz Cuma</span>
-                <span className="text-sm text-gray-700 mb-1">tarihleri arasında siparişin kapında!</span>
+            <a className="font-small ml-3 text-muted" href="#reviews">( {product.reviewCount} değerlendirme)</a>
+          </div>
+        </div>
+        <div className="clearfix product-price-cover my-3">
+          <div className="product-price primary-color">
+            <span className="text-brand h4">{product.price.toFixed(2)}₺</span>
+            <ins><span className="old-price font-md ml-3 text-muted">{product.oldPrice.toFixed(2)}₺</span></ins>
+            <span className="save-price font-md ml-3 text-white bg-danger p-1 rounded">{product.discount} indirim</span>
+          </div>
+        </div>
+        {/* Features/Benefits */}
+        <div className="short-desc mb-3">
+          <div className="emoji-benefits-container">
+            {product.features.map((f, i) => (
+              <p key={i}><strong>{f}</strong></p>
+            ))}
+          </div>
+        </div>
+        {/* Section Title for Options */}
+        <div className="section-title">
+          <span>ÇOK AL & AZ ÖDE</span>
+        </div>
+        {/* Product Options */}
+        <div>
+          {product.options.map((opt, idx) => (
+            <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${idx === 0 ? ' active' : ''}`} data-quantity={opt.quantity}>
+              <img src={product.images[0]} width={60} height={60} className="img-fluid" alt="product image" />
+              <div className="details">
+                <div className="info">
+                  <span className="title">
+                    {opt.quantity} Adet <small className="kargo-bedava">{opt.badge}</small>
+                    {opt.discount > 0 && <div className="discount" style={{maxWidth: 115}}>{opt.badge}</div>}
+                  </span>
+                  <span className="price">
+                    {opt.price.toFixed(2)}TL
+                    <br />
+                    {opt.discount > 0 && <div className="original-price">{opt.original.toFixed(2)}TL</div>}
+                  </span>
+                </div>
               </div>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg mb-2 text-lg transition">Kapıda Ödemeli Sipariş Ver</button>
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg text-lg transition">Şimdi Sipariş Ver</button>
             </div>
+          ))}
+              </div>
+            </div>
+
+            <div className="border-top my-3"></div>
+
+      {/* Delivery Info */}
+      <div className="delivery-info mb-4">
+        <i className="fas fa-shipping-fast"></i>
+        Şimdi sipariş verirsen <br />
+        <small id="delivery-dates">{deliveryDates.start} - {deliveryDates.end}</small>
+        <p>tarihleri arasında siparişin kapında!</p>
+      </div>
+
+      {/* Order Buttons */}
+      <div className="product-extra-link2 mb-3 w-100">
+        <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
+          Kapıda Ödemeli Sipariş Ver
+        </button>
+              </div>
+      
+      <div className="product-extra-link2 mb-3 w-100">
+        <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
+          Şimdi Sipariş Ver
+        </button>
+            </div>
+
             {/* Reviews Section Title */}
-            <div className="flex items-center w-full mb-4 mt-8">
-              <div className="flex-1 h-px bg-red-500" />
-              <span className="mx-4 text-lg font-bold text-gray-700">Tüm Değerlendirmeler ({product.reviewCount})</span>
-              <div className="flex-1 h-px bg-red-500" />
+      <h6 className="section-title style-1 my-30 text-center" id="reviews">
+        Tüm Değerlendirmeler ({product.reviewCount})
+      </h6>
+      <div className="comment-grid" id="comment-container">
+        {product.reviews.map((review, idx) => (
+          <div className="comment-item" key={idx}>
+            <div className="comment-card">
+              {review.img && <img src={review.img} className="comment-img" alt="Comment Image" />}
+              <div className="comment-content">
+                <div>
+                  <div className="star-rating mb-1">
+                    {[...Array(5)].map((_, starIndex) => (
+                      <i 
+                        key={starIndex}
+                        className={`fas fa-star${starIndex < review.rating ? '' : '-o'}`}
+                        style={{ 
+                          color: starIndex < review.rating ? '#FFD700' : '#ccc',
+                          fontSize: '14px',
+                          marginRight: '2px'
+                        }}
+                      />
+                    ))}
             </div>
-            {/* Reviews */}
-            <ReviewGrid reviews={product.reviews} />
-            {/* Order Summary Card Divider */}
-            <div className="flex items-center w-full mb-2">
-              <div className="flex-1 h-px bg-red-500" />
+                  <h6 className="mb-1">{review.name}</h6>
             </div>
-            {/* Order Summary Card */}
-            <div className="w-full bg-white flex flex-col" style={{
-              position: 'fixed',
-              bottom: 0,
-              zIndex: 2,
-              boxShadow: '0 -2px 5px rgba(0,0,0,0.1)',
-              padding: '10px',
-              borderTop: '1px solid #e0e0e0'
-            }}>
-              <span className="font-bold text-gray-800" style={{ fontSize: '18px', fontFamily: 'Roboto, sans-serif' }}>MagnoGlow Lamba</span>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400 line-through" style={{ fontSize: '16px', fontFamily: 'Roboto, sans-serif' }}>700.00TL</span>
-                <span className="text-[#dc3545] font-bold" style={{ fontSize: '17.6px', fontFamily: 'Roboto, sans-serif' }}>499.00TL</span>
+                <small>{review.text}</small>
               </div>
             </div>
           </div>
-        </main>
-        <Footer />
+        ))}
       </div>
-      <style jsx global>{`
-        .announcement-bar {
-          width: 100%;
-          overflow: hidden;
-          background-color: #000;
-          color: #fff;
-          padding: 10px;
-        }
-        .header {
-          text-align: center !important;
-        }
-        .header img, .header :global(img) {
-          display: block !important;
-          margin-left: auto !important;
-          margin-right: auto !important;
-        }
-        .scrolling-text {
-          display: inline-block;
-          white-space: nowrap;
-          animation: scroll 30s linear infinite;
-        }
-        .scrolling-text span {
-          display: inline-block;
-          padding: 0 2rem;
-          font-size: 1.2rem;
-        }
-        @keyframes scroll {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
+      {/* Continue with reviews and modal in next steps */}
+
+      {/* Order Modal */}
+      <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{display: showModal ? 'block' : 'none'}}>
+        <div className="modal-dialog modal-dialog-centered modal-fullscreen" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-center" id="fullScreenModalLabel">Sipariş Formu</h5>
+              <button type="button" className="close" onClick={closeModal} aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body" style={{overflow: 'scroll'}}>
+              <form method="post" className="order-form" id="order-form">
+                <input type="hidden" name="ref_url" id="ref_url" />
+                <input type="hidden" name="quantity" id="quantity" value={selectedOption.quantity} />
+                <input type="hidden" name="total_price" id="total_price" value={selectedOption.price.toFixed(2)} />
+                <input type="hidden" name="products" value={product.name} />
+                <input type="hidden" name="product_id" value={product.id} />
+                <div>
+                  {/* Product Options in Modal */}
+                  {product.options.map((opt, idx) => (
+                    <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => selectOption(opt)}>
+                      <img src={product.images[0]} width={60} height={60} className="img-fluid" alt="product image" />
+                      <div className="details">
+                        <div className="info">
+                          <span className="title">
+                            {opt.quantity} Adet
+                            <small className="kargo-bedava">Ücretsiz Kargo</small>
+                            {opt.discount > 0 && <div className="discount" style={{maxWidth: 115}}>{opt.badge}</div>}
+                          </span>
+                          <span className="price">
+                            {opt.price.toFixed(2)}TL
+                            <br />
+                            {opt.discount > 0 && <div className="original-price">{opt.original.toFixed(2)}TL</div>}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {/* Total Section */}
+                  <div className="total-section mb-1">
+                    <div className="row justify-content-between">
+                      <div className="col-6 label">Ara Toplam</div>
+                      <div className="col-6 value text-right">{selectedOption.price.toFixed(2)}TL</div>
+                    </div>
+                    <div className="row justify-content-between">
+                      <div className="col-6 label">Kargo</div>
+                      <div className="col-6 value text-right" id="shipping-cost">Ücretsiz</div>
+                    </div>
+                    <div className="row justify-content-between" id="discounts" style={{display: 'none'}}>
+                      <div className="col-6 label">İndirimler</div>
+                      <div className="col-6 discount text-right" id="discount_amount"></div>
+                    </div>
+                    <div className="row justify-content-between total-row mt-2 pt-2 border-top">
+                      <div className="col-6 label">Toplam</div>
+                      <div className="col-6 total text-right" id="total-price">{selectedOption.price.toFixed(2)}TL</div>
+                    </div>
+                  </div>
+                  {/* Shipping Section */}
+                  <div className="shipping-section mb-3">
+                    <div className="form-check active">
+                      <label className="form-check-label">
+                        <input type="radio" className="form-check-input" value="nakit" name="paymentType" data-additional-cost=".00TL" defaultChecked />
+                        <span>Kapıda Nakit Ödeme</span>
+                        <span>Ücretsiz</span>
+                      </label>
+            </div>
+                    <div className="form-check">
+                      <label className="form-check-label">
+                        <input type="radio" className="form-check-input" value="kart" name="paymentType" data-additional-cost="19.00" />
+                        <span>Kapıda Kartlı Ödeme</span>
+                        <span>19.00TL</span>
+                </label>
+              </div>
+            </div>
+            {/* Form Fields */}
+                  <div className="mb-3">
+                    <div className="input-group">
+                      <span className="input-group-text"><i className="fas fa-user"></i></span>
+                      <input name="name" type="text" required className="form-control" placeholder="Adınız Soyadınız" />
+                    </div>
+                  </div>
+                  <div className="mb-3">
+                    <div className="input-group">
+                      <span className="input-group-text"><i className="fas fa-phone"></i></span>
+                      <input name="phone" autoComplete="off" required type="tel" className="form-control" id="phoneInput" placeholder="05XXXXXXXXX" />
+              </div>
+                    <div className="invalid-feedback" id="phoneError"></div>
+              </div>
+                  <div className="mb-3">
+                    <div className="input-group">
+                      <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
+                      <select required name="city_id" className="form-control" id="citySelect">
+                  <option value="">İl Seçiniz</option>
+                        <option value="34">İSTANBUL</option>
+                        <option value="6">ANKARA</option>
+                        <option value="35">İZMİR</option>
+                </select>
+                    </div>
+              </div>
+                  <div className="mb-3">
+                    <div className="input-group">
+                      <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
+                      <select required name="district_id" className="form-control" id="districtSelect">
+                  <option value="">İlçe Seçiniz</option>
+                </select>
+                    </div>
+              </div>
+                  <div className="mb-1">
+                    <div className="input-group">
+                      <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
+                      <select name="neighborhood_id" className="form-control" id="neighborhoodSelect">
+                  <option value="">Mahalle Seçiniz</option>
+                </select>
+              </div>
+                  </div>
+                  <div className="mb-3">
+                    <small className="text-info">Örn: Silahtarağa mah örnek sok no:1/20</small>
+                    <div className="input-group">
+                      <span className="input-group-text"><i className="fas fa-home"></i></span>
+                      <textarea name="address" rows={2} required className="form-control" placeholder="Sokak, Kapı Numarası ve Daire" />
+                    </div>
+                  </div>
+                  <div className="product-extra-link2 fixed-bottom-button">
+                    <button type="submit" className="btn btn-success btn-block complete-order">
+                      SİPARİŞİ TAMAMLAYIN - {selectedOption.price.toFixed(2)}TL
+                    </button>
+                  </div>
+                  <div className="mt-3 text-center">
+                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
+              </div>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+            {/* Sticky Footer */}
+      <div className="sticky-footer">
+        <div className="product-info">
+          <div className="product-name">{product.name}</div>
+          <div className="product-price">
+            <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
+            <span className="text-danger" style={{fontWeight: 'bolder', fontSize: '1.1rem'}}>{selectedOption.price.toFixed(2)}TL</span>
+          </div>
+        </div>
+        <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
+      </div>
     </div>
   );
 } 

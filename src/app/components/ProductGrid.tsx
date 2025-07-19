@@ -17,21 +17,26 @@ type ProductGridProps = {
 
 export default function ProductGrid({ products }: ProductGridProps) {
   return (
-    <section className="w-full max-w-[1320px] mx-auto mb-12">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {products.map((product, idx) => (
-          <ProductCard
-            key={idx}
-            image={product.imgSrc}
-            title={product.name}
-            rating={product.rating ? parseFloat(product.rating) : null}
-            price={product.priceCurrent}
-            oldPrice={product.priceOriginal}
-            slug={product.slug}
-            productLink={product.productLink}
-          />
-        ))}
-      </div>
-    </section>
+    <main className="main">
+      <section className="mt-20 mb-20">
+        <div className="container">
+          <div className="row">
+            {products.map((product, idx) => (
+              <div key={idx} className="col-lg-3 col-md-4 col-sm-6 col-6 px-1">
+                <ProductCard
+                  image={product.imgSrc}
+                  title={product.name}
+                  rating={product.rating ? parseFloat(product.rating) : null}
+                  price={product.priceCurrent}
+                  oldPrice={product.priceOriginal}
+                  slug={product.slug}
+                  productLink={product.productLink}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 } 

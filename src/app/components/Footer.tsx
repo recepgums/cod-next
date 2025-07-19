@@ -5,43 +5,58 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 const footerLinks = [
-  { label: 'Gizlilik Politikası', href: '#' },
-  { label: 'Kargo Politikası', href: '#', highlight: true },
-  { label: 'Para İade Politikası', href: '#' },
-  { label: 'Hizmet ve Şartlar', href: '#' },
-  { label: 'İletişim', href: '#' },
-  { label: 'Yasal Bildirim', href: '#' },
+  { label: 'Gizlilik Politikası', href: '#', key: 'privacy-policy' },
+  { label: 'Kargo Politikası', href: '#', key: 'shipping-policy' },
+  { label: 'Para İade Politikası', href: '#', key: 'refund-policy' },
+  { label: 'Hizmet ve Şartlar', href: '#', key: 'terms-and-conditions' },
+  { label: 'İletişim', href: '#', key: 'contact' },
+  { label: 'Yasal Bildirim', href: '#', key: 'legal-notice' },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1a1a1a] w-full py-10 mt-10 relative">
-      <div className="max-w-[1400px] mx-auto px-4 flex flex-col md:flex-row md:items-start md:justify-between gap-8">
-        {/* Left & Right: Synchronized hover using group */}
-        <ul className="flex-1 flex flex-col gap-2 text-base">
-          {footerLinks.map((link, idx) => (
-            <li key={link.label} className="flex items-center group">
-              <a
-                href={link.href}
-                className={`flex items-center gap-2 transition-colors text-gray-200 hover:text-orange-400 ${link.highlight ? 'hover:font-bold' : ''}`}
-              >
-                <svg className={`w-5 h-5 mr-2 text-orange-400 group-hover:text-orange-500`} fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" /></svg>
-                <span className="text-[14px] text-gray-500 group-hover:text-orange-400 transition-colors" style={{ fontFamily: 'Lato, sans-serif' }}>{link.label}</span>
-              </a>
-              {/* Right icon, synchronized hover */}
-              <a
-                href={link.href}
-                className="p-1 ml-auto hidden md:inline group"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={link.label}
-              >
-                <FontAwesomeIcon icon={faExternalLinkAlt} className="text-[12px] text-gray-500 group-hover:text-orange-400 transition-colors"/>
-              </a>
-            </li>
-          ))}
-        </ul>
+    <footer className="main" style={{backgroundColor: '#1a1a1a', paddingTop: '30px', paddingBottom: '100px'}}>
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <ul style={{listStyle: 'none', padding: 0}}>
+              {footerLinks.map((link, idx) => (
+                <li key={link.label} style={{marginBottom: '12px'}}>
+                  <a 
+                    href={link.href} 
+                    className="legal-link" 
+                    data-key={link.key}
+                    style={{
+                      color: '#888', 
+                      textDecoration: 'none', 
+                      fontSize: '14px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      transition: 'color 0.3s ease'
+                    }}
+                  >
+                    <i className="fas fa-angle-right" style={{color: '#FF6A00', marginRight: '8px'}}></i>
+                    <span style={{flexGrow: 1}}>{link.label}</span>
+                    <i className="fas fa-external-link-alt" style={{fontSize: '12px', marginLeft: '8px', opacity: 0.6}}></i>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
+      <style jsx>{`
+        footer a:hover { 
+          color: #FF6A00 !important; 
+        }
+        footer a:hover .fa-external-link-alt { 
+          opacity: 1 !important; 
+        }
+        .legal-content { 
+          padding: 15px; 
+          line-height: 1.6; 
+        }
+      `}</style>
     </footer>
   );
 } 

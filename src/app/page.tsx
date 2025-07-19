@@ -3,20 +3,11 @@
 import Header from './components/Header';
 import ProductGrid from './components/ProductGrid';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import React, { useEffect, useState } from 'react';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // set initial state
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -41,27 +32,14 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  function scrollToTop() {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-vh-100 bg-white d-flex flex-column">
       <Header />
-      <main className="flex-1 mt-[20px] pb-16">
+      <main className="flex-fill mt-3 pb-4">
         <ProductGrid products={products} />
       </main>
       <Footer />
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          aria-label="Sayfanın başına dön"
-          id="scrollToTopBtn"
-        >
-          <i className="fi-rs-arrow-up"></i>
-        </button>
-      )}
+      <ScrollToTop />
     </div>
   );
 }

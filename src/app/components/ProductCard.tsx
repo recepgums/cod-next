@@ -9,6 +9,7 @@ type ProductCardProps = {
   price: string;
   oldPrice?: string | null;
   slug: string;
+  productLink: string;
 };
 
 function StarRating({ rating }: { rating: number }) {
@@ -17,17 +18,17 @@ function StarRating({ rating }: { rating: number }) {
     if (rating >= i) {
       // Full star
       stars.push(
-        <svg key={i} className="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+        <svg key={i} className="text-warning" style={{width: '16px', height: '16px'}} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
       );
     } else if (rating > i - 1) {
       // Half star
       stars.push(
-        <svg key={i} className="w-4 h-4 text-yellow-400 inline" viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#facc15"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+        <svg key={i} className="text-warning" style={{width: '16px', height: '16px'}} viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#f39c12"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
       );
     } else {
       // Empty star
       stars.push(
-        <svg key={i} className="w-4 h-4 text-gray-300 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+        <svg key={i} className="text-muted" style={{width: '16px', height: '16px'}} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
       );
     }
   }
@@ -41,68 +42,67 @@ export default function ProductCard({
   price,
   oldPrice,
   slug,
+  productLink,
 }: ProductCardProps) {
   return (
-   
-      <div className="rounded-[10px] shadow-sm mb-3 bg-white overflow-hidden w-[320px] mx-auto border border-gray-200">
-         <Link href={`/product/${slug}`} className="block">
-        <div className="w-[320px] h-[200px] relative" style={{ background: '#f3f3f3', borderRadius: '10px', overflow: 'hidden' }}>
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover"
-            sizes="320px"
-            priority={false}
-          />
-        </div>
-        </Link>
-        <div className="px-[20px] pb-[15px] pt-2">
-          <h2 className="mb-2 font-bold" style={{ color: '#333' }}>
-            <span style={{ fontFamily: 'Spartan, sans-serif', fontSize: '15.4px' }}>{title}</span>
-          </h2>
-          {typeof rating === 'number' && (
-            <div>
-              <span className="text-[12.6px]" style={{ color: '#f39c12', fontFamily: 'Lato, sans-serif' }}>
-                {/* Inline SVG stars */}
-                {Array.from({ length: 5 }).map((_, i) => {
-                  if (rating >= i + 1) {
-                    // Full star
-                    return (
-                      <svg key={i} className="w-4 h-4 inline text-[#f39c12]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                    );
-                  } else if (rating > i) {
-                    // Half star
-                    return (
-                      <svg key={i} className="w-4 h-4 inline text-[#f39c12]" viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#f39c12"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                    );
-                  } else {
-                    // Empty star
-                    return (
-                      <svg key={i} className="w-4 h-4 inline text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                    );
-                  }
-                })}
-                {` ${rating.toFixed(1)}`}
-              </span>
-            </div>
-          )}
-          <div className="product-price mt-1">
-            <span className="text-[16.8px] font-bold" style={{ color: '#ff6a00', fontFamily: 'Lato, sans-serif' }}>{price}</span>
-            {oldPrice && (
-              <span className="old-price ml-2 text-[12.6px]" style={{ color: '#aaa', textDecoration: 'line-through', fontFamily: 'Lato, sans-serif' }}>{oldPrice}</span>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center justify-center">
-          <a
-            href={`/product/${slug}`}
-            className="btn w-full btn-sm add-to-cart font-semibold text-[1em] border-0 py-[10px] rounded-b-[10px] flex items-center justify-center"
-            style={{ background: 'linear-gradient(90deg, #FF6A00 0%, #EE0979 100%)' }}
-          >
-            <i className="fi-rs-shopping-bag mr-2" />Kapıda Ödemeli Al
-          </a>
+    <div className="product-cart-wrap mb-3 shadow-sm" style={{borderRadius: '10px'}}>
+      <div className="product-img-action-wrap" style={{padding: 0}}>
+        <div className="product-img product-img-zoom" style={{borderRadius: '10px 10px 0 0', overflow: 'hidden'}}>
+          <Link href={productLink}>
+            <Image
+              src={image}
+              alt={title}
+              width={320}
+              height={200}
+              className="lozad default-img w-100"
+              style={{height: '200px', objectFit: 'cover'}}
+              priority={false}
+            />
+          </Link>
         </div>
       </div>
+      <div className="product-content-wrap pt-2 px-3">
+        <h2 className="mb-2" style={{fontSize: '1.1em', fontWeight: 'bold'}}>
+          <Link href={productLink} style={{color: '#333'}}>{title}</Link>
+        </h2>
+        {typeof rating === 'number' && (
+          <div>
+            <span>
+              <span style={{fontSize: '0.9em', color: '#f39c12'}}>
+                <StarRating rating={rating} />
+                {` ${rating.toFixed(1)}`}
+              </span>
+            </span>
+          </div>
+        )}
+        <div className="product-price mt-1">
+          <span style={{fontSize: '1.2em', color: '#ff6a00'}}>{price} TL</span>
+          {oldPrice && (
+            <span className="old-price" style={{fontSize: '0.9em', color: '#aaa', textDecoration: 'line-through'}}>{oldPrice} TL</span>
+          )}
+        </div>
+      </div>
+      <div className="row mx-auto">
+        <div className="col-12 px-0">
+          <Link 
+            href={`/product/${slug}`} 
+            className="btn w-100 btn-sm add-to-cart" 
+            style={{
+              background: 'linear-gradient(90deg, #FF6A00 0%, #EE0979 100%)', 
+              fontWeight: 600, 
+              fontSize: '1em', 
+              border: 0, 
+              padding: '10px',
+              color: 'white',
+              borderRadius: '0 0 10px 10px'
+            }}
+            data-product-name={title}
+            data-product-price={price}
+          >
+            <i className="fi-rs-shopping-bag me-2"></i>Kapıda Ödemeli Al
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
