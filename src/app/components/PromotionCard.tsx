@@ -17,15 +17,15 @@ function StarRating({ rating }: { rating: number }) {
   for (let i = 1; i <= 5; i++) {
     if (rating >= i) {
       stars.push(
-        <svg key={i} className="w-4 h-4 text-yellow-400 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+        <i key={i} className="fas fa-star text-warning"></i>
       );
     } else if (rating > i - 1) {
       stars.push(
-        <svg key={i} className="w-4 h-4 text-yellow-400 inline" viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#facc15"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+        <i key={i} className="fas fa-star-half-alt text-warning"></i>
       );
     } else {
       stars.push(
-        <svg key={i} className="w-4 h-4 text-gray-300 inline" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+        <i key={i} className="far fa-star text-muted"></i>
       );
     }
   }
@@ -42,29 +42,35 @@ export default function PromotionCard({
   imgName,
 }: PromotionCardProps) {
   return (
-    <div
-      className="rounded-[25px] shadow-sm mb-3 pt-3 bg-white overflow-hidden w-[320px] mx-auto border border-gray-200"
-      style={{ paddingRight: '.25rem', paddingLeft: '.25rem' }}>
-      <div style={{ marginBottom: '30px', position: 'relative'}}>
+    <div className="card h-100 shadow-sm border-0" style={{ borderRadius: '25px', overflow: 'hidden' }}>
+      <div className="position-relative">
         {/* Badge */}
         <span
+          className="badge position-absolute"
           style={{
-            position: 'absolute',
-            top: 12,
-            left: 12,
+            top: '12px',
+            left: '12px',
             background: '#ff3e8e',
             color: '#fff',
             fontWeight: 600,
-            fontSize: 13,
+            fontSize: '13px',
             padding: '3px 12px',
-            borderRadius: 12,
+            borderRadius: '12px',
             zIndex: 2,
           }}
         >
           İndirimli
         </span>
-        <Link href={`/product/${slug}`} className="block">
-          <div className="w-[296px] h-[296px] relative mx-auto" style={{ background: '#f3f3f3', borderRadius: '10px', overflow: 'hidden', padding: '10px 12px' }}>
+        
+        <Link href={`/product/${slug}`} className="d-block">
+          <div className="card-img-top" style={{ 
+            background: '#f3f3f3', 
+            borderRadius: '10px', 
+            overflow: 'hidden', 
+            padding: '10px 12px',
+            height: '296px',
+            position: 'relative'
+          }}>
             <Image
               src={`/images/${imgName}`}
               alt={title}
@@ -75,50 +81,54 @@ export default function PromotionCard({
             />
           </div>
         </Link>
-        <div className="px-[20px] pb-[15px] pt-2">
-          <h2 className="mb-2 font-bold" style={{ color: '#333' }}>
-            <span style={{ fontFamily: 'Spartan, sans-serif', fontSize: '15.4px' }}>{title}</span>
-          </h2>
+        
+        <div className="card-body p-3">
+          <h5 className="card-title mb-2 fw-bold" style={{ color: '#333', fontSize: '15.4px', fontFamily: 'Spartan, sans-serif' }}>
+            {title}
+          </h5>
+          
           {typeof rating === 'number' && (
-            <div>
-              <span className="text-[12.6px]" style={{ color: '#f39c12', fontFamily: 'Lato, sans-serif' }}>
-                {/* Inline SVG stars */}
-                {Array.from({ length: 5 }).map((_, i) => {
-                  if (rating >= i + 1) {
-                    // Full star
-                    return (
-                      <svg key={i} className="w-4 h-4 inline text-[#f39c12]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                    );
-                  } else if (rating > i) {
-                    // Half star
-                    return (
-                      <svg key={i} className="w-4 h-4 inline text-[#f39c12]" viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#f39c12"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                    );
-                  } else {
-                    // Empty star
-                    return (
-                      <svg key={i} className="w-4 h-4 inline text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                    );
-                  }
-                })}
+            <div className="mb-2">
+              <span className="text-muted" style={{ fontSize: '12.6px', color: '#f39c12', fontFamily: 'Lato, sans-serif' }}>
+                <StarRating rating={rating} />
                 {` ${rating.toFixed(1)}`}
               </span>
             </div>
           )}
-          <div className="product-price mt-1">
-            <span className="text-[16.8px] font-bold" style={{ color: '#ff6a00', fontFamily: 'Lato, sans-serif' }}>{price}</span>
+          
+          <div className="product-price">
+            <span className="fw-bold" style={{ 
+              fontSize: '16.8px', 
+              color: '#ff6a00', 
+              fontFamily: 'Lato, sans-serif' 
+            }}>
+              {price}
+            </span>
             {oldPrice && (
-              <span className="old-price ml-2 text-[12.6px]" style={{ color: '#aaa', textDecoration: 'line-through', fontFamily: 'Lato, sans-serif' }}>{oldPrice}</span>
+              <span className="text-muted ms-2" style={{ 
+                fontSize: '12.6px', 
+                textDecoration: 'line-through', 
+                fontFamily: 'Lato, sans-serif' 
+              }}>
+                {oldPrice}
+              </span>
             )}
           </div>
         </div>
-        <div className="flex items-center justify-center">
+        
+        <div className="card-footer bg-transparent border-0 p-3">
           <a
             href={`/product/${slug}`}
-            className="btn w-full btn-sm add-to-cart font-semibold text-[1em] border-0 py-[10px] flex items-center justify-center"
-            style={{ background: 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)' }}
+            className="btn btn-primary w-100 fw-semibold"
+            style={{ 
+              background: 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)',
+              border: 'none',
+              fontSize: '1em',
+              padding: '10px'
+            }}
           >
-            <i className="fi-rs-shopping-bag mr-2" />Kapıda Ödemeli Al
+            <i className="fi-rs-shopping-bag me-2"></i>
+            Kapıda Ödemeli Al
           </a>
         </div>
       </div>

@@ -1,19 +1,22 @@
 import Image from 'next/image';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import PromotionCard from '../../../components/PromotionCard';
-import { FaGift, FaCheckCircle, FaCheck } from 'react-icons/fa';
+import ScrollToTop from '../../../components/ScrollToTop';
+import AnalyticsScripts from '../../../components/AnalyticsScripts';
+import { FaGift, FaCheckCircle, FaCheck, FaChevronDown } from 'react-icons/fa';
+import './promotion.css';
 
 const promoProducts = [
   {
-    "name": "Cosmos Yıldız Yağmuru",
-    "internalName": "Stary Lamba Cosmos",
-    "productLink": "https://trendygoods.com.tr/product/cosmos-yildiz-yagmuru",
-    "imgSrc": "https://trendygoods.com.tr/storage/33/resim_2024-07-17_174036181.png",
-    "imgName": "resim_2024-07-17_174036181.png",
-    "rating": "4.9",
-    "priceCurrent": "749,00TL",
-    "priceOriginal": "999.00TL"
+    "name": "Buzlu Vantilatör",
+    "internalName": "Buzlu Fan",
+    "productLink": "https://trendygoods.com.tr/product/buzlu-vantilator",
+    "imgSrc": "https://trendygoods.com.tr/storage/514/resim_2025-06-27_093728668.png",
+    "imgName": "resim_2025-06-27_093728668.png",
+    "rating": "4.5",
+    "priceCurrent": "599,00TL",
+    "priceOriginal": "799.00TL",
+    "productId": "169"
   },
   {
     "name": "Konuşan Kaktüs",
@@ -21,19 +24,10 @@ const promoProducts = [
     "productLink": "https://trendygoods.com.tr/product/konusan-kaktus",
     "imgSrc": "https://trendygoods.com.tr/storage/540/resim_2025-07-06_101718015.png",
     "imgName": "resim_2025-07-06_101718015.png",
-    "rating": "4.2",
-    "priceCurrent": "300,00TL",
-    "priceOriginal": "550.00TL"
-  },
-  {
-    "name": "Sinek Raketi",
-    "internalName": "Sinek Raketi",
-    "productLink": "https://trendygoods.com.tr/product/sinek-raketi-lp",
-    "imgSrc": "https://trendygoods.com.tr/storage/508/resim_2025-06-14_113718564.png",
-    "imgName": "resim_2025-06-14_113718564.png",
-    "rating": "4.4",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
+    "rating": "4.5",
+    "priceCurrent": "350,00TL",
+    "priceOriginal": "550.00TL",
+    "productId": "173"
   },
   {
     "name": "Ultra Su Emici Banyo Paspası",
@@ -41,229 +35,10 @@ const promoProducts = [
     "productLink": "https://trendygoods.com.tr/product/banyo-paspasi",
     "imgSrc": "https://trendygoods.com.tr/storage/58/resim_2024-08-28_083825924.png",
     "imgName": "resim_2024-08-28_083825924.png",
-    "rating": "4.6",
-    "priceCurrent": "149,00TL",
-    "priceOriginal": "399.00TL"
-  },
-  {
-    "name": "Sensörlü Tezgah Altı Lamba",
-    "internalName": "Akasya Lamba",
-    "productLink": "https://trendygoods.com.tr/product/tezgah-lamba",
-    "imgSrc": "https://trendygoods.com.tr/storage/133/resim_2024-10-27_124035023.png",
-    "imgName": "resim_2024-10-27_124035023.png",
-    "rating": "4.4",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "BrightPad - Yazı ve Resim Tahtası",
-    "internalName": "Cam Tahta",
-    "productLink": "https://trendygoods.com.tr/product/cam-tahta",
-    "imgSrc": "https://trendygoods.com.tr/storage/286/resim_2025-01-07_101401653.png",
-    "imgName": "resim_2025-01-07_101401653.png",
-    "rating": "4.1",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "Televizyon Arkası Led",
-    "internalName": "TV Arkası LED",
-    "productLink": "https://trendygoods.com.tr/product/tv-arkasi-led",
-    "imgSrc": "https://trendygoods.com.tr/storage/279/resim_2024-12-27_085422283.png",
-    "imgName": "resim_2024-12-27_085422283.png",
-    "rating": "4.1",
-    "priceCurrent": "250,00TL",
-    "priceOriginal": "500.00TL"
-  },
-  {
-    "name": "Çok Fonksiyonlu Tazyikli Musluk Başlığı",
-    "internalName": "Mutfak Musluk Başlığı",
-    "productLink": "https://trendygoods.com.tr/product/tazyikli-musluk-basligi",
-    "imgSrc": "https://trendygoods.com.tr/storage/115/resim_2024-10-06_092512445.png",
-    "imgName": "resim_2024-10-06_092512445.png",
-    "rating": "4.4",
-    "priceCurrent": "172,00TL",
-    "priceOriginal": "422.00TL"
-  },
-  {
-    "name": "MagnoGlow Lamba",
-    "internalName": "MagnoGlow Lamba",
-    "productLink": "https://trendygoods.com.tr/product/miknatisli-lamba",
-    "imgSrc": "https://trendygoods.com.tr/storage/1/1.webp",
-    "imgName": "1.webp",
-    "rating": "4.3",
-    "priceCurrent": "249,00TL",
-    "priceOriginal": "499.00TL"
-  },
-  {
-    "name": "TrendyGlow 3x3 mt Perde LED Işıkları",
-    "internalName": "Perde Led",
-    "productLink": "https://trendygoods.com.tr/product/perd-led",
-    "imgSrc": "https://trendygoods.com.tr/storage/255/resim_2024-12-23_214326254.png",
-    "imgName": "resim_2024-12-23_214326254.png",
-    "rating": "4.9",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "Sinek Raketi",
-    "internalName": "Sinek Raketi",
-    "productLink": "https://trendygoods.com.tr/product/sinek-raketi",
-    "imgSrc": "https://trendygoods.com.tr/storage/501/resim_2025-06-13_151235155.png",
-    "imgName": "resim_2025-06-13_151235155.png",
-    "rating": "4.8",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "Araç Şemsiyesi",
-    "internalName": "Araç Şemsiye",
-    "productLink": "https://trendygoods.com.tr/product/arac-gunes-semsiyesi",
-    "imgSrc": "https://trendygoods.com.tr/storage/504/resim_2025-06-14_084237987.png",
-    "imgName": "resim_2025-06-14_084237987.png",
-    "rating": "4.7",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "Buzlu Vantilatör",
-    "internalName": "Buzlu Fan",
-    "productLink": "https://trendygoods.com.tr/product/buzlu-vantilator",
-    "imgSrc": "https://trendygoods.com.tr/storage/514/resim_2025-06-27_093728668.png",
-    "imgName": "resim_2025-06-27_093728668.png",
-    "rating": "4.6",
-    "priceCurrent": "549,00TL",
-    "priceOriginal": "799.00TL"
-  },
-  {
-    "name": "Cilt Yenileyici Buz Kalıbı",
-    "internalName": "Beyzana Cilt Buzu",
-    "productLink": "https://trendygoods.com.tr/product/cilt-yenileyici-buz-kalibi",
-    "imgSrc": "https://trendygoods.com.tr/storage/527/resim_2025-06-28_164740642.png",
-    "imgName": "resim_2025-06-28_164740642.png",
-    "rating": "4.1",
-    "priceCurrent": "149,00TL",
-    "priceOriginal": "399.00TL"
-  },
-  {
-    "name": "BrightPad - Yazı ve Resim Tahtası",
-    "internalName": "Cam Tahta",
-    "productLink": "https://trendygoods.com.tr/product/cam-tahta-rw",
-    "imgSrc": "https://trendygoods.com.tr/storage/298/resim_2025-01-07_213931443.png",
-    "imgName": "resim_2025-01-07_213931443.png",
-    "rating": "4.2",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "Sürüklenebilir Nokta Çizim Tahtası",
-    "internalName": "Nokta Tahtası",
-    "productLink": "https://trendygoods.com.tr/product/suruklenebilir-nokta-cizim-tahtasi",
-    "imgSrc": "https://trendygoods.com.tr/storage/415/resim_2025-03-07_222443084.png",
-    "imgName": "resim_2025-03-07_222443084.png",
-    "rating": "4.2",
-    "priceCurrent": "349,00TL",
-    "priceOriginal": "599.00TL"
-  },
-  {
-    "name": "60 cm Sensörlü Lamba (4 ledli)",
-    "internalName": "60 CM Akasya Lamba",
-    "productLink": "https://trendygoods.com.tr/product/tezgah-lamba-60cm",
-    "imgSrc": "https://trendygoods.com.tr/storage/462/resim_2024-10-27_124035023.png",
-    "imgName": "resim_2024-10-27_124035023.png",
-    "rating": "4.8",
-    "priceCurrent": "449,00TL",
-    "priceOriginal": "699.00TL"
-  },
-  {
-    "name": "Vakumlu Tutacak",
-    "internalName": "Vakumlu Tutacak",
-    "productLink": "https://trendygoods.com.tr/product/vakumlu-tutacak",
-    "imgSrc": "https://trendygoods.com.tr/storage/521/resim_2025-06-27_172839505.png",
-    "imgName": "resim_2025-06-27_172839505.png",
-    "rating": "4.1",
-    "priceCurrent": "249,00TL",
-    "priceOriginal": "499.00TL"
-  },
-  {
-    "name": "3 Renk Modlu Masa Lambası",
-    "internalName": "Masa Lambası",
-    "productLink": "https://trendygoods.com.tr/product/masa-lambasi",
-    "imgSrc": "https://trendygoods.com.tr/storage/383/resim_2025-02-08_175647926.png",
-    "imgName": "resim_2025-02-08_175647926.png",
     "rating": "4.5",
-    "priceCurrent": "249,00TL",
-    "priceOriginal": "499.00TL"
-  },
-  {
-    "name": "VolcanoAir Oda Nemlendiricisi",
-    "internalName": "Volkan",
-    "productLink": "https://trendygoods.com.tr/product/volkan-nemlendirici",
-    "imgSrc": "https://trendygoods.com.tr/storage/280/resim_2025-01-02_173208712.png",
-    "imgName": "resim_2025-01-02_173208712.png",
-    "rating": "4.2",
-    "priceCurrent": "549,00TL",
-    "priceOriginal": "799.00TL"
-  },
-  {
-    "name": "Araba içi Ayaklık Led",
-    "internalName": "Araba LED",
-    "productLink": "https://trendygoods.com.tr/product/araba-led",
-    "imgSrc": "https://trendygoods.com.tr/storage/303/resim_2025-01-10_223703357.png",
-    "imgName": "resim_2025-01-10_223703357.png",
-    "rating": "4.8",
-    "priceCurrent": "300,00TL",
-    "priceOriginal": "550.00TL"
-  },
-  {
-    "name": "Uzay Bulut Robotu",
-    "internalName": "Astronot",
-    "productLink": "https://trendygoods.com.tr/product/uzay-bulut-robotu",
-    "imgSrc": "https://trendygoods.com.tr/storage/39/resim_2024-04-11_225018545-(2).png",
-    "imgName": "resim_2024-04-11_225018545-(2).png",
-    "rating": "4.7",
-    "priceCurrent": "749,00TL",
-    "priceOriginal": "999.00TL"
-  },
-  {
-    "name": "Taşınabilir Projeksiyon",
-    "internalName": "Projeksiyon",
-    "productLink": "https://trendygoods.com.tr/product/ekran-yansitici",
-    "imgSrc": "https://trendygoods.com.tr/storage/153/resim_2024-11-03_123329458.png",
-    "imgName": "resim_2024-11-03_123329458.png",
-    "rating": "4.9",
-    "priceCurrent": "2249,00TL",
-    "priceOriginal": "2499.00TL"
-  },
-  {
-    "name": "Işıklı Yüksek Ses Party Box Karaoke Bluetooth Hoparlör",
-    "internalName": "Hoparlör",
-    "productLink": "https://trendygoods.com.tr/product/isikli-yuksek-ses-party-box-karaoke-bluetooth-hoparlor",
-    "imgSrc": "https://trendygoods.com.tr/storage/534/resim_2025-07-05_122005655.png",
-    "imgName": "resim_2025-07-05_122005655.png",
-    "rating": "4.6",
-    "priceCurrent": "400,00TL",
-    "priceOriginal": "650.00TL"
-  },
-  {
-    "name": "Su Emici Tezgah Üstü Mutfak Matı",
-    "internalName": "Mutfak Matı",
-    "productLink": "https://trendygoods.com.tr/product/mutfak-mati",
-    "imgSrc": "https://trendygoods.com.tr/storage/42/resim_2024-07-23_094830795.png",
-    "imgName": "resim_2024-07-23_094830795.png",
-    "rating": "4.7",
-    "priceCurrent": "149,00TL",
-    "priceOriginal": "399.00TL"
-  },
-  {
-    "name": "5'li Şeffaf Süper Yapışkan Askılık",
-    "internalName": "5li Yapışkan Askılık",
-    "productLink": "https://trendygoods.com.tr/product/yapiskanli-aski",
-    "imgSrc": "https://trendygoods.com.tr/storage/105/resim_2024-10-05_182429423.png",
-    "imgName": "resim_2024-10-05_182429423.png",
-    "rating": "4.1",
-    "priceCurrent": "45,00TL",
-    "priceOriginal": "295.00TL"
+    "priceCurrent": "199,00TL",
+    "priceOriginal": "399.00TL",
+    "productId": "2"
   },
   {
     "name": "Ahşap Ayak Masajı",
@@ -271,102 +46,263 @@ const promoProducts = [
     "productLink": "https://trendygoods.com.tr/product/ahsap-ayak-masaji",
     "imgSrc": "https://trendygoods.com.tr/storage/488/resim_2025-06-09_101049753.png",
     "imgName": "resim_2025-06-09_101049753.png",
-    "rating": "4.9",
-    "priceCurrent": "249,00TL",
-    "priceOriginal": "499.00TL"
-  },
-  {
-    "name": "TrendySand Kum Sanatı (Deniz Rengi)",
-    "internalName": "Kum Sanatı (Blue)",
-    "productLink": "https://trendygoods.com.tr/product/kum-sanati-mavi",
-    "imgSrc": "https://trendygoods.com.tr/storage/130/resim_2024-10-23_070924251.png",
-    "imgName": "resim_2024-10-23_070924251.png",
-    "rating": "4.2",
-    "priceCurrent": "185,00TL",
-    "priceOriginal": "435.00TL"
-  },
-  {
-    "name": "AutoComfort Yatak Seti",
-    "internalName": "Araba Yatağı",
-    "productLink": "https://trendygoods.com.tr/product/araba-yatagi",
-    "imgSrc": "https://trendygoods.com.tr/storage/50/resim_2024-08-09_225836761.png",
-    "imgName": "resim_2024-08-09_225836761.png",
-    "rating": "4.5",
-    "priceCurrent": "1049,00TL",
-    "priceOriginal": "1299.00TL"
-  },
-  {
-    "name": "Duvara Yapışan Tuvalet Fırçası",
-    "internalName": "Tuvalet Fırçası",
-    "productLink": "https://trendygoods.com.tr/product/tuvalet-fircasi-siyah",
-    "imgSrc": "https://trendygoods.com.tr/storage/110/resim_2024-10-05_202809404.png",
-    "imgName": "resim_2024-10-05_202809404.png",
-    "rating": "4.4",
-    "priceCurrent": "123,00TL",
-    "priceOriginal": "373.00TL"
+    "rating": "4.7",
+    "priceCurrent": "299,00TL",
+    "priceOriginal": "499.00TL",
+    "productId": "165"
   }
 ];
 
 export default function PromotionPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center">
+    <div className="min-h-screen bg-white">
       <Header />
-      {/* Announcement Section */}
-      <div className="w-full max-w-[1320px] mx-auto flex justify-center mt-6 mb-5">
-        <div className="bg-[#f8f9fa] rounded-[10px] border border-[#e0e0e0] w-full flex flex-col items-center shadow-sm" style={{ padding: '24px' }}>
-          <div className="flex items-center justify-center">
-            <FaCheckCircle className="text-[#0b8123] mr-2" size={25} />
-            <h2 className="text-[#0b8123]" style={{ fontFamily: 'Spartan, sans-serif', fontSize: '25.2px', fontWeight: 'bold' }}>SİPARİŞİNİZ ALINDI</h2>
+      
+      {/* Order Confirmation Section */}
+      <section className="mt-20 mb-30">
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-12 text-center">
+              <div className="order-confirmation-box p-4" style={{backgroundColor: '#f8f9fa', borderRadius: '10px', border: '1px solid #e0e0e0'}}>
+                <h2 style={{fontSize: '1.8em', color: '#0b8123', fontWeight: 'bold', marginBottom: '15px'}}>
+                  <i className="fas fa-check-circle mr-2"></i>SİPARİŞİNİZ ALINDI
+                </h2>
+                <div className="points-box mt-4 p-3" style={{backgroundColor: '#fff8e1', borderRadius: '8px', borderLeft: '4px solid #ffc107'}}>
+                  <h4 style={{color: '#ff6a00', fontWeight: 'bold'}}>
+                    <i className="fas fa-gift mr-2"></i>Tebrikler! Aşağıdaki ürünleri indirimli fiyatarıyla almaya hak kazandınız
+                  </h4>
+                  <span className="mb-0" style={{fontSize: '0.9em'}}>
+                    *Dilediğiniz ürünü <b>'Sepete Ekle'</b> tuşuna basarak sepetinize ekleyebilirsiniz
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div
-            className="w-full bg-[#fffbe6] py-3 px-4 flex flex-col items-center"
-            style={{ marginTop: 24, backgroundColor: '#fff8e1', borderRadius: 8, borderLeft: '4px solid #ffc107' }}
-          >
-            <span className="text-[#ff6a00] font-bold text-[18px] flex items-center">
-              <FaGift className="mr-2" color="#ff6a00" size={18} />
-              Tebrikler! Aşağıdaki ürünleri indirimli fiyatlarıyla almaya hak kazandınız
-            </span>
-            <span className="text-gray-500 text-sm mt-1">*Dilediğiniz ürünü 'Sepete Ekle' tuşuna basarak sepetinize ekleyebilirsiniz</span>
-          </div>
-          
         </div>
-      </div> 
-      {/* Main Content */}
-      <main className="w-full max-w-[1320px] mx-auto flex flex-col items-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+      </section>
+
+      {/* Products Grid */}
+      <div className="container">
+        <div className="row product-grid-3">
           {promoProducts.map((product, idx) => (
-            <PromotionCard
-              key={idx}
-              image={product.imgSrc}
-              title={product.name}
-              rating={product.rating ? parseFloat(product.rating) : null}
-              price={product.priceCurrent}
-              oldPrice={product.priceOriginal}
-              slug={product.productLink.replace('https://trendygoods.com.tr/product/', '')}
-              imgName={product.imgName}
-            />
+            <div key={idx} className="col-lg-3 col-md-4 col-sm-6 px-1">
+              <div className="product-cart-wrap mb-30">
+                <div className="product-img-action-wrap">
+                  <div className="product-img product-img-zoom">
+                    <a href={product.productLink}>
+                      <img 
+                        className="default-img"
+                        src={product.imgSrc}
+                        alt={product.name}
+                        style={{width: '100%', height: 'auto'}}
+                      />
+                    </a>
+                  </div>
+                  <div className="product-badges product-badges-position product-badges-mrg">
+                    <span className="hot">İndirimli</span>
+                  </div>
+                </div>
+                
+                <div className="product-content-wrap pt-2">
+                  <h2>
+                    <a href={product.productLink}>{product.name}</a>
+                  </h2>
+                  <div className="rating-result" title="96%">
+                    <span>
+                      <span>{product.rating}</span>
+                    </span>
+                  </div>
+                  <div className="product-price">
+                    <span className="old-price">{product.priceOriginal}</span>
+                    <span style={{color: '#bb0000', fontWeight: '600'}}>{product.priceCurrent}</span>
+                  </div>
+                </div>
+                
+                <div className="row mb-30 mx-auto px-0">
+                  <div className="col-12 pr-1">
+                    <button 
+                      className="btn w-100 btn-sm add-to-cart"
+                      style={{
+                        background: 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        border: '0 solid',
+                        color: '#fff'
+                      }}
+                      data-product-name={product.internalName}
+                      data-product-id={product.productId}
+                      data-product-price={product.priceCurrent.replace(',00TL', '').replace('TL', '')}
+                    >
+                      <i className="fi-rs-shopping-bag mr-5"></i>Sepete Ekle
+                    </button>
+                  </div>
+                </div>
+                
+                <div id={`details-${idx}`} className="collapse px-3 pb-2">
+                  <div className="short-desc mb-3">
+                    <div className="emoji-benefits-container">
+                      {product.name === "Buzlu Vantilatör" && (
+                        <>
+                          <p>❄️ <strong>Tek Kişilik Serinleme Çözümü</strong></p>
+                          <p>💨 <strong>Soğuk Buhar ile Anında Ferahlık</strong></p>
+                          <p>👍 <strong>7 Renkli Işık Modu</strong></p>
+                          <p>🫶 <strong>Sıcak Günlerin Vazgeçilmezi</strong></p>
+                          <p>🌙 <strong>Ultra Sessiz Gürültüsüz Çalışma</strong></p>
+                          <p>💯 <strong>Kapıda Ödeme Kargo Bedava</strong></p>
+                        </>
+                      )}
+                      {product.name === "Konuşan Kaktüs" && (
+                        <>
+                          <p>🎶 <strong>21 Farklı Şarkı ile Eğlenceli Dakikalar</strong></p>
+                          <p>🎤 <strong>Ses Kayıt Özelliği ile Taklit Yeteneği</strong></p>
+                          <p>😂 <strong>Oyun Oynarken Hareket Ediyor</strong></p>
+                          <p>🎁 <strong>Çocuklar İçin Mükemmel Hediye</strong></p>
+                          <p>👍 <strong>Sağlam ve Sorunsuz Teslimat</strong></p>
+                          <p>💡 <strong>Işıklı Tasarımıyla Göz Alıcı</strong></p>
+                        </>
+                      )}
+                      {product.name === "Ultra Su Emici Banyo Paspası" && (
+                        <>
+                          <p>💦 <strong>Ultra Su Emiciliği ile Anında Kuruluk</strong></p>
+                          <p>🦶 <strong>Abdest Sonrası Rahatlık</strong></p>
+                          <p>🚫 <strong>Kaymaz Taban ile Güvenli Kullanım</strong></p>
+                          <p>🛁 <strong>Banyonuzun Olmazsa Olmazı</strong></p>
+                          <p>🎁 <strong>40 X 60cm Ebatında</strong></p>
+                          <p>🌈 <strong>Güzel Renkleriyle Banyonuza Estetik Katar</strong></p>
+                        </>
+                      )}
+                      {product.name === "Ahşap Ayak Masajı" && (
+                        <>
+                          <p>🦶 <strong>Ayak ağrılarını hafifletir.</strong></p>
+                          <p>😌 <strong>Rahatlatıcı bir etki sağlar.</strong></p>
+                          <p>💪 <strong>Ayak kaslarını güçlendirir.</strong></p>
+                          <p>👍 <strong>Kullanımı kolay ve pratiktir.</strong></p>
+                          <p>🌱 <strong>Doğal ahşap malzemeden üretilmiştir.</strong></p>
+                          <p>🎁 <strong>Sevdiklerinize hediye edebileceğiniz güzel bir seçenek.</strong></p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {product.name === "Buzlu Vantilatör" && (
+                    <section>
+                      <h2>Sıcak Yazlara Veda Edin!</h2>
+                      <p>Buzlu Vantilatör ile kişisel serinliğinizi her yere taşıyın.</p>
+                      <img src="https://trendygoods.com.tr/storage/514/resim_2025-06-27_093728668.png" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <h2>Tek Kişilik Klima Konforu</h2>
+                      <p>Büyük klimalara veda edin, bireysel serinleme ihtiyaçlarınız için ideal çözüm.</p>
+                      <h2>Anında Ferahlık, Dakikalar İçinde Serinleyin</h2>
+                      <p>Soğuk buhar özelliği ile anında ferahlayın, yaz sıcaklarının etkisini azaltın.</p>
+                      <h2>Bütçe Dostu Serinleme</h2>
+                      <p>Yüksek fiyatlı klimalara alternatif, uygun fiyatlı ve etkili serinleme çözümü.</p>
+                      <h2>Güvenlik Kulübesi ve Küçük Alanlar İçin Mükemmel</h2>
+                      <p>Kısıtlı alanlarda bile serinliğin keyfini çıkarın, güvenlik kulübeleri için ideal boyut.</p>
+                      <h2>Gece Lambası ile Huzurlu Uyku</h2>
+                      <p>Gece lambası özelliği sayesinde hem serinleyin hem de rahatlatıcı bir ortam yaratın.</p>
+                      <img src="https://trendygoods.com.tr/storage/515/resim_2025-06-27_095050476.png" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <h2>Kaliteli Malzeme, Uzun Ömürlü Kullanım</h2>
+                      <p>Dayanıklı malzemeler sayesinde uzun yıllar güvenle kullanın.</p>
+                      <h2>Hemen Alın, Yazın Keyfini Çıkarın!</h2>
+                      <p>Sıcaklara veda etme zamanı geldi. Buzlu Vantilatör ile serin ve konforlu bir yaz geçirin.</p>
+                    </section>
+                  )}
+                  
+                  {product.name === "Konuşan Kaktüs" && (
+                    <section>
+                      <h2>Eğlenceyi Eve Getirin</h2>
+                      <p>🎶 <strong>21 Farklı Şarkı ile Eğlenceli Dakikalar:</strong> Çocuğunuzun müzikle dolu keyifli anlar yaşamasına olanak tanıyın.</p>
+                      <img src="https://trendygoods.com.tr/storage/539/resim_2025-07-06_094148266.png" alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <br />
+                      <h2>Öğrenmeyi Destekleyin</h2>
+                      <p>🎤 <strong>Ses Kayıt Özelliği ile Taklit Yeteneği:</strong> Çocuğunuzun konuşma becerilerini geliştirirken eğlenmesini sağlayın.</p>
+                      <img src="https://trendygoods.com.tr/storage/540/resim_2025-07-06_101718015.png" alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <br />
+                      <h2>Oyun Oynarken Geliştirin</h2>
+                      <p>😂 <strong>Oyun Oynarken Gözleri Hareket Ediyor:</strong> Eğlenceli tasarımı ile çocuğunuzun dikkatini çeker ve oyun saatlerini daha keyifli hale getirir.</p>
+                      <h2>Hediye Seçimi Derdine Son</h2>
+                      <p>🎁 <strong>Çocuklar İçin Mükemmel Hediye Seçeneği:</strong> Doğum günleri veya özel günler için ideal, unutulmaz bir hediye alternatifi.</p>
+                      <h2>Göz Alıcı Tasarım</h2>
+                      <p>💡 <strong>Işıklı Tasarımıyla Göz Alıcı:</strong> Çocuğunuzun odasına renk katar, gece lambası olarak da kullanılabilir.</p>
+                    </section>
+                  )}
+                  
+                  {product.name === "Ultra Su Emici Banyo Paspası" && (
+                    <>
+                      <p><img alt="paspas.jpg" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/paspas.jpg?v=1701017039" style={{width: '350px'}} /></p>
+                      <p>&nbsp;</p>
+                      <p>&nbsp;</p>
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td><img alt="water-drop.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/water-drop.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
+                            <td>
+                              <h3><strong>💧 Süper Emici</strong></h3>
+                              <p>Yenilikçi, gelişmiş nano gözenekli deri yüzeyi, herhangi bir filigran veya leke bırakmadan damlayan suyu anında emebilir. Banyo zeminini temiz, kuru ve güvenli tutmak için küvetin, duş kapısının veya lavabonun önünde rahatlıkla kullanılabilir.</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td><img alt="wipe.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/wipe.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
+                            <td>
+                              <h3><strong>🧼 Kolay Temizlenebilir</strong></h3>
+                              <p>Süper Su Emici Banyo Paspasında az miktarda toz varsa elektrikli süpürge kullanarak bunu temizleyebilirsiniz. Yağ lekelerinin temizlenmesi de kolaydır; yıkamak için biraz deterjan damlatabilir ve ardından suyla durulayabilirsiniz.</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td><img alt="quick-dry.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/quick-dry.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
+                            <td>
+                              <h3><strong>🌬️ Hızlı Kuruma</strong></h3>
+                              <p>Süper Su Emici Banyo Paspasının içindeki çok sayıda küçük gözenek, suyun doğal havada hızla buharlaşmasını sağlar. Hızlı kuruyan banyo paspası bir sonraki kullanıcı için fazla nemli olmayacaktır.</p>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td><img alt="slip.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/slip.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
+                            <td>
+                              <h3><strong>🚫 Kaymaz Taban</strong></h3>
+                              <p>Kauçuk destekli Süper Su Emici Banyo Paspası diğer paspaslara kıyasla ıslak zeminde kaymaya karşı dirençlidir. Dayanıklı kauçuk destek aynı zamanda suyun alttan sızmasını ve yere akmasını da önler.</p>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <p>&nbsp;</p>
+                      <p>&nbsp;</p>
+                      <p><img alt="giphy" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/giphy_6922fcc3-d38a-4c88-b781-6778695ade6e.gif?v=1704211578" style={{height: '480px', width: '278px'}} /></p>
+                    </>
+                  )}
+                  
+                  {product.name === "Ahşap Ayak Masajı" && (
+                    <img src="https://trendygoods.com.tr/storage/487/resim_2025-06-09_100456047.png" style={{width: '100%'}} />
+                  )}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-      </main>
-      {/* Green Button */}
-      <div className="w-full flex justify-center my-8">
-        <button
-          className="flex items-center justify-center w-full max-w-[1300px] text-white py-3 transition"
-          style={{ 
-            borderRadius: '4px',
-            color: '#fff',
-            border: '1px solid #046963',
-            backgroundColor: '#088178',
-            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
-            fontFamily: 'Lato, sans-serif',
-            fontSize: '12px'
-          }}
-        >
-          <FaCheck className="mr-2" size={12} />
-          Siparişimi Tamamla
-        </button>
       </div>
+
+      {/* Green Button */}
+      <div className="container mt-5 mb-5">
+        <div className="row">
+          <div className="col-12 text-center">
+            <button
+              className="btn btn-success btn-lg w-100"
+              style={{ 
+                backgroundColor: '#088178',
+                borderColor: '#046963',
+                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
+                fontFamily: 'Lato, sans-serif',
+                fontSize: '12px'
+              }}
+            >
+              <FaCheck className="mr-2" size={12} />
+              Siparişimi Tamamla
+            </button>
+          </div>
+        </div>
+      </div>
+      
       <Footer />
+      <ScrollToTop />
+      <AnalyticsScripts />
     </div>
   );
 } 
