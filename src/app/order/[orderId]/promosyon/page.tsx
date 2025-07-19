@@ -10,8 +10,8 @@ const promoProducts = [
   {
     "name": "Buzlu Vantilatör",
     "internalName": "Buzlu Fan",
-    "productLink": "https://trendygoods.com.tr/product/buzlu-vantilator",
-    "imgSrc": "https://trendygoods.com.tr/storage/514/resim_2025-06-27_093728668.png",
+    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/buzlu-vantilator`,
+    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/514/resim_2025-06-27_093728668.png`,
     "imgName": "resim_2025-06-27_093728668.png",
     "rating": "4.5",
     "priceCurrent": "599,00TL",
@@ -21,8 +21,8 @@ const promoProducts = [
   {
     "name": "Konuşan Kaktüs",
     "internalName": "Kaktüs",
-    "productLink": "https://trendygoods.com.tr/product/konusan-kaktus",
-    "imgSrc": "https://trendygoods.com.tr/storage/540/resim_2025-07-06_101718015.png",
+    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/konusan-kaktus`,
+    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/540/resim_2025-07-06_101718015.png`,
     "imgName": "resim_2025-07-06_101718015.png",
     "rating": "4.5",
     "priceCurrent": "350,00TL",
@@ -32,8 +32,8 @@ const promoProducts = [
   {
     "name": "Ultra Su Emici Banyo Paspası",
     "internalName": "Banyo Paspası",
-    "productLink": "https://trendygoods.com.tr/product/banyo-paspasi",
-    "imgSrc": "https://trendygoods.com.tr/storage/58/resim_2024-08-28_083825924.png",
+    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/banyo-paspasi`,
+    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/58/resim_2024-08-28_083825924.png`,
     "imgName": "resim_2024-08-28_083825924.png",
     "rating": "4.5",
     "priceCurrent": "199,00TL",
@@ -43,8 +43,8 @@ const promoProducts = [
   {
     "name": "Ahşap Ayak Masajı",
     "internalName": "Masaj Ayak",
-    "productLink": "https://trendygoods.com.tr/product/ahsap-ayak-masaji",
-    "imgSrc": "https://trendygoods.com.tr/storage/488/resim_2025-06-09_101049753.png",
+    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/ahsap-ayak-masaji`,
+    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/488/resim_2025-06-09_101049753.png`,
     "imgName": "resim_2025-06-09_101049753.png",
     "rating": "4.7",
     "priceCurrent": "299,00TL",
@@ -188,7 +188,7 @@ export default function PromotionPage() {
                     <section>
                       <h2>Sıcak Yazlara Veda Edin!</h2>
                       <p>Buzlu Vantilatör ile kişisel serinliğinizi her yere taşıyın.</p>
-                      <img src="https://trendygoods.com.tr/storage/514/resim_2025-06-27_093728668.png" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/514/resim_2025-06-27_093728668.png`} style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
                       <h2>Tek Kişilik Klima Konforu</h2>
                       <p>Büyük klimalara veda edin, bireysel serinleme ihtiyaçlarınız için ideal çözüm.</p>
                       <h2>Anında Ferahlık, Dakikalar İçinde Serinleyin</h2>
@@ -199,7 +199,7 @@ export default function PromotionPage() {
                       <p>Kısıtlı alanlarda bile serinliğin keyfini çıkarın, güvenlik kulübeleri için ideal boyut.</p>
                       <h2>Gece Lambası ile Huzurlu Uyku</h2>
                       <p>Gece lambası özelliği sayesinde hem serinleyin hem de rahatlatıcı bir ortam yaratın.</p>
-                      <img src="https://trendygoods.com.tr/storage/515/resim_2025-06-27_095050476.png" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/515/resim_2025-06-27_095050476.png`} style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
                       <h2>Kaliteli Malzeme, Uzun Ömürlü Kullanım</h2>
                       <p>Dayanıklı malzemeler sayesinde uzun yıllar güvenle kullanın.</p>
                       <h2>Hemen Alın, Yazın Keyfini Çıkarın!</h2>
@@ -211,11 +211,11 @@ export default function PromotionPage() {
                     <section>
                       <h2>Eğlenceyi Eve Getirin</h2>
                       <p>🎶 <strong>21 Farklı Şarkı ile Eğlenceli Dakikalar:</strong> Çocuğunuzun müzikle dolu keyifli anlar yaşamasına olanak tanıyın.</p>
-                      <img src="https://trendygoods.com.tr/storage/539/resim_2025-07-06_094148266.png" alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/539/resim_2025-07-06_094148266.png`} alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
                       <br />
                       <h2>Öğrenmeyi Destekleyin</h2>
                       <p>🎤 <strong>Ses Kayıt Özelliği ile Taklit Yeteneği:</strong> Çocuğunuzun konuşma becerilerini geliştirirken eğlenmesini sağlayın.</p>
-                      <img src="https://trendygoods.com.tr/storage/540/resim_2025-07-06_101718015.png" alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
+                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/540/resim_2025-07-06_101718015.png`} alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
                       <br />
                       <h2>Oyun Oynarken Geliştirin</h2>
                       <p>😂 <strong>Oyun Oynarken Gözleri Hareket Ediyor:</strong> Eğlenceli tasarımı ile çocuğunuzun dikkatini çeker ve oyun saatlerini daha keyifli hale getirir.</p>
@@ -270,7 +270,7 @@ export default function PromotionPage() {
                   )}
                   
                   {product.name === "Ahşap Ayak Masajı" && (
-                    <img src="https://trendygoods.com.tr/storage/487/resim_2025-06-09_100456047.png" style={{width: '100%'}} />
+                    <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/487/resim_2025-06-09_100456047.png`} style={{width: '100%'}} />
                   )}
                 </div>
               </div>

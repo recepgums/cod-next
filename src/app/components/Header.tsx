@@ -23,10 +23,10 @@ export default function Header() {
           <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="https://trendygoods.com.tr">Anasayfa</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="https://trendygoods.com.tr/kargo-takip">Kargo Takip</a>
+                            <a className="nav-link" href={process.env.NEXT_PUBLIC_WEBSITE_URL}>Anasayfa</a>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link" href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/kargo-takip`}>Kargo Takip</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#contact-section">İletişim</a>

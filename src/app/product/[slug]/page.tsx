@@ -62,7 +62,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     console.log('Slug is:', slug);
     if (!slug) return; // Wait for router to be ready
 
-    axios.get(`http://cod.laravel/api/product/${slug}`)
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
       .then(res => {
         console.log(res.data);
         const productData = res.data.product;

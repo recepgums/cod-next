@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54d3c92d-a00a-4e9f-bfe2-7cc8c0f6bc1b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/order/[orderId]/promosyon/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/order/[orderId]/promosyon/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/product/custom.css" beforeDir="false" />
-    </list>
+    <list default="true" id="54d3c92d-a00a-4e9f-bfe2-7cc8c0f6bc1b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,7 +72,7 @@
       <workItem from="1752686420125" duration="5903000" />
       <workItem from="1752778791355" duration="304000" />
       <workItem from="1752842212906" duration="754000" />
-      <workItem from="1752917084260" duration="576000" />
+      <workItem from="1752917084260" duration="1696000" />
     </task>
     <servers />
   </component>

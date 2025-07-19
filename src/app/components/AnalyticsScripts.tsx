@@ -188,7 +188,7 @@ const AnalyticsScripts: React.FC = () => {
         }
 
         // Make AJAX request
-        fetch(`https://trendygoods.com.tr/order/14458/add-to-cart`, {
+        fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/order/14458/add-to-cart`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
