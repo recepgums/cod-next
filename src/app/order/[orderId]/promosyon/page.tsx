@@ -76,7 +76,7 @@ export default function PromotionPage() {
                   </span>
                 </div>
               </div>
-            </div>
+          </div>
           </div>
         </div>
       </section>
@@ -283,20 +283,20 @@ export default function PromotionPage() {
       <div className="container mt-5 mb-5">
         <div className="row">
           <div className="col-12 text-center">
-            <button
+        <button
               className="btn btn-success btn-lg w-100"
-              style={{ 
-                backgroundColor: '#088178',
+          style={{ 
+            backgroundColor: '#088178',
                 borderColor: '#046963',
-                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
-                fontFamily: 'Lato, sans-serif',
-                fontSize: '12px'
-              }}
-            >
-              <FaCheck className="mr-2" size={12} />
-              Siparişimi Tamamla
-            </button>
-          </div>
+            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
+            fontFamily: 'Lato, sans-serif',
+            fontSize: '12px'
+          }}
+        >
+          <FaCheck className="mr-2" size={12} />
+          Siparişimi Tamamla
+        </button>
+      </div>
         </div>
       </div>
       
