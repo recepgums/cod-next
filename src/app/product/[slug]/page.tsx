@@ -1,57 +1,41 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import '../custom.css'
+import '../product-details.css'
+import axios from 'axios';
+import Footer from '../../components/Footer';
 
-// --- DATA OBJECTS ---
-const product = {
-  id: 1,
-  name: 'MagnoGlow Lamba',
-  price: 499,
-  oldPrice: 700,
-  discount: '29%',
-  images: [
-    'https://trendygoods.com.tr/storage/1/1.webp',
-    'https://trendygoods.com.tr/storage/13/amzn.jpg',
-    'https://trendygoods.com.tr/storage/14/usage.gif',
-    'https://trendygoods.com.tr/storage/10/6.webp',
-    'https://trendygoods.com.tr/storage/11/7.webp',
-    'https://trendygoods.com.tr/storage/9/5.webp',
-    '/storage/3/1_org_zoom-(2).webp',
-    '/storage/6/2.webp',
-    '/storage/7/3.webp',
-    '/storage/2/1_org_zoom-(1).webp',
-    '/storage/8/4.webp',
-  ],
-  options: [
-    { quantity: 1, price: 499, original: 499, discount: 0, badge: 'Ücretsiz Kargo' },
-    { quantity: 2, price: 699, original: 998, discount: 299, badge: 'Tanesi 350TL' },
-    { quantity: 3, price: 899, original: 1497, discount: 598, badge: 'Tanesi 300TL' },
-  ],
-  features: [
-    '💡 Üç Farklı Işık Rengi',
-    '🔋 Kablosuz ve Şarj Edilebilir',
-    '🧲 Her yere kolayca yapışır',
-    '🏠 Kolay Kurulum ve Taşınabilir',
-    '🔌 USB ile Hızlı Şarj',
-    '📏 30 cm uzunluğunda',
-    '📦 Hızlı Teslimat ve Kapıda Ödeme',
-  ],
-  rating: 4.8,
-  reviewCount: 9,
-  reviews: [
-    { name: 'Zeynep B.', rating: 5, text: 'Ürünü gece 1 gibi sipariş ettim 13 saat sonra elime ulaştı. Çok sağlam bir şekilde paketlenmişti. Çok kaliteli, çocukların ilgisini çeken bir ürün', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
-    { name: '***** *', rating: 5, text: 'Hafif bir ürün. Yapıştırması çok kolay. Işığı yeterli geldi bize. Şarjı 5 saat kadar gidiyor parlaklığını ayarlayabiliyorsunuz Sarı ve beyaz ışıklı fotoğraflarını ekledim. Biz memnun kaldık, teşekkür ederiz.', img: '/assets/imgs/products/miknatisli-lamba/reviews/1.webp' },
-    { name: 'Şevval T.', rating: 5, text: 'Çok pratik kesinlikle tavsiye ediyorum kızımın masasına aldım.Şarjı da çok iyi bir kaç kademesi var.göz yormuyor çok faydalı.kutudan usb şarj kablosu çıkıyor.Biz çok sevdik.Pişman olmazsınız.', img: '/assets/imgs/products/miknatisli-lamba/reviews/6.webp' },
-    { name: 'Bahri K.', rating: 5, text: 'Ürün çok iyi kaliteli düşünmeden alabilirsiniz çift taraflı yapışkanı var 30cm civarı gerek ışık kalitesi gerek görüntüsü ışık modları beyaz,sarı,beyaz-sarı ve Çakar şeklinde yanıp sönen beyaz sarı ışık hepsinin aydınlatması çok güzel asla pişman etmez', img: '/assets/imgs/products/miknatisli-lamba/reviews/9.webp' },
-    { name: 'Ayşegül T. Ü.', rating: 4, text: 'çok beğendim tam yerini buldu', img: '/assets/imgs/products/miknatisli-lamba/reviews/7.webp' },
-    { name: 'hilal ö.', rating: 4, text: 'Mutfağa çok iyi oldu. Çok beğendik. 3 tane daha sipariş vereceğim.', img: '/assets/imgs/products/miknatisli-lamba/reviews/3.webp' },
-    { name: 'F** A**', rating: 5, text: 'alıp tekrar sipariş verdim çok güzel bir ürün', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
-    { name: 'Ş** K**', rating: 5, text: 'Makyaj aynama taktım , artık rahatlıkla makyaj yapabiliyorum 🧡💓💗', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
-    { name: 'S** K**', rating: 5, text: 'çok memnun kaldım. Çok yeterli ışik veriyor tavsiye ederim', img: '/assets/imgs/products/miknatisli-lamba/reviews/8.webp' },
-  ],
-};
+interface ProductOption {
+  quantity: number;
+  price: number;
+  original?: number;
+  discount: number;
+  badge: string;
+}
+
+interface ProductComment {
+  id: number;
+  author: string;
+  content: string;
+  rating: number;
+  photo?: string;
+  order?: number | null;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  oldPrice: number;
+  discount: string;
+  images: string[];
+  options: ProductOption[];
+  features: string[];
+  rating: number;
+  commentCount: number;
+  comments: ProductComment[];
+}
+
 
 const announcementTexts = [
   '💰 Kapıda Ödeme Seçeneği 💰',
@@ -59,15 +43,48 @@ const announcementTexts = [
   '⭐ +10.000 Mutlu Müşteri ⭐',
 ];
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   // State for gallery
+  const slug = React.use(params).slug;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+
   const [mainImg, setMainImg] = useState(0);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [timer, setTimer] = useState({ hours: '00', minutes: '00', seconds: '00' });
   const [showModal, setShowModal] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(product.options[0]);
+  const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
 
+
+  useEffect(() => {
+    console.log('Slug is:', slug);
+    if (!slug) return; // Wait for router to be ready
+
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
+      .then(res => {
+        console.log(res.data);
+        const productData = res.data.product;
+        const commentsData = res.data.comments;
+        
+        // Merge comments into product data
+        const productWithComments = {
+          ...productData,
+          comments: commentsData || []
+        };
+        
+        setProduct(productWithComments);
+        if (productData.options && productData.options.length > 0) {
+          setSelectedOption(productData.options[0]);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch product:', err);
+        setLoading(false);
+      });
+  }, [slug]);
 
 
   // Timer state
@@ -159,6 +176,27 @@ export default function ProductDetailPage() {
     setSelectedOption(option);
   };
 
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+        <div className="text-center">
+          <h4>Ürün bulunamadı</h4>
+          <p>Lütfen tekrar deneyin.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Announcement Bar */}
@@ -175,12 +213,12 @@ export default function ProductDetailPage() {
           <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
               </div>
               <div className="main-image-container">
-          <img id="mainImage" src={product.images[mainImg]} height={375} alt="product image" loading="lazy" />
+          <img id="mainImage" src={product.images?.[mainImg] || product.images?.[0]} height={375} alt="product image" loading="lazy" />
               </div>
         <div className="thumbnail-wrapper">
           <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>
           <div className="thumbnail-container" ref={thumbnailRef}>
-            {product.images.map((img, idx) => (
+            {product.images?.map((img: string, idx: number) => (
               <img
                 key={img + idx}
                         src={img}
@@ -234,7 +272,7 @@ export default function ProductDetailPage() {
                 />
               ))}
             </div>
-            <a className="font-small ml-3 text-muted" href="#reviews">( {product.reviewCount} değerlendirme)</a>
+            <a className="font-small ml-3 text-muted" href="#comments">( {product.commentCount || 0} değerlendirme)</a>
           </div>
         </div>
         <div className="clearfix product-price-cover my-3">
@@ -270,7 +308,7 @@ export default function ProductDetailPage() {
                   <span className="price">
                     {opt.price.toFixed(2)}TL
                     <br />
-                    {opt.discount > 0 && <div className="original-price">{opt.original.toFixed(2)}TL</div>}
+                    {opt.discount > 0 && <div className="original-price">{opt.original?.toFixed(2) || opt.original}TL</div>}
                   </span>
                 </div>
               </div>
@@ -302,39 +340,43 @@ export default function ProductDetailPage() {
         </button>
             </div>
 
-            {/* Reviews Section Title */}
-      <h6 className="section-title style-1 my-30 text-center" id="reviews">
-        Tüm Değerlendirmeler ({product.reviewCount})
+            {/* comments Section Title */}
+      <h6 className="section-title style-1 my-30 text-center" id="comments">
+        Tüm Değerlendirmeler ({product.commentCount || 0})
       </h6>
-      <div className="comment-grid" id="comment-container">
-        {product.reviews.map((review, idx) => (
-          <div className="comment-item" key={idx}>
-            <div className="comment-card">
-              {review.img && <img src={review.img} className="comment-img" alt="Comment Image" />}
-              <div className="comment-content">
-                <div>
-                  <div className="star-rating mb-1">
-                    {[...Array(5)].map((_, starIndex) => (
-                      <i 
-                        key={starIndex}
-                        className={`fas fa-star${starIndex < review.rating ? '' : '-o'}`}
-                        style={{ 
-                          color: starIndex < review.rating ? '#FFD700' : '#ccc',
-                          fontSize: '14px',
-                          marginRight: '2px'
-                        }}
-                      />
-                    ))}
+              <div className="comment-grid" id="comment-container">
+          {product.comments?.map((comment, idx) => (
+            <div className="comment-item" key={idx}>
+              <div className="comment-card">
+                {comment.photo && <img src={comment.photo} className="comment-img" alt="Comment Image" />}
+                <div className="comment-content">
+                  <div>
+                    <div className="star-rating mb-1">
+                      {[...Array(5)].map((_, starIndex) => (
+                        <i 
+                          key={starIndex}
+                          className={`fas fa-star${starIndex < comment.rating ? '' : '-o'}`}
+                          style={{ 
+                            color: starIndex < comment.rating ? '#FFD700' : '#ccc',
+                            fontSize: '14px',
+                            marginRight: '2px'
+                          }}
+                        />
+                      ))}
             </div>
-                  <h6 className="mb-1">{review.name}</h6>
+                                      <h6 className="mb-1">{comment.author}</h6>
             </div>
-                <small>{review.text}</small>
+                <small>{comment.content}</small>
+                </div>
               </div>
             </div>
+          )) || (
+            <div className="text-center w-100">
+              <p>Henüz yorum bulunmuyor.</p>
           </div>
-        ))}
+          )}
       </div>
-      {/* Continue with reviews and modal in next steps */}
+      {/* Continue with comments and modal in next steps */}
 
       {/* Order Modal */}
       <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{display: showModal ? 'block' : 'none'}}>
@@ -349,14 +391,14 @@ export default function ProductDetailPage() {
             <div className="modal-body" style={{overflow: 'scroll'}}>
               <form method="post" className="order-form" id="order-form">
                 <input type="hidden" name="ref_url" id="ref_url" />
-                <input type="hidden" name="quantity" id="quantity" value={selectedOption.quantity} />
-                <input type="hidden" name="total_price" id="total_price" value={selectedOption.price.toFixed(2)} />
+                <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
+                <input type="hidden" name="total_price" id="total_price" value={selectedOption?.price.toFixed(2) || product.price.toFixed(2)} />
                 <input type="hidden" name="products" value={product.name} />
                 <input type="hidden" name="product_id" value={product.id} />
                 <div>
                   {/* Product Options in Modal */}
                   {product.options.map((opt, idx) => (
-                    <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => selectOption(opt)}>
+                    <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption?.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => selectOption(opt)}>
                       <img src={product.images[0]} width={60} height={60} className="img-fluid" alt="product image" />
                       <div className="details">
                         <div className="info">
@@ -368,7 +410,7 @@ export default function ProductDetailPage() {
                           <span className="price">
                             {opt.price.toFixed(2)}TL
                             <br />
-                            {opt.discount > 0 && <div className="original-price">{opt.original.toFixed(2)}TL</div>}
+                            {opt.discount > 0 && <div className="original-price">{opt.original?.toFixed(2) || opt.original}TL</div>}
                           </span>
                         </div>
                       </div>
@@ -378,7 +420,7 @@ export default function ProductDetailPage() {
                   <div className="total-section mb-1">
                     <div className="row justify-content-between">
                       <div className="col-6 label">Ara Toplam</div>
-                      <div className="col-6 value text-right">{selectedOption.price.toFixed(2)}TL</div>
+                      <div className="col-6 value text-right">{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</div>
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-6 label">Kargo</div>
@@ -390,7 +432,7 @@ export default function ProductDetailPage() {
                     </div>
                     <div className="row justify-content-between total-row mt-2 pt-2 border-top">
                       <div className="col-6 label">Toplam</div>
-                      <div className="col-6 total text-right" id="total-price">{selectedOption.price.toFixed(2)}TL</div>
+                      <div className="col-6 total text-right" id="total-price">{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</div>
                     </div>
                   </div>
                   {/* Shipping Section */}
@@ -460,7 +502,7 @@ export default function ProductDetailPage() {
                   </div>
                   <div className="product-extra-link2 fixed-bottom-button">
                     <button type="submit" className="btn btn-success btn-block complete-order">
-                      SİPARİŞİ TAMAMLAYIN - {selectedOption.price.toFixed(2)}TL
+                      SİPARİŞİ TAMAMLAYIN - {selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL
                     </button>
                   </div>
                   <div className="mt-3 text-center">
@@ -479,11 +521,14 @@ export default function ProductDetailPage() {
           <div className="product-name">{product.name}</div>
           <div className="product-price">
             <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
-            <span className="text-danger" style={{fontWeight: 'bolder', fontSize: '1.1rem'}}>{selectedOption.price.toFixed(2)}TL</span>
+            <span className="text-danger" style={{fontWeight: 'bolder', fontSize: '1.1rem'}}>{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</span>
           </div>
         </div>
         <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 } 

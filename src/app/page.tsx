@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch('http://cod.laravel/api/merchant/products');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/merchant/products`);
         const data = await res.json();
         const productsArray = data.data || [];
         const mapped = productsArray.map((item: any) => ({
