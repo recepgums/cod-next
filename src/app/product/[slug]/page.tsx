@@ -60,6 +60,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
+  const [cities, setCities] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
+  const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
+
+  const commentGridRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
@@ -71,6 +79,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         console.log(res.data);
         const productData = res.data.product;
         const commentsData = res.data.comments;
+        const citiesData = res.data.cities || [];
         
         // Merge comments into product data
         const productWithComments = {
@@ -79,6 +88,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         };
         
         setProduct(productWithComments);
+        setCities(citiesData);
         if (productData.options && productData.options.length > 0) {
           setSelectedOption(productData.options[0]);
         }
@@ -158,6 +168,45 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     calculateDeliveryDates();
   }, []);
 
+  // Fetch districts when city changes
+  useEffect(() => {
+    if (!selectedCity) {
+      setDistricts([]);
+      setSelectedDistrict("");
+      setSelectedNeighborhood("");
+      return;
+    }
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/cities/${selectedCity}/districts`)
+      .then(res => {
+        setDistricts(res.data || []);
+        setSelectedDistrict("");
+        setSelectedNeighborhood("");
+      })
+      .catch(() => {
+        setDistricts([]);
+        setSelectedDistrict("");
+        setSelectedNeighborhood("");
+      });
+  }, [selectedCity]);
+
+  // Fetch neighborhoods when district changes
+  useEffect(() => {
+    if (!selectedDistrict) {
+      setNeighborhoods([]);
+      setSelectedNeighborhood("");
+      return;
+    }
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/districts/${selectedDistrict}/neighborhoods`)
+      .then(res => {
+        setNeighborhoods(res.data || []);
+        setSelectedNeighborhood("");
+      })
+      .catch(() => {
+        setNeighborhoods([]);
+        setSelectedNeighborhood("");
+      });
+  }, [selectedDistrict]);
+
   // Gallery scroll
   const scrollThumbnails = (direction: 'left' | 'right') => {
     if (thumbnailRef.current) {
@@ -179,6 +228,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const selectOption = (option: any) => {
     setSelectedOption(option);
   };
+
+  useEffect(() => {
+    if (commentGridRef.current) {
+      import('masonry-layout').then((MasonryModule) => {
+        const Masonry = MasonryModule.default;
+        new Masonry(commentGridRef.current, {
+          itemSelector: '.comment-item',
+          columnWidth: '.comment-item',
+          percentPosition: true,
+          gutter: 16,
+        });
+      });
+    }
+  }, [product?.comments]); // re-run when comments change
 
   if (loading) {
     return (
@@ -363,7 +426,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       <h6 className="section-title style-1 my-30 text-center" id="comments">
         Tüm Değerlendirmeler ({product.commentCount || 0})
       </h6>
-              <div className="comment-grid" id="comment-container">
+              <div className="comment-grid" id="comment-container" ref={commentGridRef}>
           {product.comments?.map((comment, idx) => (
             <div className="comment-item" key={idx}>
               <div className="comment-card">
@@ -502,27 +565,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select required name="city_id" className="form-control" id="citySelect">
+                      <select required name="city_id" className="form-control" id="citySelect" value={selectedCity} onChange={e => setSelectedCity(e.target.value)}>
                   <option value="">İl Seçiniz</option>
-                        <option value="34">İSTANBUL</option>
-                        <option value="6">ANKARA</option>
-                        <option value="35">İZMİR</option>
+                  {cities.map((city: any) => (
+                    <option key={city.id} value={city.id}>{city.name}</option>
+                  ))}
                 </select>
                     </div>
               </div>
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select required name="district_id" className="form-control" id="districtSelect">
+                      <select required name="district_id" className="form-control" id="districtSelect" value={selectedDistrict} onChange={e => setSelectedDistrict(e.target.value)}>
                   <option value="">İlçe Seçiniz</option>
+                {districts.map((district: any) => (
+                  <option key={district.id || district.fest_id} value={district.id || district.fest_id}>{district.name}</option>
+                ))}
                 </select>
                     </div>
               </div>
                   <div className="mb-1">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select name="neighborhood_id" className="form-control" id="neighborhoodSelect">
+                      <select name="neighborhood_id" className="form-control" id="neighborhoodSelect" value={selectedNeighborhood} onChange={e => setSelectedNeighborhood(e.target.value)}>
                   <option value="">Mahalle Seçiniz</option>
+                {neighborhoods.map((neighborhood: any) => (
+                  <option key={neighborhood.id || neighborhood.fest_id} value={neighborhood.id || neighborhood.fest_id}>{neighborhood.name}</option>
+                ))}
                 </select>
               </div>
                   </div>
