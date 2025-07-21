@@ -49,7 +49,7 @@ const announcementTexts = [
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   // State for gallery
-  const slug = React.use(params).slug;
+  const { slug } = React.use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   
@@ -79,12 +79,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         console.log(res.data);
         const productData = res.data.product;
         const commentsData = res.data.comments;
-        const citiesData = res.data.cities || [];
+        const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
         
         // Merge comments into product data
         const productWithComments = {
           ...productData,
-          comments: commentsData || []
+          comments: Array.isArray(commentsData) ? commentsData : []
         };
         
         setProduct(productWithComments);
@@ -230,7 +230,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   };
 
   useEffect(() => {
-    if (commentGridRef.current) {
+    if (commentGridRef.current && product?.comments?.length) {
+      // @ts-ignore
       import('masonry-layout').then((MasonryModule) => {
         const Masonry = MasonryModule.default;
         new Masonry(commentGridRef.current, {
@@ -242,6 +243,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       });
     }
   }, [product?.comments]); // re-run when comments change
+
+  // 3. Ensure dropdown values are valid
+  useEffect(() => {
+    if (selectedCity && !cities.find((c: any) => String(c.id) === String(selectedCity))) {
+      setSelectedCity("");
+    }
+  }, [cities]);
+  useEffect(() => {
+    if (selectedDistrict && !districts.find((d: any) => String(d.id || d.fest_id) === String(selectedDistrict))) {
+      setSelectedDistrict("");
+    }
+  }, [districts]);
+  useEffect(() => {
+    if (selectedNeighborhood && !neighborhoods.find((n: any) => String(n.id || n.fest_id) === String(selectedNeighborhood))) {
+      setSelectedNeighborhood("");
+    }
+  }, [neighborhoods]);
 
   if (loading) {
     return (
@@ -280,12 +298,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
               </div>
               <div className="main-image-container">
-          <img id="mainImage" src={product.images?.[mainImg] || product.images?.[0]} height={375} alt="product image" loading="lazy" />
+          <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg] || product.images[0]) : '/images/default-product.png'} height={375} alt="product image" loading="lazy" />
               </div>
         <div className="thumbnail-wrapper">
           <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>
           <div className="thumbnail-container" ref={thumbnailRef}>
-            {product.images?.map((img: string, idx: number) => (
+            {product.images && product.images.length > 0 && product.images.map((img: string, idx: number) => (
               <img
                 key={img + idx}
                         src={img}
