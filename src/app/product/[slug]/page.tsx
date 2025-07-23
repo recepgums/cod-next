@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../product-details.css'
 import axios from 'axios';
 import Footer from '../../components/Footer';
+import dynamic from 'next/dynamic';
+const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
 interface ProductOption {
   quantity: number;
@@ -38,6 +40,7 @@ interface Product {
   rating: number;
   commentCount: number;
   comments: ProductComment[];
+  pixels?: { platform: string; pixel_id: string }[];
 }
 
 
@@ -58,6 +61,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [timer, setTimer] = useState({ hours: '00', minutes: '00', seconds: '00' });
   const [showModal, setShowModal] = useState(false);
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    // Cleanup in case component unmounts while modal is open
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showModal]);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [cities, setCities] = useState<any[]>([]);
@@ -71,12 +86,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
 
   useEffect(() => {
-    console.log('Slug is:', slug);
     if (!slug) return; // Wait for router to be ready
 
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
       .then(res => {
-        console.log(res.data);
         const productData = res.data.product;
         const commentsData = res.data.comments;
         const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
@@ -649,6 +662,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       
       {/* Footer */}
       <Footer />
+      {product && product.pixels && (
+        <PixelScripts pixels={product.pixels} product={product} />
+      )}
     </div>
   );
 } 
