@@ -83,8 +83,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
   const [phoneError, setPhoneError] = useState<string>("");
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
+  const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
 
   const commentGridRef = useRef<HTMLDivElement>(null);
+
+  // Calculate total price including payment method cost
+  const calculateTotalPrice = () => {
+    const basePrice = selectedOption?.price || product?.price || 0;
+    const paymentCost = selectedPaymentType === "kart" ? 19.00 : 0;
+    return basePrice + paymentCost;
+  };
+
+  // Handle payment type change
+  const handlePaymentTypeChange = (paymentType: string) => {
+    setSelectedPaymentType(paymentType);
+  };
 
   // Phone validation function
   const validatePhone = (phone: string) => {
@@ -616,11 +629,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <div className="total-section mb-1">
                     <div className="row justify-content-between">
                       <div className="col-6 label">Ara Toplam</div>
-                      <div className="col-6 value text-right">{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</div>
+                      <div className="col-6 value text-right">{(selectedOption?.price || product?.price || 0).toFixed(2)}TL</div>
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-6 label">Kargo</div>
                       <div className="col-6 value text-right" id="shipping-cost">Ücretsiz</div>
+                    </div>
+                    <div className="row justify-content-between">
+                      <div className="col-6 label">Ödeme Ücreti</div>
+                      <div className="col-6 value text-right">{selectedPaymentType === "kart" ? "19.00TL" : "Ücretsiz"}</div>
                     </div>
                     <div className="row justify-content-between" id="discounts" style={{display: 'none'}}>
                       <div className="col-6 label">İndirimler</div>
@@ -628,21 +645,37 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
                     <div className="row justify-content-between total-row mt-2 pt-2 border-top">
                       <div className="col-6 label">Toplam</div>
-                      <div className="col-6 total text-right" id="total-price">{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</div>
+                      <div className="col-6 total text-right" id="total-price">{calculateTotalPrice().toFixed(2)}TL</div>
                     </div>
                   </div>
                   {/* Shipping Section */}
                   <div className="shipping-section mb-3">
-                    <div className="form-check active">
+                    <div className={`form-check ${selectedPaymentType === "nakit" ? "active" : ""}`}>
                       <label className="form-check-label">
-                        <input type="radio" className="form-check-input" value="nakit" name="paymentType" data-additional-cost=".00TL" defaultChecked />
+                        <input 
+                          type="radio" 
+                          className="form-check-input" 
+                          value="nakit" 
+                          name="paymentType" 
+                          data-additional-cost=".00TL" 
+                          checked={selectedPaymentType === "nakit"}
+                          onChange={() => handlePaymentTypeChange("nakit")}
+                        />
                         <span>Kapıda Nakit Ödeme</span>
                         <span>Ücretsiz</span>
                       </label>
             </div>
-                    <div className="form-check">
+                    <div className={`form-check ${selectedPaymentType === "kart" ? "active" : ""}`}>
                       <label className="form-check-label">
-                        <input type="radio" className="form-check-input" value="kart" name="paymentType" data-additional-cost="19.00" />
+                        <input 
+                          type="radio" 
+                          className="form-check-input" 
+                          value="kart" 
+                          name="paymentType" 
+                          data-additional-cost="19.00"
+                          checked={selectedPaymentType === "kart"}
+                          onChange={() => handlePaymentTypeChange("kart")}
+                        />
                         <span>Kapıda Kartlı Ödeme</span>
                         <span>19.00TL</span>
                 </label>
@@ -714,7 +747,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   </div>
                   <div className="product-extra-link2 fixed-bottom-button">
                     <button type="submit" className="btn btn-success btn-block complete-order" onClick={handleFormSubmit}>
-                      SİPARİŞİ TAMAMLAYIN - {selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL
+                      SİPARİŞİ TAMAMLAYIN - {calculateTotalPrice().toFixed(2)}TL
                     </button>
                   </div>
                   <div className="mt-3 text-center">
