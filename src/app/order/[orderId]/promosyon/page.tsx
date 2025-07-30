@@ -1,65 +1,241 @@
-import Image from 'next/image';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import ScrollToTop from '../../../components/ScrollToTop';
-import AnalyticsScripts from '../../../components/AnalyticsScripts';
-import { FaGift, FaCheckCircle, FaCheck, FaChevronDown } from 'react-icons/fa';
 import './promotion.css';
 
-const promoProducts = [
-  {
-    "name": "Buzlu Vantilatör",
-    "internalName": "Buzlu Fan",
-    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/buzlu-vantilator`,
-    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/514/resim_2025-06-27_093728668.png`,
-    "imgName": "resim_2025-06-27_093728668.png",
-    "rating": "4.5",
-    "priceCurrent": "599,00TL",
-    "priceOriginal": "799.00TL",
-    "productId": "169"
-  },
-  {
-    "name": "Konuşan Kaktüs",
-    "internalName": "Kaktüs",
-    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/konusan-kaktus`,
-    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/540/resim_2025-07-06_101718015.png`,
-    "imgName": "resim_2025-07-06_101718015.png",
-    "rating": "4.5",
-    "priceCurrent": "350,00TL",
-    "priceOriginal": "550.00TL",
-    "productId": "173"
-  },
-  {
-    "name": "Ultra Su Emici Banyo Paspası",
-    "internalName": "Banyo Paspası",
-    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/banyo-paspasi`,
-    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/58/resim_2024-08-28_083825924.png`,
-    "imgName": "resim_2024-08-28_083825924.png",
-    "rating": "4.5",
-    "priceCurrent": "199,00TL",
-    "priceOriginal": "399.00TL",
-    "productId": "2"
-  },
-  {
-    "name": "Ahşap Ayak Masajı",
-    "internalName": "Masaj Ayak",
-    "productLink": `${process.env.NEXT_PUBLIC_WEBSITE_URL}/product/ahsap-ayak-masaji`,
-    "imgSrc": `${process.env.NEXT_PUBLIC_STORAGE_URL}/488/resim_2025-06-09_101049753.png`,
-    "imgName": "resim_2025-06-09_101049753.png",
-    "rating": "4.7",
-    "priceCurrent": "299,00TL",
-    "priceOriginal": "499.00TL",
-    "productId": "165"
-  }
-];
+interface ProductVariant {
+  type: string;
+  name: string;
+  stock: number;
+}
 
-export default function PromotionPage() {
-  return (
-    <div className="min-h-screen bg-white">
-      <Header />
+interface UpsellProduct {
+  id: number;
+  name: string;
+  price: number;
+  product_images: string[];
+  variants?: ProductVariant[];
+  settings?: any;
+  emoji_benefits?: string;
+  content?: string;
+}
+
+interface Order {
+  id: number;
+  products: string;
+  total_price: string;
+  orderItems: any[];
+}
+
+export default function PromosyonPage() {
+  const params = useParams();
+  const orderId = params.orderId as string;
+  
+  const [order, setOrder] = useState<Order | null>(null);
+  const [products, setProducts] = useState<UpsellProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+  const [selectedVariants, setSelectedVariants] = useState<{[productId: number]: {[type: string]: string}}>({});
+  const [addingToCart, setAddingToCart] = useState<{[productId: number]: boolean}>({});
+  const [addedToCart, setAddedToCart] = useState<{[productId: number]: boolean}>({});
+  const [finishingOrder, setFinishingOrder] = useState(false);
+
+  useEffect(() => {
+    loadUpsellData();
+  }, [orderId]);
+
+  const loadUpsellData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/promotion`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrder(data.order);
+        setProducts(data.products || []);
+      } else {
+        setError("Sipariş bilgileri yüklenemedi.");
+      }
+    } catch (error) {
+      console.error('Error loading upsell data:', error);
+      setError("Bağlantı hatası. Lütfen tekrar deneyin.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVariantChange = (productId: number, type: string, value: string) => {
+    setSelectedVariants(prev => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [type]: value
+      }
+    }));
+  };
+
+  const validateVariants = (productId: number): boolean => {
+    const product = products.find(p => p.id === productId);
+    if (!product?.variants || product.variants.length === 0) return true;
+    
+    const productVariants = selectedVariants[productId] || {};
+    return product.variants.every(variant => productVariants[variant.type]);
+  };
+
+  const addToCart = async (productId: number) => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    // Validate variants if product has them
+    if (product.variants && product.variants.length > 0) {
+      if (!validateVariants(productId)) {
+        alert('Lütfen tüm varyant seçeneklerini seçiniz.');
+        return;
+      }
+    }
+
+    setAddingToCart(prev => ({ ...prev, [productId]: true }));
+
+    try {
+      const formData = new FormData();
+      formData.append('product_id', productId.toString());
+      formData.append('product_name', product.settings?.alias || product.name);
+      const promotionDiscount = parseInt(process.env.NEXT_PUBLIC_PROMOTION_DISCOUNT_AMOUNT || '0');
+      formData.append('product_price', (product.price - promotionDiscount).toString());
+      formData.append('quantity', '1');
       
-      {/* Order Confirmation Section */}
-      <section className="mt-20 mb-30">
+      if (product.variants && product.variants.length > 0) {
+        const variants = selectedVariants[productId] || {};
+        Object.entries(variants).forEach(([type, value]) => {
+          formData.append(`variants[${type}]`, value);
+        });
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/add-to-cart`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        setAddedToCart(prev => ({ ...prev, [productId]: true }));
+        // Update order total if needed
+        const result = await response.json();
+        if (result.success) {
+          // Optionally update the order total display
+        }
+      } else {
+        alert('Ürün sepete eklenirken bir hata oluştu.');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+    } finally {
+      setAddingToCart(prev => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const finishOrder = async () => {
+    setFinishingOrder(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/finish-order`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        // Redirect to thank you page
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/tesekkurler`;
+      } else {
+        alert('Sipariş tamamlanırken bir hata oluştu.');
+      }
+    } catch (error) {
+      console.error('Error finishing order:', error);
+      alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+    } finally {
+      setFinishingOrder(false);
+    }
+  };
+
+  const createVariantFields = (product: UpsellProduct) => {
+    if (!product.variants || product.variants.length === 0) return null;
+
+    const groupedVariants: {[type: string]: ProductVariant[]} = {};
+    product.variants.forEach(variant => {
+      if (!groupedVariants[variant.type]) {
+        groupedVariants[variant.type] = [];
+      }
+      groupedVariants[variant.type].push(variant);
+    });
+
+    return (
+      <div className="variant-selection mb-3">
+        <div className="variant-container">
+          {Object.entries(groupedVariants).map(([type, options]) => (
+            <div key={type} className="variant-item">
+              <label className="variant-label">{type} Seçin</label>
+              <select
+                className={`form-control ${!selectedVariants[product.id]?.[type] && product.variants?.length ? 'is-invalid' : ''}`}
+                value={selectedVariants[product.id]?.[type] || ''}
+                onChange={(e) => handleVariantChange(product.id, type, e.target.value)}
+                required
+              >
+                <option value="">{type} Seçin</option>
+                {options.map((variant, index) => (
+                  <option 
+                    key={index} 
+                    value={variant.name}
+                    disabled={variant.stock <= 0}
+                  >
+                    {variant.name} {variant.stock <= 0 ? '(Tükendi)' : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="min-vh-100 bg-white d-flex flex-column">
+        <Header />
+        <main className="flex-fill d-flex align-items-center justify-content-center">
+          <div className="text-center">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Yükleniyor...</span>
+            </div>
+            <p className="mt-3">Sipariş bilgileri yükleniyor...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-vh-100 bg-white d-flex flex-column">
+        <Header />
+        <main className="flex-fill d-flex align-items-center justify-content-center">
+          <div className="text-center">
+            <div className="alert alert-danger" role="alert">
+              {error}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const promotionDiscount = parseInt(process.env.NEXT_PUBLIC_PROMOTION_DISCOUNT_AMOUNT || '0');
+
+  return (
+    <div className="min-vh-100 bg-white d-flex flex-column">
+      <Header />
+      <main className="flex-fill mt-3 pb-4">
         <div className="container">
           <div className="row">
             <div className="col-lg-12 text-center">
@@ -67,6 +243,7 @@ export default function PromotionPage() {
                 <h2 style={{fontSize: '1.8em', color: '#0b8123', fontWeight: 'bold', marginBottom: '15px'}}>
                   <i className="fas fa-check-circle mr-2"></i>SİPARİŞİNİZ ALINDI
                 </h2>
+
                 <div className="points-box mt-4 p-3" style={{backgroundColor: '#fff8e1', borderRadius: '8px', borderLeft: '4px solid #ffc107'}}>
                   <h4 style={{color: '#ff6a00', fontWeight: 'bold'}}>
                     <i className="fas fa-gift mr-2"></i>Tebrikler! Aşağıdaki ürünleri indirimli fiyatarıyla almaya hak kazandınız
@@ -76,233 +253,124 @@ export default function PromotionPage() {
                   </span>
                 </div>
               </div>
-          </div>
-          </div>
-        </div>
-      </section>
+            </div>
 
-      {/* Products Grid */}
-      <div className="container">
-        <div className="row product-grid-3">
-          {promoProducts.map((product, idx) => (
-            <div key={idx} className="col-lg-3 col-md-4 col-sm-6 px-1">
-              <div className="product-cart-wrap mb-30">
-                <div className="product-img-action-wrap">
-                  <div className="product-img product-img-zoom">
-                    <a href={product.productLink}>
-                      <img 
-                        className="default-img"
-                        src={product.imgSrc}
-                        alt={product.name}
-                        style={{width: '100%', height: 'auto'}}
-                      />
-                    </a>
-                  </div>
-                  <div className="product-badges product-badges-position product-badges-mrg">
-                    <span className="hot">İndirimli</span>
-                  </div>
-                </div>
-                
-                <div className="product-content-wrap pt-2">
-                  <h2>
-                    <a href={product.productLink}>{product.name}</a>
-                  </h2>
-                  <div className="rating-result" title="96%">
-                    <span>
-                      <span>{product.rating}</span>
-                    </span>
-                  </div>
-                  <div className="product-price">
-                    <span className="old-price">{product.priceOriginal}</span>
-                    <span style={{color: '#bb0000', fontWeight: '600'}}>{product.priceCurrent}</span>
-                  </div>
-                </div>
-                
-                <div className="row mb-30 mx-auto px-0">
-                  <div className="col-12 pr-1">
-                    <button 
-                      className="btn w-100 btn-sm add-to-cart"
-                      style={{
-                        background: 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)',
-                        fontWeight: '600',
-                        fontSize: '14px',
-                        border: '0 solid',
-                        color: '#fff'
-                      }}
-                      data-product-name={product.internalName}
-                      data-product-id={product.productId}
-                      data-product-price={product.priceCurrent.replace(',00TL', '').replace('TL', '')}
-                    >
-                      <i className="fi-rs-shopping-bag mr-5"></i>Sepete Ekle
-                    </button>
-                  </div>
-                </div>
-                
-                <div id={`details-${idx}`} className="collapse px-3 pb-2">
-                  <div className="short-desc mb-3">
-                    <div className="emoji-benefits-container">
-                      {product.name === "Buzlu Vantilatör" && (
-                        <>
-                          <p>❄️ <strong>Tek Kişilik Serinleme Çözümü</strong></p>
-                          <p>💨 <strong>Soğuk Buhar ile Anında Ferahlık</strong></p>
-                          <p>👍 <strong>7 Renkli Işık Modu</strong></p>
-                          <p>🫶 <strong>Sıcak Günlerin Vazgeçilmezi</strong></p>
-                          <p>🌙 <strong>Ultra Sessiz Gürültüsüz Çalışma</strong></p>
-                          <p>💯 <strong>Kapıda Ödeme Kargo Bedava</strong></p>
-                        </>
-                      )}
-                      {product.name === "Konuşan Kaktüs" && (
-                        <>
-                          <p>🎶 <strong>21 Farklı Şarkı ile Eğlenceli Dakikalar</strong></p>
-                          <p>🎤 <strong>Ses Kayıt Özelliği ile Taklit Yeteneği</strong></p>
-                          <p>😂 <strong>Oyun Oynarken Hareket Ediyor</strong></p>
-                          <p>🎁 <strong>Çocuklar İçin Mükemmel Hediye</strong></p>
-                          <p>👍 <strong>Sağlam ve Sorunsuz Teslimat</strong></p>
-                          <p>💡 <strong>Işıklı Tasarımıyla Göz Alıcı</strong></p>
-                        </>
-                      )}
-                      {product.name === "Ultra Su Emici Banyo Paspası" && (
-                        <>
-                          <p>💦 <strong>Ultra Su Emiciliği ile Anında Kuruluk</strong></p>
-                          <p>🦶 <strong>Abdest Sonrası Rahatlık</strong></p>
-                          <p>🚫 <strong>Kaymaz Taban ile Güvenli Kullanım</strong></p>
-                          <p>🛁 <strong>Banyonuzun Olmazsa Olmazı</strong></p>
-                          <p>🎁 <strong>40 X 60cm Ebatında</strong></p>
-                          <p>🌈 <strong>Güzel Renkleriyle Banyonuza Estetik Katar</strong></p>
-                        </>
-                      )}
-                      {product.name === "Ahşap Ayak Masajı" && (
-                        <>
-                          <p>🦶 <strong>Ayak ağrılarını hafifletir.</strong></p>
-                          <p>😌 <strong>Rahatlatıcı bir etki sağlar.</strong></p>
-                          <p>💪 <strong>Ayak kaslarını güçlendirir.</strong></p>
-                          <p>👍 <strong>Kullanımı kolay ve pratiktir.</strong></p>
-                          <p>🌱 <strong>Doğal ahşap malzemeden üretilmiştir.</strong></p>
-                          <p>🎁 <strong>Sevdiklerinize hediye edebileceğiniz güzel bir seçenek.</strong></p>
-                        </>
-                      )}
+            <div className="col-lg-12">
+              <div className="row product-grid-3">
+                {products.map((product) => (
+                  <div key={product.id} className="col-lg-3 col-md-4 col-sm-6 px-1">
+                    <div className="product-cart-wrap mb-30">
+                      <div className="product-img-action-wrap">
+                        <div className="product-img product-img-zoom">
+                          <img 
+                            className="default-img"
+                            src={product.product_images[0] || '/placeholder-product.jpg'}
+                            alt={product.name}
+                            style={{width: '100%', height: '200px', objectFit: 'cover'}}
+                          />
+                        </div>
+                        <div className="product-badges product-badges-position product-badges-mrg">
+                          <span className="hot">İndirimli</span>
+                        </div>
+                      </div>
+                      
+                      <div className="product-content-wrap pt-2">
+                        <h2 style={{fontSize: '1rem', marginBottom: '10px'}}>
+                          {product.name}
+                        </h2>
+                        
+                        <div className="rating-result" title="96%">
+                          <span>
+                            <span>4.{Math.floor(Math.random() * 9) + 1}</span>
+                          </span>
+                        </div>
+                        
+                        <div className="product-price">
+                          <span className="old-price">{product.price}TL</span>
+                          <span style={{color: '#bb0000', fontWeight: '600'}}>
+                            {product.price - promotionDiscount},00TL
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="row mb-30 mx-auto px-0">
+                        {createVariantFields(product)}
+                        
+                        <div className="col-12 pr-1">
+                          <button 
+                            className={`btn w-100 btn-sm ${addedToCart[product.id] ? 'btn-success' : 'btn-primary'}`}
+                            style={{
+                              background: addedToCart[product.id] 
+                                ? 'linear-gradient(180deg, #28a745 0%, #20c997 100%)'
+                                : 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)',
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              border: '0 solid'
+                            }}
+                            onClick={() => addToCart(product.id)}
+                            disabled={addingToCart[product.id] || addedToCart[product.id]}
+                            data-product-name={product.settings?.alias || product.name}
+                            data-product-id={product.id}
+                            data-product-price={product.price - promotionDiscount}
+                          >
+                            {addingToCart[product.id] ? (
+                              <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                                Ekleniyor...
+                              </>
+                            ) : addedToCart[product.id] ? (
+                              <>
+                                <i className="fas fa-check mr-2"></i>Sepete Eklendi
+                              </>
+                            ) : (
+                              <>
+                                <i className="fas fa-shopping-bag mr-2"></i>Sepete Ekle
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="px-3 pb-2">
+                        <div className="short-desc mb-3">
+                          {product.emoji_benefits && (
+                            <div className="emoji-benefits-container" 
+                                 dangerouslySetInnerHTML={{__html: product.emoji_benefits}} />
+                          )}
+                        </div>
+                        {product.content && (
+                          <div dangerouslySetInnerHTML={{__html: product.content}} />
+                        )}
+                      </div>
                     </div>
                   </div>
-                  
-                  {product.name === "Buzlu Vantilatör" && (
-                    <section>
-                      <h2>Sıcak Yazlara Veda Edin!</h2>
-                      <p>Buzlu Vantilatör ile kişisel serinliğinizi her yere taşıyın.</p>
-                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/514/resim_2025-06-27_093728668.png`} style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
-                      <h2>Tek Kişilik Klima Konforu</h2>
-                      <p>Büyük klimalara veda edin, bireysel serinleme ihtiyaçlarınız için ideal çözüm.</p>
-                      <h2>Anında Ferahlık, Dakikalar İçinde Serinleyin</h2>
-                      <p>Soğuk buhar özelliği ile anında ferahlayın, yaz sıcaklarının etkisini azaltın.</p>
-                      <h2>Bütçe Dostu Serinleme</h2>
-                      <p>Yüksek fiyatlı klimalara alternatif, uygun fiyatlı ve etkili serinleme çözümü.</p>
-                      <h2>Güvenlik Kulübesi ve Küçük Alanlar İçin Mükemmel</h2>
-                      <p>Kısıtlı alanlarda bile serinliğin keyfini çıkarın, güvenlik kulübeleri için ideal boyut.</p>
-                      <h2>Gece Lambası ile Huzurlu Uyku</h2>
-                      <p>Gece lambası özelliği sayesinde hem serinleyin hem de rahatlatıcı bir ortam yaratın.</p>
-                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/515/resim_2025-06-27_095050476.png`} style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
-                      <h2>Kaliteli Malzeme, Uzun Ömürlü Kullanım</h2>
-                      <p>Dayanıklı malzemeler sayesinde uzun yıllar güvenle kullanın.</p>
-                      <h2>Hemen Alın, Yazın Keyfini Çıkarın!</h2>
-                      <p>Sıcaklara veda etme zamanı geldi. Buzlu Vantilatör ile serin ve konforlu bir yaz geçirin.</p>
-                    </section>
-                  )}
-                  
-                  {product.name === "Konuşan Kaktüs" && (
-                    <section>
-                      <h2>Eğlenceyi Eve Getirin</h2>
-                      <p>🎶 <strong>21 Farklı Şarkı ile Eğlenceli Dakikalar:</strong> Çocuğunuzun müzikle dolu keyifli anlar yaşamasına olanak tanıyın.</p>
-                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/539/resim_2025-07-06_094148266.png`} alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
-                      <br />
-                      <h2>Öğrenmeyi Destekleyin</h2>
-                      <p>🎤 <strong>Ses Kayıt Özelliği ile Taklit Yeteneği:</strong> Çocuğunuzun konuşma becerilerini geliştirirken eğlenmesini sağlayın.</p>
-                      <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/540/resim_2025-07-06_101718015.png`} alt="Konuşan Kaktüs" style={{maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto'}} />
-                      <br />
-                      <h2>Oyun Oynarken Geliştirin</h2>
-                      <p>😂 <strong>Oyun Oynarken Gözleri Hareket Ediyor:</strong> Eğlenceli tasarımı ile çocuğunuzun dikkatini çeker ve oyun saatlerini daha keyifli hale getirir.</p>
-                      <h2>Hediye Seçimi Derdine Son</h2>
-                      <p>🎁 <strong>Çocuklar İçin Mükemmel Hediye Seçeneği:</strong> Doğum günleri veya özel günler için ideal, unutulmaz bir hediye alternatifi.</p>
-                      <h2>Göz Alıcı Tasarım</h2>
-                      <p>💡 <strong>Işıklı Tasarımıyla Göz Alıcı:</strong> Çocuğunuzun odasına renk katar, gece lambası olarak da kullanılabilir.</p>
-                    </section>
-                  )}
-                  
-                  {product.name === "Ultra Su Emici Banyo Paspası" && (
-                    <>
-                      <p><img alt="paspas.jpg" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/paspas.jpg?v=1701017039" style={{width: '350px'}} /></p>
-                      <p>&nbsp;</p>
-                      <p>&nbsp;</p>
-                      <table>
-                        <tbody>
-                          <tr>
-                            <td><img alt="water-drop.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/water-drop.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
-                            <td>
-                              <h3><strong>💧 Süper Emici</strong></h3>
-                              <p>Yenilikçi, gelişmiş nano gözenekli deri yüzeyi, herhangi bir filigran veya leke bırakmadan damlayan suyu anında emebilir. Banyo zeminini temiz, kuru ve güvenli tutmak için küvetin, duş kapısının veya lavabonun önünde rahatlıkla kullanılabilir.</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img alt="wipe.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/wipe.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
-                            <td>
-                              <h3><strong>🧼 Kolay Temizlenebilir</strong></h3>
-                              <p>Süper Su Emici Banyo Paspasında az miktarda toz varsa elektrikli süpürge kullanarak bunu temizleyebilirsiniz. Yağ lekelerinin temizlenmesi de kolaydır; yıkamak için biraz deterjan damlatabilir ve ardından suyla durulayabilirsiniz.</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img alt="quick-dry.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/quick-dry.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
-                            <td>
-                              <h3><strong>🌬️ Hızlı Kuruma</strong></h3>
-                              <p>Süper Su Emici Banyo Paspasının içindeki çok sayıda küçük gözenek, suyun doğal havada hızla buharlaşmasını sağlar. Hızlı kuruyan banyo paspası bir sonraki kullanıcı için fazla nemli olmayacaktır.</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img alt="slip.png" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/slip.png?v=1700937143" style={{height: '128px', width: '128px'}} /></td>
-                            <td>
-                              <h3><strong>🚫 Kaymaz Taban</strong></h3>
-                              <p>Kauçuk destekli Süper Su Emici Banyo Paspası diğer paspaslara kıyasla ıslak zeminde kaymaya karşı dirençlidir. Dayanıklı kauçuk destek aynı zamanda suyun alttan sızmasını ve yere akmasını da önler.</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <p>&nbsp;</p>
-                      <p>&nbsp;</p>
-                      <p><img alt="giphy" src="https://cdn.shopify.com/s/files/1/0829/8371/5122/files/giphy_6922fcc3-d38a-4c88-b781-6778695ade6e.gif?v=1704211578" style={{height: '480px', width: '278px'}} /></p>
-                    </>
-                  )}
-                  
-                  {product.name === "Ahşap Ayak Masajı" && (
-                    <img src={`${process.env.NEXT_PUBLIC_STORAGE_URL}/487/resim_2025-06-09_100456047.png`} style={{width: '100%'}} />
-                  )}
-                </div>
+                ))}
               </div>
             </div>
-          ))}
+          </div>
+          
+          <form onSubmit={(e) => { e.preventDefault(); finishOrder(); }}>
+            <button 
+              type="submit" 
+              className="btn w-100 btn-sm btn-success"
+              disabled={finishingOrder}
+            >
+              {finishingOrder ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Sipariş Tamamlanıyor...
+                </>
+              ) : (
+                <>
+                  <i className="fas fa-check mr-2"></i>
+                  Siparişimi Tamamla
+                </>
+              )}
+            </button>
+          </form>
         </div>
-      </div>
-
-      {/* Green Button */}
-      <div className="container mt-5 mb-5">
-        <div className="row">
-          <div className="col-12 text-center">
-        <button
-              className="btn btn-success btn-lg w-100"
-          style={{ 
-            backgroundColor: '#088178',
-                borderColor: '#046963',
-            boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)',
-            fontFamily: 'Lato, sans-serif',
-            fontSize: '12px'
-          }}
-        >
-          <FaCheck className="mr-2" size={12} />
-          Siparişimi Tamamla
-        </button>
-      </div>
-        </div>
-      </div>
-      
+      </main>
       <Footer />
-      <ScrollToTop />
-      <AnalyticsScripts />
     </div>
   );
 } 

@@ -41,6 +41,7 @@ interface Product {
   commentCount: number;
   comments: ProductComment[];
   pixels?: { platform: string; pixel_id: string }[];
+  template?: string; // Added for 2-step template
 }
 
 
@@ -84,6 +85,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [phoneError, setPhoneError] = useState<string>("");
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string>("");
 
   const commentGridRef = useRef<HTMLDivElement>(null);
 
@@ -97,6 +100,42 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   // Handle payment type change
   const handlePaymentTypeChange = (paymentType: string) => {
     setSelectedPaymentType(paymentType);
+  };
+
+  // Load districts when city changes
+  const handleCityChange = async (cityId: string) => {
+    setSelectedCity(cityId);
+    setSelectedDistrict("");
+    setSelectedNeighborhood("");
+    setDistricts([]);
+    setNeighborhoods([]);
+    
+    if (cityId) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/city/${cityId}/districts`);
+        const data = await response.json();
+        setDistricts(data);
+      } catch (error) {
+        console.error('Error loading districts:', error);
+      }
+    }
+  };
+
+  // Load neighborhoods when district changes
+  const handleDistrictChange = async (districtId: string) => {
+    setSelectedDistrict(districtId);
+    setSelectedNeighborhood("");
+    setNeighborhoods([]);
+    
+    if (districtId) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/district/${districtId}/neighborhoods`);
+        const data = await response.json();
+        setNeighborhoods(data);
+      } catch (error) {
+        console.error('Error loading neighborhoods:', error);
+      }
+    }
   };
 
   // Phone validation function
@@ -135,18 +174,73 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   };
 
   // Handle form submission
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate phone number
     const phoneInput = document.getElementById('phoneInput') as HTMLInputElement;
     const phone = phoneInput?.value || '';
     
     if (!validatePhone(phone)) {
-      e.preventDefault();
       setPhoneError("Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
       return false;
     }
+
+    // Validate required fields
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
     
-    // Form is valid, allow submission
-    return true;
+    const requiredFields = ['name', 'phone', 'city_id', 'district_id', 'address'];
+    for (const field of requiredFields) {
+      if (!formData.get(field)) {
+        setSubmitError(`Lütfen ${field === 'name' ? 'adınızı' : field === 'phone' ? 'telefon numaranızı' : field === 'city_id' ? 'ili' : field === 'district_id' ? 'ilçeyi' : 'adresi'} giriniz.`);
+        return false;
+      }
+    }
+    
+    // Add calculated total price
+    formData.set('total_price', calculateTotalPrice().toString());
+    
+    // Add reference URL
+    formData.set('ref_url', window.location.href);
+    
+    // Add product information
+    if (product) {
+      formData.set('product_id', product.id.toString());
+      formData.set('products', product.name);
+      formData.set('quantity', selectedOption?.quantity?.toString() || '1');
+    }
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Check if it's a 2-step template
+        if (product?.template === "2step") {
+          // Show thank you page directly
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/order/${result.order_id}/tesekkurler`;
+        } else {
+          // Redirect to upsell page
+          window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/order/${result.order_id}/promosyon`;
+        }
+      } else {
+        const errorData = await response.json();
+        setSubmitError(errorData.message || "Sipariş gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
+      }
+    } catch (error) {
+      console.error('Order submission error:', error);
+      setSubmitError("Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
 
@@ -708,33 +802,55 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select required name="city_id" className="form-control" id="citySelect" value={selectedCity} onChange={e => setSelectedCity(e.target.value)}>
-                  <option value="">İl Seçiniz</option>
-                  {cities.map((city: any) => (
-                    <option key={city.id} value={city.id}>{city.name}</option>
-                  ))}
-                </select>
+                      <select 
+                        required 
+                        name="city_id" 
+                        className="form-control" 
+                        id="citySelect" 
+                        value={selectedCity} 
+                        onChange={e => handleCityChange(e.target.value)}
+                      >
+                        <option value="">İl Seçiniz</option>
+                        {cities.map((city: any) => (
+                          <option key={city.id} value={city.id}>{city.name}</option>
+                        ))}
+                      </select>
                     </div>
               </div>
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select required name="district_id" className="form-control" id="districtSelect" value={selectedDistrict} onChange={e => setSelectedDistrict(e.target.value)}>
-                  <option value="">İlçe Seçiniz</option>
-                {districts.map((district: any) => (
-                  <option key={district.id || district.fest_id} value={district.id || district.fest_id}>{district.name}</option>
-                ))}
-                </select>
+                      <select 
+                        required 
+                        name="district_id" 
+                        className="form-control" 
+                        id="districtSelect" 
+                        value={selectedDistrict} 
+                        onChange={e => handleDistrictChange(e.target.value)}
+                        disabled={!selectedCity}
+                      >
+                        <option value="">İlçe Seçiniz</option>
+                        {districts.map((district: any) => (
+                          <option key={district.id || district.fest_id} value={district.id || district.fest_id}>{district.name}</option>
+                        ))}
+                      </select>
                     </div>
               </div>
                   <div className="mb-1">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select name="neighborhood_id" className="form-control" id="neighborhoodSelect" value={selectedNeighborhood} onChange={e => setSelectedNeighborhood(e.target.value)}>
-                  <option value="">Mahalle Seçiniz</option>
-                {neighborhoods.map((neighborhood: any) => (
-                  <option key={neighborhood.id || neighborhood.fest_id} value={neighborhood.id || neighborhood.fest_id}>{neighborhood.name}</option>
-                ))}
+                      <select 
+                        name="neighborhood_id" 
+                        className="form-control" 
+                        id="neighborhoodSelect" 
+                        value={selectedNeighborhood} 
+                        onChange={e => setSelectedNeighborhood(e.target.value)}
+                        disabled={!selectedDistrict}
+                      >
+                        <option value="">Mahalle Seçiniz</option>
+                        {neighborhoods.map((neighborhood: any) => (
+                          <option key={neighborhood.id || neighborhood.fest_id} value={neighborhood.id || neighborhood.fest_id}>{neighborhood.name}</option>
+                        ))}
                 </select>
               </div>
                   </div>
@@ -746,10 +862,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
                   </div>
                   <div className="product-extra-link2 fixed-bottom-button">
-                    <button type="submit" className="btn btn-success btn-block complete-order" onClick={handleFormSubmit}>
-                      SİPARİŞİ TAMAMLAYIN - {calculateTotalPrice().toFixed(2)}TL
+                    <button 
+                      type="submit" 
+                      className="btn btn-success btn-block complete-order" 
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Sipariş Gönderiliyor...
+                        </>
+                      ) : (
+                        `SİPARİŞİ TAMAMLAYIN - ${calculateTotalPrice().toFixed(2)}TL`
+                      )}
                     </button>
                   </div>
+                  
+                  {submitError && (
+                    <div className="alert alert-danger mt-3" role="alert">
+                      {submitError}
+                    </div>
+                  )}
+                  
                   <div className="mt-3 text-center">
                     Lütfen teslim almayacağınız siparişleri VERMEYİN!
               </div>
