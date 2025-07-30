@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../product-details.css'
 import axios from 'axios';
 import Footer from '../../components/Footer';
+import dynamic from 'next/dynamic';
+const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
 interface ProductOption {
   quantity: number;
@@ -38,6 +40,7 @@ interface Product {
   rating: number;
   commentCount: number;
   comments: ProductComment[];
+  pixels?: { platform: string; pixel_id: string }[];
 }
 
 
@@ -49,7 +52,7 @@ const announcementTexts = [
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   // State for gallery
-  const slug = React.use(params).slug;
+  const { slug } = React.use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   
@@ -58,27 +61,47 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [timer, setTimer] = useState({ hours: '00', minutes: '00', seconds: '00' });
   const [showModal, setShowModal] = useState(false);
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    // Cleanup in case component unmounts while modal is open
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showModal]);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
+  const [cities, setCities] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
+  const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
+
+  const commentGridRef = useRef<HTMLDivElement>(null);
 
 
   useEffect(() => {
-    console.log('Slug is:', slug);
     if (!slug) return; // Wait for router to be ready
 
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
       .then(res => {
-        console.log(res.data);
         const productData = res.data.product;
         const commentsData = res.data.comments;
+        const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
         
         // Merge comments into product data
         const productWithComments = {
           ...productData,
-          comments: commentsData || []
+          comments: Array.isArray(commentsData) ? commentsData : []
         };
         
         setProduct(productWithComments);
+        setCities(citiesData);
         if (productData.options && productData.options.length > 0) {
           setSelectedOption(productData.options[0]);
         }
@@ -158,6 +181,45 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     calculateDeliveryDates();
   }, []);
 
+  // Fetch districts when city changes
+  useEffect(() => {
+    if (!selectedCity) {
+      setDistricts([]);
+      setSelectedDistrict("");
+      setSelectedNeighborhood("");
+      return;
+    }
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/cities/${selectedCity}/districts`)
+      .then(res => {
+        setDistricts(res.data || []);
+        setSelectedDistrict("");
+        setSelectedNeighborhood("");
+      })
+      .catch(() => {
+        setDistricts([]);
+        setSelectedDistrict("");
+        setSelectedNeighborhood("");
+      });
+  }, [selectedCity]);
+
+  // Fetch neighborhoods when district changes
+  useEffect(() => {
+    if (!selectedDistrict) {
+      setNeighborhoods([]);
+      setSelectedNeighborhood("");
+      return;
+    }
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/districts/${selectedDistrict}/neighborhoods`)
+      .then(res => {
+        setNeighborhoods(res.data || []);
+        setSelectedNeighborhood("");
+      })
+      .catch(() => {
+        setNeighborhoods([]);
+        setSelectedNeighborhood("");
+      });
+  }, [selectedDistrict]);
+
   // Gallery scroll
   const scrollThumbnails = (direction: 'left' | 'right') => {
     if (thumbnailRef.current) {
@@ -179,6 +241,38 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const selectOption = (option: any) => {
     setSelectedOption(option);
   };
+
+  useEffect(() => {
+    if (commentGridRef.current && product?.comments?.length) {
+      // @ts-ignore
+      import('masonry-layout').then((MasonryModule) => {
+        const Masonry = MasonryModule.default;
+        new Masonry(commentGridRef.current, {
+          itemSelector: '.comment-item',
+          columnWidth: '.comment-item',
+          percentPosition: true,
+          gutter: 16,
+        });
+      });
+    }
+  }, [product?.comments]); // re-run when comments change
+
+  // 3. Ensure dropdown values are valid
+  useEffect(() => {
+    if (selectedCity && !cities.find((c: any) => String(c.id) === String(selectedCity))) {
+      setSelectedCity("");
+    }
+  }, [cities]);
+  useEffect(() => {
+    if (selectedDistrict && !districts.find((d: any) => String(d.id || d.fest_id) === String(selectedDistrict))) {
+      setSelectedDistrict("");
+    }
+  }, [districts]);
+  useEffect(() => {
+    if (selectedNeighborhood && !neighborhoods.find((n: any) => String(n.id || n.fest_id) === String(selectedNeighborhood))) {
+      setSelectedNeighborhood("");
+    }
+  }, [neighborhoods]);
 
   if (loading) {
     return (
@@ -202,7 +296,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div>
+    <div className="product-details-container">
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">
@@ -217,12 +311,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
               </div>
               <div className="main-image-container">
-          <img id="mainImage" src={product.images?.[mainImg] || product.images?.[0]} height={375} alt="product image" loading="lazy" />
+          <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg] || product.images[0]) : '/images/default-product.png'} height={375} alt="product image" loading="lazy" />
               </div>
         <div className="thumbnail-wrapper">
           <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>
           <div className="thumbnail-container" ref={thumbnailRef}>
-            {product.images?.map((img: string, idx: number) => (
+            {product.images && product.images.length > 0 && product.images.map((img: string, idx: number) => (
               <img
                 key={img + idx}
                         src={img}
@@ -363,7 +457,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       <h6 className="section-title style-1 my-30 text-center" id="comments">
         Tüm Değerlendirmeler ({product.commentCount || 0})
       </h6>
-              <div className="comment-grid" id="comment-container">
+              <div className="comment-grid" id="comment-container" ref={commentGridRef}>
           {product.comments?.map((comment, idx) => (
             <div className="comment-item" key={idx}>
               <div className="comment-card">
@@ -396,6 +490,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           )}
       </div>
       {/* Continue with comments and modal in next steps */}
+
+      {/* Modal Backdrop */}
+      {showModal && (
+        <div 
+          className="modal-backdrop show" 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            zIndex: 1040
+          }}
+          onClick={closeModal}
+        />
+      )}
 
       {/* Order Modal */}
       <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{display: showModal ? 'block' : 'none'}}>
@@ -502,27 +613,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select required name="city_id" className="form-control" id="citySelect">
+                      <select required name="city_id" className="form-control" id="citySelect" value={selectedCity} onChange={e => setSelectedCity(e.target.value)}>
                   <option value="">İl Seçiniz</option>
-                        <option value="34">İSTANBUL</option>
-                        <option value="6">ANKARA</option>
-                        <option value="35">İZMİR</option>
+                  {cities.map((city: any) => (
+                    <option key={city.id} value={city.id}>{city.name}</option>
+                  ))}
                 </select>
                     </div>
               </div>
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select required name="district_id" className="form-control" id="districtSelect">
+                      <select required name="district_id" className="form-control" id="districtSelect" value={selectedDistrict} onChange={e => setSelectedDistrict(e.target.value)}>
                   <option value="">İlçe Seçiniz</option>
+                {districts.map((district: any) => (
+                  <option key={district.id || district.fest_id} value={district.id || district.fest_id}>{district.name}</option>
+                ))}
                 </select>
                     </div>
               </div>
                   <div className="mb-1">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select name="neighborhood_id" className="form-control" id="neighborhoodSelect">
+                      <select name="neighborhood_id" className="form-control" id="neighborhoodSelect" value={selectedNeighborhood} onChange={e => setSelectedNeighborhood(e.target.value)}>
                   <option value="">Mahalle Seçiniz</option>
+                {neighborhoods.map((neighborhood: any) => (
+                  <option key={neighborhood.id || neighborhood.fest_id} value={neighborhood.id || neighborhood.fest_id}>{neighborhood.name}</option>
+                ))}
                 </select>
               </div>
                   </div>
@@ -562,6 +679,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       
       {/* Footer */}
       <Footer />
+      {product && product.pixels && (
+        <PixelScripts pixels={product.pixels} product={product} />
+      )}
     </div>
   );
 } 

@@ -63,7 +63,7 @@ export default function ProductCard({
       </div>
       <div className="product-content-wrap pt-2 px-3">
         <h2 className="mb-2" style={{fontSize: '1.1em', fontWeight: 'bold'}}>
-          <Link href={productLink} style={{color: '#333'}}>{title}</Link>
+          <Link href={productLink} style={{color: '#333', textDecoration: 'none'}}>{title}</Link>
         </h2>
         {typeof rating === 'number' && (
           <div>
