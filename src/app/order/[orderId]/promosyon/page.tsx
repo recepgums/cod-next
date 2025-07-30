@@ -53,7 +53,47 @@ export default function PromosyonPage() {
       if (response.ok) {
         const data = await response.json();
         setOrder(data.order);
-        setProducts(data.products || []);
+        
+        // If products array is empty, add sample products for testing
+        if (!data.products || data.products.length === 0) {
+          const sampleProducts: UpsellProduct[] = [
+            {
+              id: 1,
+              name: "60 cm Sensörlü Lamba (4 ledli)",
+              price: 699,
+              product_images: ["https://trendygoods.com.tr/storage/462/resim_2024-10-27_124035023.png"],
+              settings: { alias: "Sensörlü Lamba" }
+            },
+            {
+              id: 2,
+              name: "Işıklı Yüksek Ses Party Box Karaoke Bluetooth Hoparlör",
+              price: 650,
+              product_images: ["https://trendygoods.com.tr/storage/534/resim_2025-07-05_122005655.png"],
+              settings: { alias: "Party Box" }
+            },
+            {
+              id: 3,
+              name: "3D Kum Sanatı",
+              price: 499,
+              product_images: ["https://trendygoods.com.tr/storage/56/yenifrsta3.jpg"],
+              variants: [
+                { type: "Renk", name: "Deniz Rengi", stock: 15 },
+                { type: "Renk", name: "Kum Rengi", stock: 8 }
+              ],
+              settings: { alias: "3D Kum" }
+            },
+            {
+              id: 4,
+              name: "Sinek Raketi",
+              price: 599,
+              product_images: ["https://trendygoods.com.tr/storage/508/resim_2025-06-14_113718564.png"],
+              settings: { alias: "Sinek Raketi" }
+            }
+          ];
+          setProducts(sampleProducts);
+        } else {
+          setProducts(data.products || []);
+        }
       } else {
         setError("Sipariş bilgileri yüklenemedi.");
       }
@@ -266,7 +306,7 @@ export default function PromosyonPage() {
                             className="default-img"
                             src={product.product_images[0] || '/placeholder-product.jpg'}
                             alt={product.name}
-                            style={{width: '100%', height: '200px', objectFit: 'cover'}}
+                            style={{width: '100%', height: 'auto', borderRadius: '10px'}}
                           />
                         </div>
                         <div className="product-badges product-badges-position product-badges-mrg">
@@ -275,7 +315,7 @@ export default function PromosyonPage() {
                       </div>
                       
                       <div className="product-content-wrap pt-2">
-                        <h2 style={{fontSize: '1rem', marginBottom: '10px'}}>
+                        <h2 style={{fontSize: '1rem', marginBottom: '10px', fontWeight: '600'}}>
                           {product.name}
                         </h2>
                         
@@ -286,8 +326,8 @@ export default function PromosyonPage() {
                         </div>
                         
                         <div className="product-price">
-                          <span className="old-price">{product.price}TL</span>
-                          <span style={{color: '#bb0000', fontWeight: '600'}}>
+                          <span className="old-price">{product.price}.00TL</span>
+                          <span style={{color: '#bb0000', fontWeight: '600', fontSize: '1.1rem'}}>
                             {product.price - promotionDiscount},00TL
                           </span>
                         </div>
@@ -305,7 +345,9 @@ export default function PromosyonPage() {
                                 : 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)',
                               fontWeight: '600',
                               fontSize: '14px',
-                              border: '0 solid'
+                              border: '0 solid',
+                              borderRadius: '5px',
+                              padding: '10px 15px'
                             }}
                             onClick={() => addToCart(product.id)}
                             disabled={addingToCart[product.id] || addedToCart[product.id]}
@@ -329,18 +371,6 @@ export default function PromosyonPage() {
                             )}
                           </button>
                         </div>
-                      </div>
-                      
-                      <div className="px-3 pb-2">
-                        <div className="short-desc mb-3">
-                          {product.emoji_benefits && (
-                            <div className="emoji-benefits-container" 
-                                 dangerouslySetInnerHTML={{__html: product.emoji_benefits}} />
-                          )}
-                        </div>
-                        {product.content && (
-                          <div dangerouslySetInnerHTML={{__html: product.content}} />
-                        )}
                       </div>
                     </div>
                   </div>
