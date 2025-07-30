@@ -81,8 +81,60 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
   const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
+  const [phoneError, setPhoneError] = useState<string>("");
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
 
   const commentGridRef = useRef<HTMLDivElement>(null);
+
+  // Phone validation function
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^05[0-9]{9}$/;
+    return phoneRegex.test(phone);
+  };
+
+  // Handle phone input change
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phone = e.target.value;
+    
+    // Remove any non-digit characters
+    const cleanPhone = phone.replace(/\D/g, '');
+    
+    // Limit to 11 digits
+    if (cleanPhone.length <= 11) {
+      e.target.value = cleanPhone;
+      
+      if (cleanPhone.length === 11) {
+        if (validatePhone(cleanPhone)) {
+          setPhoneError("");
+          setIsPhoneValid(true);
+        } else {
+          setPhoneError("Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
+          setIsPhoneValid(false);
+        }
+      } else if (cleanPhone.length > 0) {
+        setPhoneError("Telefon numarası 11 haneli olmalıdır");
+        setIsPhoneValid(false);
+      } else {
+        setPhoneError("");
+        setIsPhoneValid(false);
+      }
+    }
+  };
+
+  // Handle form submission
+  const handleFormSubmit = (e: React.FormEvent) => {
+    const phoneInput = document.getElementById('phoneInput') as HTMLInputElement;
+    const phone = phoneInput?.value || '';
+    
+    if (!validatePhone(phone)) {
+      e.preventDefault();
+      setPhoneError("Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
+      return false;
+    }
+    
+    // Form is valid, allow submission
+    return true;
+  };
 
 
   useEffect(() => {
@@ -519,7 +571,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               </button>
             </div>
             <div className="modal-body" style={{overflow: 'scroll'}}>
-              <form method="post" className="order-form" id="order-form">
+              <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
                 <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
                 <input type="hidden" name="total_price" id="total_price" value={selectedOption?.price.toFixed(2) || product.price.toFixed(2)} />
@@ -606,9 +658,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-phone"></i></span>
-                      <input name="phone" autoComplete="off" required type="tel" className="form-control" id="phoneInput" placeholder="05XXXXXXXXX" />
+                      <input 
+                        name="phone" 
+                        autoComplete="off" 
+                        required 
+                        type="tel" 
+                        className={`form-control ${phoneError ? 'is-invalid' : isPhoneValid ? 'is-valid' : ''}`}
+                        id="phoneInput" 
+                        placeholder="05XXXXXXXXX" 
+                        onChange={handlePhoneChange}
+                        maxLength={11}
+                      />
               </div>
-                    <div className="invalid-feedback" id="phoneError"></div>
+                    <div className="invalid-feedback" id="phoneError">{phoneError}</div>
               </div>
                   <div className="mb-3">
                     <div className="input-group">
@@ -651,7 +713,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
                   </div>
                   <div className="product-extra-link2 fixed-bottom-button">
-                    <button type="submit" className="btn btn-success btn-block complete-order">
+                    <button type="submit" className="btn btn-success btn-block complete-order" onClick={handleFormSubmit}>
                       SİPARİŞİ TAMAMLAYIN - {selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL
                     </button>
                   </div>
