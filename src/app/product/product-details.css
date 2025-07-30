@@ -307,15 +307,6 @@
     margin-top: 5px;
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1.6;
-    padding: 0;
-    box-sizing: border-box;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
 .text-brand {
     color: #088178 !important;
     font-weight: bolder;
@@ -353,6 +344,7 @@ strong {
 .complete-order {
     padding: 10px 20px;
     font-size: 1.1em;
+    width: 100%;
 }
 
 .modal-body .price {
@@ -397,6 +389,15 @@ strong {
     font-weight: bold;
 }
 
+.product-details-container {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    padding: 0;
+    box-sizing: border-box;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 
 /* Custom styles to match the provided design */
 .product-detail-rating {
@@ -433,6 +434,13 @@ strong {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.product-extra-link2 button {
+    background-color: #28a745 !important;
+    border: none;
+    padding: 10px;
+    font-size: 1.2em;
 }
 
 .product-option {
@@ -509,27 +517,31 @@ strong {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: 2px solid #ddd;
     border-radius: 3px;
     margin-bottom: 5px;
     background-color: #fff;
     cursor: pointer;
     transition: border-color 0.3s ease-in-out;
+    position: relative;
 }
 
-
 .shipping-section .form-check input[type="radio"] {
+    position: absolute;
+    left: 28px;
     background-color: #28a745;
     border-color: #28a745;
-    padding-left: 1px;
+    flex-shrink: 0;
+    transform: scale(1.2);
 }
 
 .shipping-section .form-check-label {
     display: flex;
     justify-content: space-between;
-    width: 100%;
     align-items: center;
+    width: 100%;
+    margin-left: 10px;
 }
 
 .shipping-section .form-check span {
@@ -938,6 +950,23 @@ strong {
 }
 
 .modal-backdrop.show {
-    opacity: 0.45;
+    opacity: 0.6;
     background: #000;
+}
+
+button.close
+ {
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
 }
