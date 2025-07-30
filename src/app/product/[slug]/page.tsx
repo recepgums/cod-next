@@ -296,7 +296,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   }
 
   return (
-    <div>
+    <div className="product-details-container">
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">
@@ -490,6 +490,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           )}
       </div>
       {/* Continue with comments and modal in next steps */}
+
+      {/* Modal Backdrop */}
+      {showModal && (
+        <div 
+          className="modal-backdrop show" 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            zIndex: 1040
+          }}
+          onClick={closeModal}
+        />
+      )}
 
       {/* Order Modal */}
       <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{display: showModal ? 'block' : 'none'}}>
