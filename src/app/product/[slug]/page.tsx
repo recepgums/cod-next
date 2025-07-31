@@ -296,48 +296,38 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
   // Calculate delivery dates
   useEffect(() => {
-    const calculateDeliveryDates = () => {
-      const now = new Date();
-      const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-      const monthNames = [
-        'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-        'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-      ];
+    const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+    const monthNames = [
+      'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+      'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+    ];
+    const today = new Date();
 
-      // Calculate start date (3 business days from now)
-      let startDate = new Date(now);
-      let businessDaysAdded = 0;
-      while (businessDaysAdded < 3) {
-        startDate.setDate(startDate.getDate() + 1);
-        if (startDate.getDay() !== 0 && startDate.getDay() !== 6) { // Skip weekends
-          businessDaysAdded++;
+    // Function to calculate delivery dates, skipping Sunday
+    function calculateDeliveryDate(startDate: Date, offsetDays: number) {
+      let deliveryDate = new Date(startDate);
+      let addedDays = 0;
+      while (addedDays < offsetDays) {
+        deliveryDate.setDate(deliveryDate.getDate() + 1);
+        if (deliveryDate.getDay() !== 0) { // Skip Sundays
+          addedDays++;
         }
       }
+      return deliveryDate;
+    }
 
-      // Calculate end date (5 business days from now)
-      let endDate = new Date(now);
-      businessDaysAdded = 0;
-      while (businessDaysAdded < 5) {
-        endDate.setDate(endDate.getDate() + 1);
-        if (endDate.getDay() !== 0 && endDate.getDay() !== 6) { // Skip weekends
-          businessDaysAdded++;
-        }
-      }
+    // Calculate the dates
+    const firstDeliveryDate = calculateDeliveryDate(today, 1);
+    const lastDeliveryDate = calculateDeliveryDate(today, 3);
 
-      const formatDate = (date: Date) => {
-        const day = date.getDate();
-        const month = monthNames[date.getMonth()];
-        const dayName = dayNames[date.getDay()];
-        return `${day} ${month} ${dayName}`;
-      };
+    // Format the dates
+    const firstDate = `${firstDeliveryDate.getDate()} ${monthNames[firstDeliveryDate.getMonth()]} ${dayNames[firstDeliveryDate.getDay()]}`;
+    const lastDate = `${lastDeliveryDate.getDate()} ${monthNames[lastDeliveryDate.getMonth()]} ${dayNames[lastDeliveryDate.getDay()]}`;
 
-      setDeliveryDates({
-        start: formatDate(startDate),
-        end: formatDate(endDate)
-      });
-    };
-
-    calculateDeliveryDates();
+    setDeliveryDates({
+      start: firstDate,
+      end: lastDate
+    });
   }, []);
 
   // Fetch districts when city changes
@@ -568,8 +558,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     )}
                     
                     <small className="kargo-bedava">Ücretsiz Kargo</small>
-                    
-                    {opt.original && opt.original > opt.price && (
+                    {opt.discount > 0 && (
                       <div className="discount" style={{maxWidth: 115}}>
                         Tanesi {Math.round(opt.price / opt.quantity)}TL
                       </div>
