@@ -201,13 +201,7 @@ option:disabled {
   margin-left: 5px;
 }
 
-.product-content-wrap .rating-result::before {
-  font-family: "uicons-regular-straight" !important;
-  font-size: 11px;
-  letter-spacing: 2px;
-  content: '\f225' '\f225' '\f225' '\f225' '\f225';
-  color: #f39c12;
-}
+
 
 .product-content-wrap .product-price {
     padding-top: 5px;
