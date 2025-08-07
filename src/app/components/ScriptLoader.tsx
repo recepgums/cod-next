@@ -111,10 +111,10 @@ const addGlobalScripts = () => {
   masonry.src = 'https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js';
   document.head.appendChild(masonry);
 
-  // Bootstrap JS
+  // Bootstrap JS (version 5 - no jQuery required)
   const bootstrapJS = document.createElement('script');
-  bootstrapJS.src = 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js';
-  bootstrapJS.integrity = 'sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct';
+  bootstrapJS.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js';
+  bootstrapJS.integrity = 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz';
   bootstrapJS.crossOrigin = 'anonymous';
   bootstrapJS.defer = true;
   document.head.appendChild(bootstrapJS);

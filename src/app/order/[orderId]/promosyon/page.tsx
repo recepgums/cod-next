@@ -15,8 +15,9 @@ interface ProductVariant {
 interface UpsellProduct {
   id: number;
   name: string;
-  price: number;
-  product_images: string[];
+  priceCurrent: number;
+  priceOriginal: number;
+  images: string[];
   variants?: ProductVariant[];
   settings?: any;
   emoji_benefits?: string;
@@ -53,47 +54,8 @@ export default function PromosyonPage() {
       if (response.ok) {
         const data = await response.json();
         setOrder(data.order);
+        setProducts(data.products || []);
         
-        // If products array is empty, add sample products for testing
-        if (!data.products || data.products.length === 0) {
-          const sampleProducts: UpsellProduct[] = [
-            {
-              id: 1,
-              name: "60 cm Sensörlü Lamba (4 ledli)",
-              price: 699,
-              product_images: ["https://trendygoods.com.tr/storage/462/resim_2024-10-27_124035023.png"],
-              settings: { alias: "Sensörlü Lamba" }
-            },
-            {
-              id: 2,
-              name: "Işıklı Yüksek Ses Party Box Karaoke Bluetooth Hoparlör",
-              price: 650,
-              product_images: ["https://trendygoods.com.tr/storage/534/resim_2025-07-05_122005655.png"],
-              settings: { alias: "Party Box" }
-            },
-            {
-              id: 3,
-              name: "3D Kum Sanatı",
-              price: 499,
-              product_images: ["https://trendygoods.com.tr/storage/56/yenifrsta3.jpg"],
-              variants: [
-                { type: "Renk", name: "Deniz Rengi", stock: 15 },
-                { type: "Renk", name: "Kum Rengi", stock: 8 }
-              ],
-              settings: { alias: "3D Kum" }
-            },
-            {
-              id: 4,
-              name: "Sinek Raketi",
-              price: 599,
-              product_images: ["https://trendygoods.com.tr/storage/508/resim_2025-06-14_113718564.png"],
-              settings: { alias: "Sinek Raketi" }
-            }
-          ];
-          setProducts(sampleProducts);
-        } else {
-          setProducts(data.products || []);
-        }
       } else {
         setError("Sipariş bilgileri yüklenemedi.");
       }
@@ -142,7 +104,7 @@ export default function PromosyonPage() {
       formData.append('product_id', productId.toString());
       formData.append('product_name', product.settings?.alias || product.name);
       const promotionDiscount = parseInt(process.env.NEXT_PUBLIC_PROMOTION_DISCOUNT_AMOUNT || '0');
-      formData.append('product_price', (product.price - promotionDiscount).toString());
+      formData.append('product_price', (product.priceCurrent - promotionDiscount).toString());
       formData.append('quantity', '1');
       
       if (product.variants && product.variants.length > 0) {
@@ -157,11 +119,25 @@ export default function PromosyonPage() {
         body: formData,
       });
 
+      // Console log the response
+      console.log('Add to cart API response status:', response.status);
+      console.log('Add to cart API response headers:', Object.fromEntries(response.headers.entries()));
+      
+      const responseText = await response.text();
+      console.log('Add to cart API response body:', responseText);
+      
+      let result;
+      try {
+        result = JSON.parse(responseText);
+        console.log('Add to cart API parsed response:', result);
+      } catch (e) {
+        console.log('Add to cart API response is not JSON:', responseText);
+      }
+
       if (response.ok) {
         setAddedToCart(prev => ({ ...prev, [productId]: true }));
         // Update order total if needed
-        const result = await response.json();
-        if (result.success) {
+        if (result && result.success) {
           // Optionally update the order total display
         }
       } else {
@@ -184,7 +160,7 @@ export default function PromosyonPage() {
 
       if (response.ok) {
         // Redirect to thank you page
-        window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/tesekkurler`;
+        window.location.href = `/order/${orderId}/tesekkurler`;
       } else {
         alert('Sipariş tamamlanırken bir hata oluştu.');
       }
@@ -304,7 +280,7 @@ export default function PromosyonPage() {
                         <div className="product-img product-img-zoom">
                           <img 
                             className="default-img"
-                            src={product.product_images[0] || '/placeholder-product.jpg'}
+                            src={product.images[0] || '/placeholder-product.jpg'}
                             alt={product.name}
                             style={{width: '100%', height: 'auto', borderRadius: '10px'}}
                           />
@@ -321,14 +297,35 @@ export default function PromosyonPage() {
                         
                         <div className="rating-result" title="96%">
                           <span>
-                            <span>4.{Math.floor(Math.random() * 9) + 1}</span>
+                            <span style={{fontSize: '0.9em', color: '#f39c12'}}>
+                              {(() => {
+                                const rating = 4.5;
+                                const stars = [];
+                                for (let i = 1; i <= 5; i++) {
+                                  if (rating >= i) {
+                                    stars.push(
+                                      <svg key={i} className="text-warning" style={{width: '16px', height: '16px'}} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+                                    );
+                                  } else if (rating > i - 1) {
+                                    stars.push(
+                                      <svg key={i} className="text-warning" style={{width: '16px', height: '16px'}} viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#f39c12"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+                                    );
+                                  } else {
+                                    stars.push(
+                                      <svg key={i} className="text-muted" style={{width: '16px', height: '16px'}} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+                                    );
+                                  }
+                                }
+                                return <span>{stars} {rating.toFixed(1)}</span>;
+                              })()}
+                            </span>
                           </span>
                         </div>
                         
                         <div className="product-price">
-                          <span className="old-price">{product.price}.00TL</span>
+                          <span className="old-price">{product.priceOriginal}.00TL</span>
                           <span style={{color: '#bb0000', fontWeight: '600', fontSize: '1.1rem'}}>
-                            {product.price - promotionDiscount},00TL
+                            {product.priceCurrent - promotionDiscount},00TL
                           </span>
                         </div>
                       </div>
@@ -341,7 +338,7 @@ export default function PromosyonPage() {
                             className={`btn w-100 btn-sm ${addedToCart[product.id] ? 'btn-success' : 'btn-primary'}`}
                             style={{
                               background: addedToCart[product.id] 
-                                ? 'linear-gradient(180deg, #28a745 0%, #20c997 100%)'
+                                ? 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)'
                                 : 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)',
                               fontWeight: '600',
                               fontSize: '14px',
@@ -353,7 +350,7 @@ export default function PromosyonPage() {
                             disabled={addingToCart[product.id] || addedToCart[product.id]}
                             data-product-name={product.settings?.alias || product.name}
                             data-product-id={product.id}
-                            data-product-price={product.price - promotionDiscount}
+                            data-product-price={product.priceCurrent - promotionDiscount}
                           >
                             {addingToCart[product.id] ? (
                               <>
