@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
     "bootstrap": "^5.3.7",
+    "masonry-layout": "^4.2.2",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

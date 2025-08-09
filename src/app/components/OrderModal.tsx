@@ -2,18 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-interface ProductOption {
-  quantity: number;
-  price: number;
-  original?: number;
-  discount: number;
-  badge: string;
-  isCampaign?: boolean;
-  unit?: string;
-  displayText?: string;
-  finalDiscount?: number;
-}
+import { Product, ProductOption } from '../types/product';
 
 interface OrderModalProps {
   showModal: boolean;
@@ -25,7 +14,7 @@ interface OrderModalProps {
     images: string[];
     options: ProductOption[];
     cities?: any[];
-    settings?: string; // Added settings to product prop
+    settings?: any; // Changed from string to any since it's already parsed
   };
   selectedOption?: ProductOption | null;
   onOptionSelect: (option: ProductOption) => void;
@@ -49,7 +38,6 @@ export default function OrderModal({
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>("");
-  const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [variants, setVariants] = useState<any[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
 
@@ -59,9 +47,24 @@ export default function OrderModal({
   // Calculate total price including payment method cost
   const calculateTotalPrice = () => {
     const basePrice = selectedOption?.price || product?.price || 0;
-    const paymentCost = selectedPaymentType === "kart" ? 19.00 : 0;
-    return basePrice + paymentCost;
+    const paymentCost = selectedPaymentType === "kart" ? 
+      (parseFloat(product.settings?.card_payment_cost) || 19.00) : 
+      (parseFloat(product.settings?.cash_payment_cost) || 0);
+    return Number(basePrice) + Number(paymentCost);
   };
+
+  // Get payment cost for display
+  const getPaymentCost = (type: string) => {
+    if (type === "kart") {
+      return parseFloat(product.settings?.card_payment_cost) || 19.00;
+    } else {
+      return parseFloat(product.settings?.cash_payment_cost) || 0;
+    }
+  };
+
+  // Check if product is campaign
+  const isCampaign = product.settings?.is_campaign || false;
+  const unit = product.settings?.unit || 'Adet';
 
   // Calculate discount amount
   const calculateDiscount = () => {
@@ -138,19 +141,23 @@ export default function OrderModal({
   useEffect(() => {
     if (product && product.settings) {
       try {
-        const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : product.settings;
+        const settings = product.settings;
         if (settings.variants) {
           // Handle double-encoded JSON string
           let variantsData;
           if (typeof settings.variants === 'string') {
-            variantsData = JSON.parse(settings.variants);
+            try {
+              variantsData = JSON.parse(settings.variants);
+            } catch (e) {
+              variantsData = settings.variants;
+            }
           } else {
             variantsData = settings.variants;
           }
           setVariants(variantsData);
         }
       } catch (error) {
-        console.error('Error parsing variants:', error);
+        console.error('Error parsing settings:', error);
       }
     }
   }, [product]);
@@ -188,6 +195,11 @@ export default function OrderModal({
 
     const formData = new FormData(e.target as HTMLFormElement);
     
+    // Collect variant data
+    const variantsData = selectedVariants.filter(variant => 
+      Object.keys(variant).length > 0 && Object.values(variant).some(value => value)
+    );
+    
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
@@ -201,7 +213,8 @@ export default function OrderModal({
         total_price: selectedOption?.price || product.price,
         product_id: product.id,
         products: product.name,
-        ref_url: window.location.href
+        ref_url: window.location.href,
+        variants: variantsData // Include variant data in the request
       });
 
       if (response.data.success) {
@@ -216,18 +229,6 @@ export default function OrderModal({
       setIsSubmitting(false);
     }
   };
-
-  // Calculate delivery dates
-  useEffect(() => {
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setDate(startDate.getDate() + 3);
-    
-    setDeliveryDates({
-      start: startDate.toLocaleDateString('tr-TR'),
-      end: endDate.toLocaleDateString('tr-TR')
-    });
-  }, []);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -286,25 +287,27 @@ export default function OrderModal({
                       <div className="details">
                         <div className="info">
                           <span className="title">
-                            {opt.displayText || `${opt.quantity} Adet`}
+                            {opt.displayText || `${opt.quantity} ${unit}`}
                             
-                            {opt.isCampaign && (
-                              <p style={{color: 'red', fontWeight: 'bold', fontSize: '.9rem'}}>
-                                {opt.quantity} {opt.unit || 'Adet'} BEDAVA
-                              </p>
+                            {isCampaign && (
+                              <>
+                                <p style={{color: 'red', fontWeight: 'bold', fontSize: '.9rem'}}>
+                                  Alana {opt.quantity} {unit} BEDAVA
+                                </p>
+                              </>
                             )}
                             
                             <small className="kargo-bedava">Ücretsiz Kargo</small>
                             
-                            {opt.discount > 0 && (
+                            {!isCampaign && opt.discount > 0 && (
                               <div className="discount" style={{maxWidth: 115}}>
                                 Tanesi {Math.round(opt.price / opt.quantity)}TL
                               </div>
                             )}
                             
-                            {opt.quantity > 1 && (product.price * opt.quantity) > opt.price && (
+                            {opt.discount > 0 && (
                               <div className="discount-badge" style={{color: 'red', fontWeight: 'bold', fontSize: '.8rem'}}>
-                                %{Math.round(((product.price * opt.quantity - opt.price) / (product.price * opt.quantity)) * 100)} İndirim
+                                %{Math.round((opt.discount / (opt.original || (product.price * opt.quantity))) * 100)} İndirim
                               </div>
                             )}
                           </span>
@@ -367,10 +370,6 @@ export default function OrderModal({
                       <div className="col-8 label">Kargo</div>
                       <div className="col-4 value text-end" id="shipping-cost">Ücretsiz</div>
                     </div>
-                    <div className="row justify-content-between">
-                      <div className="col-8 label">Ödeme Ücreti</div>
-                      <div className="col-4 value text-end">{selectedPaymentType === "kart" ? "19.00TL" : "Ücretsiz"}</div>
-                    </div>
                     {calculateDiscount() > 0 && (
                       <div className="row justify-content-between" id="discounts">
                         <div className="col-8 label">İndirimler</div>
@@ -393,12 +392,12 @@ export default function OrderModal({
                           className="form-check-input" 
                           value="nakit" 
                           name="paymentType" 
-                          data-additional-cost=".00TL" 
+                          data-additional-cost={getPaymentCost("nakit")} 
                           checked={selectedPaymentType === "nakit"}
                           onChange={() => handlePaymentTypeChange("nakit")}
                         />
                         <span>Kapıda Nakit Ödeme</span>
-                        <span>Ücretsiz</span>
+                        <span>{getPaymentCost("nakit") > 0 ? `${getPaymentCost("nakit")}TL` : 'Ücretsiz'}</span>
                       </label>
                     </div>
                     <div className={`form-check ${selectedPaymentType === "kart" ? "active" : ""}`}>
@@ -408,12 +407,12 @@ export default function OrderModal({
                           className="form-check-input" 
                           value="kart" 
                           name="paymentType" 
-                          data-additional-cost="19.00"
+                          data-additional-cost={getPaymentCost("kart")}
                           checked={selectedPaymentType === "kart"}
                           onChange={() => handlePaymentTypeChange("kart")}
                         />
                         <span>Kapıda Kartlı Ödeme</span>
-                        <span>19.00TL</span>
+                        <span>{getPaymentCost("kart")}TL</span>
                       </label>
                     </div>
                   </div>

@@ -5,50 +5,12 @@ import '../product-details.css'
 import axios from 'axios';
 import Footer from '../../components/Footer';
 import OrderModal from '../../components/OrderModal';
+import { parseSettings } from '../../utils/parseSettings';
+import { Product, ProductComment, ProductOption } from '../../types/product';
 import dynamic from 'next/dynamic';
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 const ImageOnlyTemplate = dynamic(() => import('./ImageOnlyTemplate'), { ssr: false });
 const TwoStepLandingTemplate = dynamic(() => import('./TwoStepLandingTemplate'), { ssr: false });
-
-interface ProductOption {
-  quantity: number;
-  price: number;
-  original?: number;
-  discount: number;
-  badge: string;
-  isCampaign?: boolean;
-  unit?: string;
-  displayText?: string;
-  finalDiscount?: number;
-}
-
-interface ProductComment {
-  id: number;
-  author: string;
-  content: string;
-  rating: number;
-  photo?: string;
-  order?: number | null;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice: number;
-  discount: string;
-  images: string[];
-  options: ProductOption[];
-  features: string[];
-  rating: number;
-  commentCount: number;
-  comments: ProductComment[];
-  cities: any[];
-  pixels?: { platform: string; pixel_id: string }[];
-  template?: string; // Added for 2-step template
-  content?: string; // Added for product content
-  settings?: string; // Added for product settings including variants
-}
 
 
 const announcementTexts = [
@@ -95,6 +57,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         const pixelsData = res.data.pixels;
         const templateData = res.data.template;
         const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
+        const legalLinksData = Array.isArray(res.data.legal_links) ? res.data.legal_links : [];
         
         // Merge comments into product data
         const product = {
@@ -103,9 +66,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           template: templateData,
-          settings: productData.settings // Include settings for variants
+          settings: productData.settings ? parseSettings(productData.settings) : null
         };
 
+        console.log(product);
         setProduct(product);
         if (productData.options && productData.options.length > 0) {
           setSelectedOption(productData.options[0]);
@@ -169,10 +133,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const firstDate = `${firstDeliveryDate.getDate()} ${monthNames[firstDeliveryDate.getMonth()]} ${dayNames[firstDeliveryDate.getDay()]}`;
     const lastDate = `${lastDeliveryDate.getDate()} ${monthNames[lastDeliveryDate.getMonth()]} ${dayNames[lastDeliveryDate.getDay()]}`;
 
-     setDeliveryDates({
-        start: firstDate,
-       end: lastDate
-     });
+    setDeliveryDates({
+      start: firstDate,
+      end: lastDate
+    });
 
   }, []);
 
@@ -403,7 +367,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
           Kapıda Ödemeli Sipariş Ver
         </button>
-      </div>
+              </div>
       
       {/* Product Content */}
       {product.content && (
@@ -414,7 +378,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
           Şimdi Sipariş Ver
         </button>
-      </div>
+            </div>
 
             {/* comments Section Title */}
       <h6 className="section-title style-1 my-30 text-center" id="comments">
@@ -465,8 +429,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         selectedOption={selectedOption}
         onOptionSelect={selectOption}
       />
-      
-      {/* Sticky Footer */}
+
+            {/* Sticky Footer */}
       <div className="sticky-footer">
         <div className="product-info">
           <div className="product-name">{product.name}</div>

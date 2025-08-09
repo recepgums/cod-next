@@ -5,13 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54d3c92d-a00a-4e9f-bfe2-7cc8c0f6bc1b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/home.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/types/product.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/utils/parseSettings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/Footer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/OrderModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/OrderModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/ProductGrid.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ProductGrid.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/ImageOnlyTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/ImageOnlyTemplate.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/TwoStepLandingTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/TwoStepLandingTemplate.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,6 +59,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;ts.external.directory.path&quot;: &quot;/home/opera/Desktop/Projects/Freelance/cod-next/node_modules/typescript/lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -61,7 +82,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-WS-251.26927.40" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-WS-251.27812.50" />
       </set>
     </attachedChunks>
   </component>
@@ -78,6 +99,10 @@
       <workItem from="1752917084260" duration="2301000" />
       <workItem from="1753112618875" duration="558000" />
       <workItem from="1753313076888" duration="635000" />
+      <workItem from="1754582155383" duration="7399000" />
+      <workItem from="1754665825933" duration="908000" />
+      <workItem from="1754697075153" duration="476000" />
+      <workItem from="1754697575349" duration="3389000" />
     </task>
     <servers />
   </component>

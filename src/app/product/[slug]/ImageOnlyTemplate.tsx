@@ -1,40 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
+import { parseSettings } from '../../utils/parseSettings';
+import { Product, ProductOption } from '../../types/product';
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
-
-interface ProductOption {
-  quantity: number;
-  price: number;
-  original?: number;
-  discount: number;
-  badge: string;
-  isCampaign?: boolean;
-  unit?: string;
-  displayText?: string;
-  finalDiscount?: number;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice: number;
-  discount: string;
-  images: string[];
-  options: ProductOption[];
-  features: string[];
-  rating: number;
-  commentCount: number;
-  comments: any[];
-  cities: any[];
-  pixels?: { platform: string; pixel_id: string }[];
-  template?: string;
-}
 
 const announcementTexts = [
   '💰 Kapıda Ödeme Seçeneği 💰',
@@ -49,6 +22,7 @@ interface ImageOnlyTemplateProps {
 export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
+  const [variants, setVariants] = useState<any[]>([]); // Added variants state
 
   const openModal = () => {
     setShowModal(true);
@@ -61,6 +35,31 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const selectOption = (option: ProductOption) => {
     setSelectedOption(option);
   };
+
+  // Load variants from product settings
+  useEffect(() => {
+    if (product && product.settings) {
+      try {
+        const settings = parseSettings(product.settings);
+        if (settings.variants) {
+          // Handle double-encoded JSON string
+          let variantsData;
+          if (typeof settings.variants === 'string') {
+            try {
+              variantsData = JSON.parse(settings.variants);
+            } catch (e) {
+              variantsData = settings.variants;
+            }
+          } else {
+            variantsData = settings.variants;
+          }
+          setVariants(variantsData);
+        }
+      } catch (error) {
+        console.error('Error parsing settings:', error);
+      }
+    }
+  }, [product]);
 
   return (
     <div className="image-only-template" style={{maxWidth: '600px', margin: '0 auto'}}>

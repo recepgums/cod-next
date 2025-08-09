@@ -4,35 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import dynamic from 'next/dynamic';
+import { parseSettings } from '../../utils/parseSettings';
+import { Product, ProductOption } from '../../types/product';
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
-
-interface ProductOption {
-  quantity: number;
-  price: number;
-  original?: number;
-  discount: number;
-  badge: string;
-  isCampaign?: boolean;
-  unit?: string;
-  displayText?: string;
-  finalDiscount?: number;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice: number;
-  discount: string;
-  images: string[];
-  options: ProductOption[];
-  features: string[];
-  rating: number;
-  commentCount: number;
-  comments: any[];
-  pixels?: { platform: string; pixel_id: string }[];
-  template?: string;
-}
 
 interface TwoStepLandingTemplateProps {
   product: Product;
@@ -41,6 +15,7 @@ interface TwoStepLandingTemplateProps {
 export default function TwoStepLandingTemplate({ product }: TwoStepLandingTemplateProps) {
   const [timer, setTimer] = useState({ minutes: '29', seconds: '39' });
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
+  const [variants, setVariants] = useState<any[]>([]); // State for variants
 
   // Countdown timer effect
   useEffect(() => {
@@ -68,6 +43,31 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
 
     return () => clearInterval(x);
   }, []);
+
+  // Load variants from product settings
+  useEffect(() => {
+    if (product && product.settings) {
+      try {
+        const settings = parseSettings(product.settings);
+        if (settings.variants) {
+          // Handle double-encoded JSON string
+          let variantsData;
+          if (typeof settings.variants === 'string') {
+            try {
+              variantsData = JSON.parse(settings.variants);
+            } catch (e) {
+              variantsData = settings.variants;
+            }
+          } else {
+            variantsData = settings.variants;
+          }
+          setVariants(variantsData);
+        }
+      } catch (error) {
+        console.error('Error parsing settings:', error);
+      }
+    }
+  }, [product]);
 
   const redirectToOrder = () => {
     const currentParams = window.location.search;

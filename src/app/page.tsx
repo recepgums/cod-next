@@ -5,17 +5,21 @@ import ProductGrid from './components/ProductGrid';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import React, { useEffect, useState } from 'react';
+import { HomepageProduct } from './types/product';
+import './home.css';
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<HomepageProduct[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProducts() {
       try {
+        setLoading(true);
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`);
         const data = await res.json();
         const productsArray = data.products || [];
-        const mapped = productsArray.map((item: any) => ({
+        const mapped: HomepageProduct[] = productsArray.map((item: any) => ({
           name: item.name,
           imgSrc: item.productImg,
           productLink: item.productLink || '',
@@ -27,16 +31,33 @@ export default function Home() {
         setProducts(mapped);
       } catch (e) {
         setProducts([]);
+      } finally {
+        setLoading(false);
       }
     }
     fetchProducts();
   }, []);
 
   return (
-    <div className="min-vh-100 bg-white d-flex flex-column">
+    <div className="home-container">
       <Header />
-      <main className="flex-fill mt-3 pb-4">
-        <ProductGrid products={products} />
+      <main className="home-main">
+        {loading ? (
+          <div className="product-loading">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : products.length > 0 ? (
+          <div className="product-grid-container">
+            <ProductGrid products={products} />
+          </div>
+        ) : (
+          <div className="product-empty">
+            <h3>Ürün bulunamadı</h3>
+            <p>Şu anda gösterilecek ürün bulunmuyor.</p>
+          </div>
+        )}
       </main>
       <Footer />
       <ScrollToTop />

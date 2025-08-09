@@ -1,18 +1,9 @@
 import React from 'react';
 import ProductCard from './ProductCard';
-
-export type Product = {
-  name: string;
-  imgSrc: string;
-  productLink: string;
-  rating?: string | null;
-  priceCurrent: string;
-  priceOriginal?: string | null;
-  slug: string;
-};
+import { HomepageProduct } from '../types/product';
 
 type ProductGridProps = {
-  products: Product[];
+  products: HomepageProduct[];
 };
 
 export default function ProductGrid({ products }: ProductGridProps) {
