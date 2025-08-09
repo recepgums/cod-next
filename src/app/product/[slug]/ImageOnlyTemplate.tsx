@@ -40,19 +40,12 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   useEffect(() => {
     if (product && product.settings) {
       try {
-        const settings = parseSettings(product.settings);
+        const settings = product.settings;
         if (settings.variants) {
           // Handle double-encoded JSON string
           let variantsData;
-          if (typeof settings.variants === 'string') {
-            try {
-              variantsData = JSON.parse(settings.variants);
-            } catch (e) {
-              variantsData = settings.variants;
-            }
-          } else {
-            variantsData = settings.variants;
-          }
+          variantsData = settings.variants;
+          
           setVariants(variantsData);
         }
       } catch (error) {

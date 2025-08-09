@@ -5,21 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54d3c92d-a00a-4e9f-bfe2-7cc8c0f6bc1b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/home.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/types/product.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/utils/parseSettings.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/Footer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/components/OrderModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/OrderModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/components/ProductGrid.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ProductGrid.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/components/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/components/ProductCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/home.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/home.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/ImageOnlyTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/ImageOnlyTemplate.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/TwoStepLandingTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/TwoStepLandingTemplate.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/product/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/product/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/utils/parseSettings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/utils/parseSettings.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,6 +96,7 @@
       <workItem from="1754665825933" duration="908000" />
       <workItem from="1754697075153" duration="476000" />
       <workItem from="1754697575349" duration="3389000" />
+      <workItem from="1754766080361" duration="1875000" />
     </task>
     <servers />
   </component>
