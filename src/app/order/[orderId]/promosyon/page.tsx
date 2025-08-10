@@ -4,7 +4,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import './promotion.css';
+import '../../../styles/promotion.css';
+
+// Star Rating Component
+const StarRating = ({ rating }: { rating: number }) => {
+  return (
+    <div className="product-rating">
+      <i className="fi-rs-star"></i>
+      <i className="fi-rs-star"></i>
+      <i className="fi-rs-star"></i>
+      <i className="fi-rs-star"></i>
+      <i className="fi-rs-star"></i>
+      <span>{rating.toFixed(1)}</span>
+    </div>
+  );
+};
 
 interface ProductVariant {
   type: string;
@@ -278,58 +292,40 @@ export default function PromosyonPage() {
                     <div className="product-cart-wrap mb-30">
                       <div className="product-img-action-wrap">
                         <div className="product-img product-img-zoom">
-                          <img 
-                            className="default-img"
-                            src={product.images[0] || '/placeholder-product.jpg'}
-                            alt={product.name}
-                            style={{width: '100%', height: 'auto', borderRadius: '10px'}}
-                          />
+                          <a href="#">
+                            <img 
+                              className="default-img"
+                              src={product.images[0] || '/placeholder-product.jpg'}
+                              alt={product.name}
+                            />
+                          </a>
                         </div>
+                        
+                        {/* Product Badges */}
                         <div className="product-badges product-badges-position product-badges-mrg">
                           <span className="hot">İndirimli</span>
                         </div>
                       </div>
                       
                       <div className="product-content-wrap pt-2">
-                        <h2 style={{fontSize: '1rem', marginBottom: '10px', fontWeight: '600'}}>
-                          {product.name}
+                        <h2>
+                          <a href="#">{product.name}</a>
                         </h2>
                         
-                        <div className="rating-result" title="96%">
-                          <span>
-                            <span style={{fontSize: '0.9em', color: '#f39c12'}}>
-                              {(() => {
-                                const rating = 4.5;
-                                const stars = [];
-                                for (let i = 1; i <= 5; i++) {
-                                  if (rating >= i) {
-                                    stars.push(
-                                      <svg key={i} className="text-warning" style={{width: '16px', height: '16px'}} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                                    );
-                                  } else if (rating > i - 1) {
-                                    stars.push(
-                                      <svg key={i} className="text-warning" style={{width: '16px', height: '16px'}} viewBox="0 0 20 20"><defs><linearGradient id={`half${i}`}><stop offset="50%" stopColor="#f39c12"/><stop offset="50%" stopColor="#e5e7eb"/></linearGradient></defs><path fill={`url(#half${i})`} d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                                    );
-                                  } else {
-                                    stars.push(
-                                      <svg key={i} className="text-muted" style={{width: '16px', height: '16px'}} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                                    );
-                                  }
-                                }
-                                return <span>{stars} {rating.toFixed(1)}</span>;
-                              })()}
-                            </span>
-                          </span>
+                        {/* Rating */}
+                        <div className="product-rating">
+                          <StarRating rating={4.8} />
                         </div>
                         
+                        {/* Product Price */}
                         <div className="product-price">
                           <span className="old-price">{product.priceOriginal}.00TL</span>
-                          <span style={{color: '#bb0000', fontWeight: '600', fontSize: '1.1rem'}}>
-                            {product.priceCurrent - promotionDiscount},00TL
-                          </span>
+                          <span className="new-price">{product.priceCurrent - promotionDiscount},00TL</span>
                         </div>
+                        
                       </div>
                       
+                      {/* Variant Selection */}
                       <div className="row mb-30 mx-auto px-0">
                         {createVariantFields(product)}
                         

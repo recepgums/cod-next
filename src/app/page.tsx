@@ -1,12 +1,12 @@
 'use client';
 
-import Header from './components/Header';
-import ProductGrid from './components/ProductGrid';
-import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';
 import React, { useEffect, useState } from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import './styles/home.css';
+import ProductGrid from './components/ProductGrid';
+import ScrollToTop from './components/ScrollToTop';
 import { HomepageProduct } from './types/product';
-import './home.css';
 
 export default function Home() {
   const [products, setProducts] = useState<HomepageProduct[]>([]);
