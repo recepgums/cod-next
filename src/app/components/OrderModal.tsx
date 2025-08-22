@@ -196,7 +196,7 @@ export default function OrderModal({
         district_id: formData.get('district_id'),
         neighborhood_id: formData.get('neighborhood_id'),
         address: formData.get('address'),
-        payment_type: formData.get('paymentType'),
+        amount_type: formData.get('paymentType'),
         quantity: selectedOption?.quantity || 1,
         total_price: selectedOption?.price || product.price,
         product_id: product.id,
