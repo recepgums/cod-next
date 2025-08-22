@@ -1,5 +1,28 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
+/* Nova Gallery Styles */
+.nova-main .splide__track,
+.nova-main .splide__list,
+.nova-main .splide__slide { height: 100%; }
+
+.nova-main .splide__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.nova-thumbs .splide__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.nova-thumbs .splide__slide.is-active img {
+  border: 2px solid #667eea;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

@@ -95,555 +95,555 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   useEffect(() => {
     if (!slug) return; // Wait for router to be ready
 
-    // axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
-    //   .then(res => {
-    //     const productData = res.data.product;
-    //     const commentsData = res.data.comments;
-    //     const pixelsData = res.data.pixels;
-    //     const templateData = res.data.template;
-    //     const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
+      .then(res => {
+        const productData = res.data.product;
+        const commentsData = res.data.comments;
+        const pixelsData = res.data.pixels;
+        const templateData = res.data.template;
+        const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
         
-    //     // Merge comments into product data
-    //     const product = {
-    //       ...productData,
-    //       comments: Array.isArray(commentsData) ? commentsData : [],
-    //       cities: Array.isArray(citiesData) ? citiesData : [],
-    //       pixels: Array.isArray(pixelsData) ? pixelsData : [],
-    //       template: "nova",
-    //       settings: productData.settings // Include settings for variants
-    //     };
+        // Merge comments into product data
+        const product = {
+          ...productData,
+          comments: Array.isArray(commentsData) ? commentsData : [],
+          cities: Array.isArray(citiesData) ? citiesData : [],
+          pixels: Array.isArray(pixelsData) ? pixelsData : [],
+          template: templateData,
+          settings: productData.settings // Include settings for variants
+        };
 
-    //     setProduct(product);
-    //     if (productData.options && productData.options.length > 0) {
-    //       setSelectedOption(productData.options[0]);
-    //     }
-    //     setLoading(false);
-    //   })
-    //   .catch(err => {
-    //     console.error('Failed to fetch product:', err);
-    //     setLoading(false);
-    //   });
+        setProduct(product);
+        if (productData.options && productData.options.length > 0) {
+          setSelectedOption(productData.options[0]);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch product:', err);
+        setLoading(false);
+      });
 
-    setProduct(
-        {
-          "product": {
-              "id": 36,
-              "slug": "masaj-tabancası",
-              "name": "MASAJ TABANCASI",
-              "price": 999,
-              "oldPrice": 1499,
-              "discount": "%33 indirim",
-              "rating": 4.5,
-              "commentCount": 34,
-              "productLink": "/products/masaj-tabancası",
-              "sold": 5000,
-              "productImg": "http:10.171.220.230/storage/194/2.png",
-              "images": [
-                  "http:10.171.220.230/storage/194/2.png",
-                  "http:10.171.220.230/storage/195/3.png",
-                  "http:10.171.220.230/storage/196/4-BAŞLIKLI-MASAJ-ALETİ.png",
-                  "http:10.171.220.230/storage/197/4.png",
-                  "http:10.171.220.230/storage/198/5.png",
-                  "http:10.171.220.230/storage/199/6.png",
-                  "http:10.171.220.230/storage/200/7.png"
-              ],
-              "features": [
-                  "🎯 Yorgun Kaslara Anında Rahatlama!\r\n📌 Şarj Edilebilir Derin Doku Masaj Aleti ile günün tüm stresini geride bırakın.",
-                  "💪 Profesyonel Masaj Deneyimi, Ev Konforunda!\r\n✔ Derin doku terapisi ile kas ağrılarını hedef alır\r\n✔ Titreşimli başlıklar sayesinde gerginliği hızla azaltır\r\n✔ Spor sonrası toparlanma sürecini destekler\r\n✔ Sessiz motor, güçlü performans\r\n✔ Kompakt, hafif ve taşınabilir\r\n🔋 Uzun ömürlü şarjlı batarya – kablo derdi yok!",
-                  "🏃‍♂ Sporcular, ofis çalışanları ve yoğun tempolular için ideal!\r\n👜 Çantanıza atın, her yere yanınızda götürün!"
-              ],
-              "options": [
-                  {
-                      "title": "1 Adet",
-                      "quantity": 1,
-                      "price": 999,
-                      "discount": 0
-                  },
-                  {
-                      "title": "2 Adet",
-                      "quantity": 2,
-                      "price": 1998,
-                      "discount": 199
-                  }
-              ],
-              "settings": "{\"alias\":\"MASAJ TABANCASI\",\"quantity_price\":\"{\\\"1\\\":999,\\\"2\\\":1998}\",\"quantity_discount\":\"{\\\"1\\\":0,\\\"2\\\":199}\",\"cash_payment_cost\":null,\"card_payment_cost\":null,\"supply_cost\":\"305\",\"ad_cost\":\"150\",\"is_campaign\":null,\"cloaker_url\":null,\"og_title\":null,\"unit\":\"Adet\",\"variants\":[]}",
-              "content": "<section style=\"font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f9f9f9; color: #333;\">\n\n  <div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\">\n\n    <h2 style=\"font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; text-align: center;\">MİNİ MASAJ ALETİ</h2>\n\n    <img src=\"https://bikolaysiparis.com/storage/306/4-BAŞLIKLI-MASAJ-ALETİ.png\" alt=\"Mini Masaj Aleti\" style=\"max-width:100%; height:auto; display:block; margin:0 auto; border-radius: 8px; margin-bottom: 20px;\">\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Omuz ve Sırt Ağrılarına Son!</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Gün boyu oluşan gerginliği ve ağrıları hafifletmek için ideal çözüm.</p>\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Farklı Başlıklarla Kişiselleştirilmiş Masaj</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Farklı masaj ihtiyaçlarınız için özel olarak tasarlanmış başlıklarla tam size göre.</p>\n\n    <img src=\"https://bikolaysiparis.com/storage/309/6.png\" alt=\"Mini Masaj Aleti Detay\" style=\"max-width:100%; height:auto; display:block; margin:0 auto; border-radius: 8px; margin-bottom: 20px;\">\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Selülitlere Karşı Etkili Yardımcı</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Kan dolaşımını hızlandırarak selülit görünümünü azaltmaya yardımcı olur.</p>\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Kablosuz Tasarım ile Özgürce Kullanım</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Şarjlı ve kablosuz özelliği sayesinde her yerde rahatlıkla kullanabilirsiniz.</p>\n\n    <p style=\"font-size: 14px; color: #777; text-align: center;\">Her evde olması gereken pratik bir masaj aleti!</p>\n\n  </div>\n\n</section>\n"
-          },
-          "comments": [
-              {
-                  "id": 548,
-                  "author": "M** K**",
-                  "content": "Tarafıma sorunsuz bir şekilde ulaştı. Satıcıya ve emeği geçenlere teşekkür ederim.",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 549,
-                  "author": "T** S**",
-                  "content": "5 kişi denedik ve sevdik. farklı başlıklar olması çok iyi. abim öyle sevdi ki bütün gün yap diyebilirim dedi😂",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 550,
-                  "author": "E** Ö**",
-                  "content": "Severek kullanıyoruz hatta dayımlarda şipariş verdi her evde bence bir tane bulunmalı sadece kademeli artış filan demişlerdi ama tek tip dozda çalışıyor ama bence yeterli ve rahatlatıyor",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 551,
-                  "author": "A** N**",
-                  "content": "Cok guzel oglum icin aldim. Her akşam masaj yapiyo ayaklarina  severek.",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 552,
-                  "author": "M** Ç**",
-                  "content": "süper sağlam geldi. küçük sanıyordum boyut olarak ideal büyüklükte. tavsiye ederim.",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 553,
-                  "author": "T** K**",
-                  "content": "Alın aldırın saatlerce babanızın omuzlarını ovmak zorunda kalmayın 😂",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 554,
-                  "author": "M** D**",
-                  "content": "harika bir şey bu ablam da kullanip almak istedim hemen denedim süper ötesi acayip rahatlatıyor çok teşekkürler",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 555,
-                  "author": "Safa Y.",
-                  "content": "Ürün gayet güzel kendi kendime masaj yapıyorum keşke daha fazla sipariş verseydim ailemdem istenler oldu",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 556,
-                  "author": "B** M**",
-                  "content": "Başarılı bir ürün",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 557,
-                  "author": "A** M**",
-                  "content": "Paketleme güzel ve hızlı geldi",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 558,
-                  "author": "P** a** ç**",
-                  "content": "çoook iyi kimse kötü yorum yapmasın ben bu kadar mükemmel biiey görmedim aşırı güçlü",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              },
-              {
-                  "id": 559,
-                  "author": "İ** B** K**",
-                  "content": "Çok iyi rahatlatıyor",
-                  "rating": "5",
-                  "photo": "",
-                  "order": 999
-              }
-          ],
-          "pixels": [
-              {
-                  "id": 4,
-                  "merchant_id": 1,
-                  "platform": "facebook",
-                  "pixel_id": "346971234347723",
-                  "name": "yenibirürün",
-                  "is_active": 1,
-                  "created_at": "2025-06-11T19:46:24.000000Z",
-                  "updated_at": "2025-06-11T19:46:24.000000Z",
-                  "pivot": {
-                      "product_id": 36,
-                      "pixel_id": 4
-                  }
-              }
-          ],
-          "cities": [
-              {
-                  "id": 1,
-                  "name": "ADANA"
-              },
-              {
-                  "id": 2,
-                  "name": "ADIYAMAN"
-              },
-              {
-                  "id": 3,
-                  "name": "AFYONKARAHİSAR"
-              },
-              {
-                  "id": 4,
-                  "name": "AĞRI"
-              },
-              {
-                  "id": 68,
-                  "name": "AKSARAY"
-              },
-              {
-                  "id": 5,
-                  "name": "AMASYA"
-              },
-              {
-                  "id": 6,
-                  "name": "ANKARA"
-              },
-              {
-                  "id": 7,
-                  "name": "ANTALYA"
-              },
-              {
-                  "id": 75,
-                  "name": "ARDAHAN"
-              },
-              {
-                  "id": 8,
-                  "name": "ARTVİN"
-              },
-              {
-                  "id": 9,
-                  "name": "AYDIN"
-              },
-              {
-                  "id": 10,
-                  "name": "BALIKESİR"
-              },
-              {
-                  "id": 74,
-                  "name": "BARTIN"
-              },
-              {
-                  "id": 72,
-                  "name": "BATMAN"
-              },
-              {
-                  "id": 69,
-                  "name": "BAYBURT"
-              },
-              {
-                  "id": 11,
-                  "name": "BİLECİK"
-              },
-              {
-                  "id": 12,
-                  "name": "BİNGÖL"
-              },
-              {
-                  "id": 13,
-                  "name": "BİTLİS"
-              },
-              {
-                  "id": 14,
-                  "name": "BOLU"
-              },
-              {
-                  "id": 15,
-                  "name": "BURDUR"
-              },
-              {
-                  "id": 16,
-                  "name": "BURSA"
-              },
-              {
-                  "id": 17,
-                  "name": "ÇANAKKALE"
-              },
-              {
-                  "id": 18,
-                  "name": "ÇANKIRI"
-              },
-              {
-                  "id": 19,
-                  "name": "ÇORUM"
-              },
-              {
-                  "id": 20,
-                  "name": "DENİZLİ"
-              },
-              {
-                  "id": 21,
-                  "name": "DİYARBAKIR"
-              },
-              {
-                  "id": 81,
-                  "name": "DÜZCE"
-              },
-              {
-                  "id": 22,
-                  "name": "EDİRNE"
-              },
-              {
-                  "id": 23,
-                  "name": "ELAZIĞ"
-              },
-              {
-                  "id": 24,
-                  "name": "ERZİNCAN"
-              },
-              {
-                  "id": 25,
-                  "name": "ERZURUM"
-              },
-              {
-                  "id": 26,
-                  "name": "ESKİŞEHİR"
-              },
-              {
-                  "id": 27,
-                  "name": "GAZİANTEP"
-              },
-              {
-                  "id": 28,
-                  "name": "GİRESUN"
-              },
-              {
-                  "id": 29,
-                  "name": "GÜMÜŞHANE"
-              },
-              {
-                  "id": 30,
-                  "name": "HAKKARİ"
-              },
-              {
-                  "id": 31,
-                  "name": "HATAY"
-              },
-              {
-                  "id": 76,
-                  "name": "IĞDIR"
-              },
-              {
-                  "id": 32,
-                  "name": "ISPARTA"
-              },
-              {
-                  "id": 34,
-                  "name": "İSTANBUL"
-              },
-              {
-                  "id": 35,
-                  "name": "İZMİR"
-              },
-              {
-                  "id": 46,
-                  "name": "KAHRAMANMARAŞ"
-              },
-              {
-                  "id": 78,
-                  "name": "KARABÜK"
-              },
-              {
-                  "id": 70,
-                  "name": "KARAMAN"
-              },
-              {
-                  "id": 36,
-                  "name": "KARS"
-              },
-              {
-                  "id": 37,
-                  "name": "KASTAMONU"
-              },
-              {
-                  "id": 38,
-                  "name": "KAYSERİ"
-              },
-              {
-                  "id": 79,
-                  "name": "KİLİS"
-              },
-              {
-                  "id": 71,
-                  "name": "KIRIKKALE"
-              },
-              {
-                  "id": 39,
-                  "name": "KIRKLARELİ"
-              },
-              {
-                  "id": 40,
-                  "name": "KIRŞEHİR"
-              },
-              {
-                  "id": 41,
-                  "name": "KOCAELİ"
-              },
-              {
-                  "id": 42,
-                  "name": "KONYA"
-              },
-              {
-                  "id": 43,
-                  "name": "KÜTAHYA"
-              },
-              {
-                  "id": 44,
-                  "name": "MALATYA"
-              },
-              {
-                  "id": 45,
-                  "name": "MANİSA"
-              },
-              {
-                  "id": 47,
-                  "name": "MARDİN"
-              },
-              {
-                  "id": 33,
-                  "name": "MERSİN"
-              },
-              {
-                  "id": 48,
-                  "name": "MUĞLA"
-              },
-              {
-                  "id": 49,
-                  "name": "MUŞ"
-              },
-              {
-                  "id": 50,
-                  "name": "NEVŞEHİR"
-              },
-              {
-                  "id": 51,
-                  "name": "NİĞDE"
-              },
-              {
-                  "id": 52,
-                  "name": "ORDU"
-              },
-              {
-                  "id": 80,
-                  "name": "OSMANİYE"
-              },
-              {
-                  "id": 53,
-                  "name": "RİZE"
-              },
-              {
-                  "id": 54,
-                  "name": "SAKARYA"
-              },
-              {
-                  "id": 55,
-                  "name": "SAMSUN"
-              },
-              {
-                  "id": 63,
-                  "name": "ŞANLIURFA"
-              },
-              {
-                  "id": 56,
-                  "name": "SİİRT"
-              },
-              {
-                  "id": 57,
-                  "name": "SİNOP"
-              },
-              {
-                  "id": 73,
-                  "name": "ŞIRNAK"
-              },
-              {
-                  "id": 58,
-                  "name": "SİVAS"
-              },
-              {
-                  "id": 59,
-                  "name": "TEKİRDAĞ"
-              },
-              {
-                  "id": 60,
-                  "name": "TOKAT"
-              },
-              {
-                  "id": 61,
-                  "name": "TRABZON"
-              },
-              {
-                  "id": 62,
-                  "name": "TUNCELİ"
-              },
-              {
-                  "id": 64,
-                  "name": "UŞAK"
-              },
-              {
-                  "id": 65,
-                  "name": "VAN"
-              },
-              {
-                  "id": 77,
-                  "name": "YALOVA"
-              },
-              {
-                  "id": 66,
-                  "name": "YOZGAT"
-              },
-              {
-                  "id": 82,
-                  "name": "YURTDIŞI"
-              },
-              {
-                  "id": 67,
-                  "name": "ZONGULDAK"
-              }
-          ],
-          "legal_links": [
-              {
-                  "key": "privacy-policy",
-                  "title": "Gizlilik Politikası"
-              },
-              {
-                  "key": "shipping-policy",
-                  "title": "Kargo Politikası"
-              },
-              {
-                  "key": "refund-policy",
-                  "title": "Para İade Politikası"
-              },
-              {
-                  "key": "terms-and-conditions",
-                  "title": "Hizmet ve Şartlar"
-              },
-              {
-                  "key": "contact",
-                  "title": "İletişim"
-              },
-              {
-                  "key": "legal-notice",
-                  "title": "Yasal Bildirim"
-              }
-          ],
-          "template": "nova"
+    // setProduct(
+    //     {
+    //       "product": {
+    //           "id": 36,
+    //           "slug": "masaj-tabancası",
+    //           "name": "MASAJ TABANCASI",
+    //           "price": 999,
+    //           "oldPrice": 1499,
+    //           "discount": "%33 indirim",
+    //           "rating": 4.5,
+    //           "commentCount": 34,
+    //           "productLink": "/products/masaj-tabancası",
+    //           "sold": 5000,
+    //           "productImg": "http:10.171.220.230/storage/194/2.png",
+    //           "images": [
+    //               "http:10.171.220.230/storage/194/2.png",
+    //               "http:10.171.220.230/storage/195/3.png",
+    //               "http:10.171.220.230/storage/196/4-BAŞLIKLI-MASAJ-ALETİ.png",
+    //               "http:10.171.220.230/storage/197/4.png",
+    //               "http:10.171.220.230/storage/198/5.png",
+    //               "http:10.171.220.230/storage/199/6.png",
+    //               "http:10.171.220.230/storage/200/7.png"
+    //           ],
+    //           "features": [
+    //               "🎯 Yorgun Kaslara Anında Rahatlama!\r\n📌 Şarj Edilebilir Derin Doku Masaj Aleti ile günün tüm stresini geride bırakın.",
+    //               "💪 Profesyonel Masaj Deneyimi, Ev Konforunda!\r\n✔ Derin doku terapisi ile kas ağrılarını hedef alır\r\n✔ Titreşimli başlıklar sayesinde gerginliği hızla azaltır\r\n✔ Spor sonrası toparlanma sürecini destekler\r\n✔ Sessiz motor, güçlü performans\r\n✔ Kompakt, hafif ve taşınabilir\r\n🔋 Uzun ömürlü şarjlı batarya – kablo derdi yok!",
+    //               "🏃‍♂ Sporcular, ofis çalışanları ve yoğun tempolular için ideal!\r\n👜 Çantanıza atın, her yere yanınızda götürün!"
+    //           ],
+    //           "options": [
+    //               {
+    //                   "title": "1 Adet",
+    //                   "quantity": 1,
+    //                   "price": 999,
+    //                   "discount": 0
+    //               },
+    //               {
+    //                   "title": "2 Adet",
+    //                   "quantity": 2,
+    //                   "price": 1998,
+    //                   "discount": 199
+    //               }
+    //           ],
+    //           "settings": "{\"alias\":\"MASAJ TABANCASI\",\"quantity_price\":\"{\\\"1\\\":999,\\\"2\\\":1998}\",\"quantity_discount\":\"{\\\"1\\\":0,\\\"2\\\":199}\",\"cash_payment_cost\":null,\"card_payment_cost\":null,\"supply_cost\":\"305\",\"ad_cost\":\"150\",\"is_campaign\":null,\"cloaker_url\":null,\"og_title\":null,\"unit\":\"Adet\",\"variants\":[]}",
+    //           "content": "<section style=\"font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f9f9f9; color: #333;\">\n\n  <div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\">\n\n    <h2 style=\"font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; text-align: center;\">MİNİ MASAJ ALETİ</h2>\n\n    <img src=\"https://bikolaysiparis.com/storage/306/4-BAŞLIKLI-MASAJ-ALETİ.png\" alt=\"Mini Masaj Aleti\" style=\"max-width:100%; height:auto; display:block; margin:0 auto; border-radius: 8px; margin-bottom: 20px;\">\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Omuz ve Sırt Ağrılarına Son!</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Gün boyu oluşan gerginliği ve ağrıları hafifletmek için ideal çözüm.</p>\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Farklı Başlıklarla Kişiselleştirilmiş Masaj</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Farklı masaj ihtiyaçlarınız için özel olarak tasarlanmış başlıklarla tam size göre.</p>\n\n    <img src=\"https://bikolaysiparis.com/storage/309/6.png\" alt=\"Mini Masaj Aleti Detay\" style=\"max-width:100%; height:auto; display:block; margin:0 auto; border-radius: 8px; margin-bottom: 20px;\">\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Selülitlere Karşı Etkili Yardımcı</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Kan dolaşımını hızlandırarak selülit görünümünü azaltmaya yardımcı olur.</p>\n\n    <h3 style=\"font-size: 18px; color: #3498db; margin-bottom: 10px;\">Kablosuz Tasarım ile Özgürce Kullanım</h3>\n    <p style=\"font-size: 16px; line-height: 1.6; color: #555; margin-bottom: 20px;\">Şarjlı ve kablosuz özelliği sayesinde her yerde rahatlıkla kullanabilirsiniz.</p>\n\n    <p style=\"font-size: 14px; color: #777; text-align: center;\">Her evde olması gereken pratik bir masaj aleti!</p>\n\n  </div>\n\n</section>\n"
+    //       },
+    //       "comments": [
+    //           {
+    //               "id": 548,
+    //               "author": "M** K**",
+    //               "content": "Tarafıma sorunsuz bir şekilde ulaştı. Satıcıya ve emeği geçenlere teşekkür ederim.",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 549,
+    //               "author": "T** S**",
+    //               "content": "5 kişi denedik ve sevdik. farklı başlıklar olması çok iyi. abim öyle sevdi ki bütün gün yap diyebilirim dedi😂",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 550,
+    //               "author": "E** Ö**",
+    //               "content": "Severek kullanıyoruz hatta dayımlarda şipariş verdi her evde bence bir tane bulunmalı sadece kademeli artış filan demişlerdi ama tek tip dozda çalışıyor ama bence yeterli ve rahatlatıyor",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 551,
+    //               "author": "A** N**",
+    //               "content": "Cok guzel oglum icin aldim. Her akşam masaj yapiyo ayaklarina  severek.",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 552,
+    //               "author": "M** Ç**",
+    //               "content": "süper sağlam geldi. küçük sanıyordum boyut olarak ideal büyüklükte. tavsiye ederim.",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 553,
+    //               "author": "T** K**",
+    //               "content": "Alın aldırın saatlerce babanızın omuzlarını ovmak zorunda kalmayın 😂",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 554,
+    //               "author": "M** D**",
+    //               "content": "harika bir şey bu ablam da kullanip almak istedim hemen denedim süper ötesi acayip rahatlatıyor çok teşekkürler",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 555,
+    //               "author": "Safa Y.",
+    //               "content": "Ürün gayet güzel kendi kendime masaj yapıyorum keşke daha fazla sipariş verseydim ailemdem istenler oldu",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 556,
+    //               "author": "B** M**",
+    //               "content": "Başarılı bir ürün",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 557,
+    //               "author": "A** M**",
+    //               "content": "Paketleme güzel ve hızlı geldi",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 558,
+    //               "author": "P** a** ç**",
+    //               "content": "çoook iyi kimse kötü yorum yapmasın ben bu kadar mükemmel biiey görmedim aşırı güçlü",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           },
+    //           {
+    //               "id": 559,
+    //               "author": "İ** B** K**",
+    //               "content": "Çok iyi rahatlatıyor",
+    //               "rating": "5",
+    //               "photo": "",
+    //               "order": 999
+    //           }
+    //       ],
+    //       "pixels": [
+    //           {
+    //               "id": 4,
+    //               "merchant_id": 1,
+    //               "platform": "facebook",
+    //               "pixel_id": "346971234347723",
+    //               "name": "yenibirürün",
+    //               "is_active": 1,
+    //               "created_at": "2025-06-11T19:46:24.000000Z",
+    //               "updated_at": "2025-06-11T19:46:24.000000Z",
+    //               "pivot": {
+    //                   "product_id": 36,
+    //                   "pixel_id": 4
+    //               }
+    //           }
+    //       ],
+    //       "cities": [
+    //           {
+    //               "id": 1,
+    //               "name": "ADANA"
+    //           },
+    //           {
+    //               "id": 2,
+    //               "name": "ADIYAMAN"
+    //           },
+    //           {
+    //               "id": 3,
+    //               "name": "AFYONKARAHİSAR"
+    //           },
+    //           {
+    //               "id": 4,
+    //               "name": "AĞRI"
+    //           },
+    //           {
+    //               "id": 68,
+    //               "name": "AKSARAY"
+    //           },
+    //           {
+    //               "id": 5,
+    //               "name": "AMASYA"
+    //           },
+    //           {
+    //               "id": 6,
+    //               "name": "ANKARA"
+    //           },
+    //           {
+    //               "id": 7,
+    //               "name": "ANTALYA"
+    //           },
+    //           {
+    //               "id": 75,
+    //               "name": "ARDAHAN"
+    //           },
+    //           {
+    //               "id": 8,
+    //               "name": "ARTVİN"
+    //           },
+    //           {
+    //               "id": 9,
+    //               "name": "AYDIN"
+    //           },
+    //           {
+    //               "id": 10,
+    //               "name": "BALIKESİR"
+    //           },
+    //           {
+    //               "id": 74,
+    //               "name": "BARTIN"
+    //           },
+    //           {
+    //               "id": 72,
+    //               "name": "BATMAN"
+    //           },
+    //           {
+    //               "id": 69,
+    //               "name": "BAYBURT"
+    //           },
+    //           {
+    //               "id": 11,
+    //               "name": "BİLECİK"
+    //           },
+    //           {
+    //               "id": 12,
+    //               "name": "BİNGÖL"
+    //           },
+    //           {
+    //               "id": 13,
+    //               "name": "BİTLİS"
+    //           },
+    //           {
+    //               "id": 14,
+    //               "name": "BOLU"
+    //           },
+    //           {
+    //               "id": 15,
+    //               "name": "BURDUR"
+    //           },
+    //           {
+    //               "id": 16,
+    //               "name": "BURSA"
+    //           },
+    //           {
+    //               "id": 17,
+    //               "name": "ÇANAKKALE"
+    //           },
+    //           {
+    //               "id": 18,
+    //               "name": "ÇANKIRI"
+    //           },
+    //           {
+    //               "id": 19,
+    //               "name": "ÇORUM"
+    //           },
+    //           {
+    //               "id": 20,
+    //               "name": "DENİZLİ"
+    //           },
+    //           {
+    //               "id": 21,
+    //               "name": "DİYARBAKIR"
+    //           },
+    //           {
+    //               "id": 81,
+    //               "name": "DÜZCE"
+    //           },
+    //           {
+    //               "id": 22,
+    //               "name": "EDİRNE"
+    //           },
+    //           {
+    //               "id": 23,
+    //               "name": "ELAZIĞ"
+    //           },
+    //           {
+    //               "id": 24,
+    //               "name": "ERZİNCAN"
+    //           },
+    //           {
+    //               "id": 25,
+    //               "name": "ERZURUM"
+    //           },
+    //           {
+    //               "id": 26,
+    //               "name": "ESKİŞEHİR"
+    //           },
+    //           {
+    //               "id": 27,
+    //               "name": "GAZİANTEP"
+    //           },
+    //           {
+    //               "id": 28,
+    //               "name": "GİRESUN"
+    //           },
+    //           {
+    //               "id": 29,
+    //               "name": "GÜMÜŞHANE"
+    //           },
+    //           {
+    //               "id": 30,
+    //               "name": "HAKKARİ"
+    //           },
+    //           {
+    //               "id": 31,
+    //               "name": "HATAY"
+    //           },
+    //           {
+    //               "id": 76,
+    //               "name": "IĞDIR"
+    //           },
+    //           {
+    //               "id": 32,
+    //               "name": "ISPARTA"
+    //           },
+    //           {
+    //               "id": 34,
+    //               "name": "İSTANBUL"
+    //           },
+    //           {
+    //               "id": 35,
+    //               "name": "İZMİR"
+    //           },
+    //           {
+    //               "id": 46,
+    //               "name": "KAHRAMANMARAŞ"
+    //           },
+    //           {
+    //               "id": 78,
+    //               "name": "KARABÜK"
+    //           },
+    //           {
+    //               "id": 70,
+    //               "name": "KARAMAN"
+    //           },
+    //           {
+    //               "id": 36,
+    //               "name": "KARS"
+    //           },
+    //           {
+    //               "id": 37,
+    //               "name": "KASTAMONU"
+    //           },
+    //           {
+    //               "id": 38,
+    //               "name": "KAYSERİ"
+    //           },
+    //           {
+    //               "id": 79,
+    //               "name": "KİLİS"
+    //           },
+    //           {
+    //               "id": 71,
+    //               "name": "KIRIKKALE"
+    //           },
+    //           {
+    //               "id": 39,
+    //               "name": "KIRKLARELİ"
+    //           },
+    //           {
+    //               "id": 40,
+    //               "name": "KIRŞEHİR"
+    //           },
+    //           {
+    //               "id": 41,
+    //               "name": "KOCAELİ"
+    //           },
+    //           {
+    //               "id": 42,
+    //               "name": "KONYA"
+    //           },
+    //           {
+    //               "id": 43,
+    //               "name": "KÜTAHYA"
+    //           },
+    //           {
+    //               "id": 44,
+    //               "name": "MALATYA"
+    //           },
+    //           {
+    //               "id": 45,
+    //               "name": "MANİSA"
+    //           },
+    //           {
+    //               "id": 47,
+    //               "name": "MARDİN"
+    //           },
+    //           {
+    //               "id": 33,
+    //               "name": "MERSİN"
+    //           },
+    //           {
+    //               "id": 48,
+    //               "name": "MUĞLA"
+    //           },
+    //           {
+    //               "id": 49,
+    //               "name": "MUŞ"
+    //           },
+    //           {
+    //               "id": 50,
+    //               "name": "NEVŞEHİR"
+    //           },
+    //           {
+    //               "id": 51,
+    //               "name": "NİĞDE"
+    //           },
+    //           {
+    //               "id": 52,
+    //               "name": "ORDU"
+    //           },
+    //           {
+    //               "id": 80,
+    //               "name": "OSMANİYE"
+    //           },
+    //           {
+    //               "id": 53,
+    //               "name": "RİZE"
+    //           },
+    //           {
+    //               "id": 54,
+    //               "name": "SAKARYA"
+    //           },
+    //           {
+    //               "id": 55,
+    //               "name": "SAMSUN"
+    //           },
+    //           {
+    //               "id": 63,
+    //               "name": "ŞANLIURFA"
+    //           },
+    //           {
+    //               "id": 56,
+    //               "name": "SİİRT"
+    //           },
+    //           {
+    //               "id": 57,
+    //               "name": "SİNOP"
+    //           },
+    //           {
+    //               "id": 73,
+    //               "name": "ŞIRNAK"
+    //           },
+    //           {
+    //               "id": 58,
+    //               "name": "SİVAS"
+    //           },
+    //           {
+    //               "id": 59,
+    //               "name": "TEKİRDAĞ"
+    //           },
+    //           {
+    //               "id": 60,
+    //               "name": "TOKAT"
+    //           },
+    //           {
+    //               "id": 61,
+    //               "name": "TRABZON"
+    //           },
+    //           {
+    //               "id": 62,
+    //               "name": "TUNCELİ"
+    //           },
+    //           {
+    //               "id": 64,
+    //               "name": "UŞAK"
+    //           },
+    //           {
+    //               "id": 65,
+    //               "name": "VAN"
+    //           },
+    //           {
+    //               "id": 77,
+    //               "name": "YALOVA"
+    //           },
+    //           {
+    //               "id": 66,
+    //               "name": "YOZGAT"
+    //           },
+    //           {
+    //               "id": 82,
+    //               "name": "YURTDIŞI"
+    //           },
+    //           {
+    //               "id": 67,
+    //               "name": "ZONGULDAK"
+    //           }
+    //       ],
+    //       "legal_links": [
+    //           {
+    //               "key": "privacy-policy",
+    //               "title": "Gizlilik Politikası"
+    //           },
+    //           {
+    //               "key": "shipping-policy",
+    //               "title": "Kargo Politikası"
+    //           },
+    //           {
+    //               "key": "refund-policy",
+    //               "title": "Para İade Politikası"
+    //           },
+    //           {
+    //               "key": "terms-and-conditions",
+    //               "title": "Hizmet ve Şartlar"
+    //           },
+    //           {
+    //               "key": "contact",
+    //               "title": "İletişim"
+    //           },
+    //           {
+    //               "key": "legal-notice",
+    //               "title": "Yasal Bildirim"
+    //           }
+    //       ],
+    //       "template": "nova"
       
-      }
-    )
-    setLoading(false);
+    //   }
+    // )
+    // setLoading(false);
   }, [slug]);
 
   // Timer state
