@@ -115,16 +115,16 @@ export default function NovaTemplate({ product }: { product: any }) {
             <div className="count-containers">
                 <div className="count-item-wrapper">
                     <div className="count-item">
-                        <div className="d-flex" style={{gap:"18px"}}>
+                        <div className="d-flex align-items-center" style={{gap:"18px"}}>
                             <div className="bar"></div>
-                            <div className="count-and-price">
+                            <div className="count-and-price d-flex justify-content-between w-100">
                                 <div className='d-flex align-items-center'>
-                                    <span>1 Adet</span>
+                                    <span className='count-in-box'>1 Adet</span>
                                 </div>
                                 <div className='d-flex flex-column'>
                                     <p className='price-in-box text-center'>2,599.99TL</p>
                                     <p className='oldPrice-in-box text-center'>3,600.00TL</p>
-                                    
+
                                 </div>
                             </div>
                         </div>

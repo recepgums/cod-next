@@ -1215,5 +1215,13 @@ button.close {
 .price-in-box{
     color: rgb(255, 0, 0);
     text-decoration: line-through;
-    
+
+}
+.count-in-box{
+    color: rgb(0, 0, 0);
+    font-size: 22px;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.6px;
+    line-height: 25px;
 }
