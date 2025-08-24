@@ -184,7 +184,6 @@ export default function NovaTemplate({ product }: { product: any }) {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div className="button-container">
                     <button type='button' className='add-to-cart w-100'>
@@ -226,15 +225,6 @@ export default function NovaTemplate({ product }: { product: any }) {
 
             {/* FAQ Container */}
             <div className="faq-container" style={{ padding: "20px 15px", marginTop: "20px" }}>
-                <h3 style={{
-                    fontSize: "18px",
-                    fontWeight: "700",
-                    color: "#000000",
-                    marginBottom: "20px",
-                    textAlign: "center"
-                }}>
-                    Sıkça Sorulan Sorular
-                </h3>
 
                 <div className="faq-list">
                     <div className="faq-item">
@@ -445,13 +435,6 @@ export default function NovaTemplate({ product }: { product: any }) {
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
         </div>
     );
 }
