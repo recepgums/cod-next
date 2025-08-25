@@ -82,7 +82,7 @@ export default function NovaTemplate({ product }: { product: any }) {
                 displayText: "3 Adet"
             }
         ],
-        cities: [], 
+        cities: product.cities, 
         settings: ""
     }
 
