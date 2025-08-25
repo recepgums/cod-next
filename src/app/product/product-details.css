@@ -1434,6 +1434,7 @@ button.close {
 
 @media (min-width: 992px) {
     .nova-template {
+        margin-top: 20px;
         width: 100%;
         display: grid;
         grid-template-columns: 48% 48%;
@@ -1442,4 +1443,32 @@ button.close {
 
 }
 
-@media (max-width: 992px) {}
+@media (min-width: 1268px) {
+    .nova-template {
+        padding: 0 100px;
+    }
+}
+
+.nova-header {
+    background-color: #FAFAFA;
+    border-bottom: 1px solid rgba(18, 18, 18, 0.08);
+}
+
+.nova-header-nav ul {
+    display: flex;
+    list-style: none;
+    margin:0
+}
+
+.nova-header-nav ul li {
+    margin-right: 20px;
+}
+
+.nova-header-nav ul li a {
+    text-decoration: none;
+    color: #121212e6;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.6px;
+}

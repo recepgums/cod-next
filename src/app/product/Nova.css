@@ -1,3 +1,63 @@
+.nova-header {
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.nova-header-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 24px;
+}
+
+.nova-header-nav li {
+    margin: 0;
+}
+
+.nova-header-nav a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 0;
+    transition: color 0.2s ease;
+}
+
+.nova-header-nav a:hover {
+    color: #007bff;
+}
+
+.mobile-menu {
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu.open {
+    left: 0 !important;
+}
+
+@media (max-width: 991.98px) {
+    .nova-header-nav ul {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .nova-header-nav a {
+        font-size: 16px;
+        padding: 12px 16px;
+        display: block;
+        border-bottom: 1px solid #f0f0f0;
+    }
+}
+
+.mobile-menu-overlay {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .product-title{
     line-height: 26px;
 }
