@@ -187,7 +187,7 @@ export default function NovaTemplate({ product }: { product: any }) {
                             <span className="oldPrice">3,600.00TL</span>
                         </div>
                         <div className=" text-white discount-container">
-                            <span className='discount'> 28% İNDİRİM</span>
+                            <span className='discount d-md-none'> 28% İNDİRİM</span>
                         </div>
                     </div>
 
