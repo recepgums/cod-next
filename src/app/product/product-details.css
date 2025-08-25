@@ -1214,7 +1214,8 @@ button.close {
     height: 20px;
     width: 20px;
 }
-.count-item-wrapper.active .bar{
+
+.count-item-wrapper.active .bar {
     background: #fff;
     border: 5px solid #007bff;
     box-shadow: 0 0 0 1px #007bff !important;
@@ -1269,6 +1270,7 @@ button.close {
     width: 100%;
     box-shadow: inset 0 0 0 2px #007BFF7A !important;
 }
+
 .count-item-wrapper.active {
     background-color: #fff;
     border: 1px solid #007bff;
@@ -1331,32 +1333,113 @@ button.close {
     width: 17px;
 }
 
-.button-container .buy span{
+.button-container .buy span {
     line-height: 1.2;
     letter-spacing: 0.6px;
     font-weight: 700;
 }
-.campaign-icon{
-    color:rgba(60, 150, 238, 0.7);
-    margin-right:4px;
+
+.campaign-icon {
+    color: rgba(60, 150, 238, 0.7);
+    margin-right: 4px;
 }
 
-.campaign-container{
+.campaign-container {
     display: flex;
     justify-content: center;
     gap: 10px;
 }
-.rate-text span{
+
+.rate-text span {
     font-size: 13px;
     font-weight: 400;
     font-family: 'Poppins', sans-serif;
 }
-.rate-text strong{
+
+.rate-text strong {
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
     font-size: 13px;
 }
 
-.nova-template .splide__arrow{
+.nova-template .splide__arrow {
     background: transparent;
 }
+
+.faq-container {
+    padding: 20px 15px;
+    margin-top: 20px;
+}
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 8px;
+    padding-left: 3px;
+    padding-right: 24px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-top: .8px solid rgba(119, 70, 41, 0.35);
+}
+
+.faq-question span {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #000000;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.faq-question svg {
+    transition: transform 0.3s ease;
+    color: #8B4513;
+}
+
+.faq-question svg.open {
+    transform: rotate(180deg);
+}
+
+.faq-question svg.closed {
+    transform: rotate(0deg);
+}
+
+.faq-answer {
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+    background-color: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.faq-answer.open {
+    max-height: 200px;
+    padding: 20px;
+}
+
+.faq-answer.closed {
+    max-height: 0;
+    padding: 0 20px;
+}
+
+.faq-answer p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555555;
+}
+
+@media (min-width: 992px) {
+    .nova-template {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 48% 48%;
+        gap: 4%;
+    }
+
+}
+
+@media (max-width: 992px) {}

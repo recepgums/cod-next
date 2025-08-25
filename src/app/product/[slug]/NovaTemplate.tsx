@@ -1,7 +1,7 @@
 'use client';
 
 import '../Nova.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
@@ -10,22 +10,41 @@ import NovaSlider from './component/NovaSlider';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
+interface ProductOption {
+    quantity: number;
+    price: number;
+    original?: number;
+    discount: number;
+    badge: string;
+    isCampaign?: boolean;
+    unit?: string;
+    displayText?: string;
+    finalDiscount?: number;
+}
+
 export default function NovaTemplate({ product }: { product: any }) {
     const [showModal, setShowModal] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<any>(null);
+    const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [selectedCount, setSelectedCount] = useState<number>(1);
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
+    
+    const selectOption = (option: ProductOption) => {
+        setSelectedOption(option);
+    };
+    
     const calculateRating = (productNameLength: number) => {
         let kalan = productNameLength % 5;
         let percentage = 100 - ((kalan + 1) * 2);
         return percentage;
     }
 
-    const dummyProduct = {
+    const dummyOrder = {
+        id: 1,
         name: "Rexing Link Kablosuz CarPlay Adaptör",
+        price: 2599.99,
         images: [
             "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
             "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
@@ -36,20 +55,53 @@ export default function NovaTemplate({ product }: { product: any }) {
             "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
             "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
             "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296"
-        ]
+        ],
+        options: [
+            {
+                quantity: 1,
+                price: 2599.99,
+                original: 3600.00,
+                discount: 28,
+                badge: "1 Adet",
+                displayText: "1 Adet"
+            },
+            {
+                quantity: 2,
+                price: 4939.98,
+                original: 7200.00,
+                discount: 33,
+                badge: "2 Adet - EKSTRA %5 İNDİRİM!",
+                displayText: "2 Adet"
+            },
+            {
+                quantity: 3,
+                price: 7019.97,
+                original: 10800.00,
+                discount: 35,
+                badge: "3 Adet - EKSTRA %10 İNDİRİM!",
+                displayText: "3 Adet"
+            }
+        ],
+        cities: [], 
+        settings: ""
     }
 
+    useEffect(() => {
+        if (dummyOrder.options && dummyOrder.options.length > 0) {
+            setSelectedOption(dummyOrder.options[0]);
+        }
+    }, []);
 
     return (
-        <div className="nova-template col-lg-6" >
+        <div className="nova-template">
+            <div className="nova-slider-wrapper">
+                <NovaSlider
+                    images={dummyOrder.images}
+                    productName={dummyOrder.name}
+                />
+            </div>
 
-
-            <NovaSlider
-                images={dummyProduct.images}
-                productName={dummyProduct.name}
-            />
-
-            <div style={{ padding: "2px 20px 0" }}>
+            <div style={{ padding: "2px 20px 0"}}>
                 <div>
                     <div className="d-flex" style={{ lineHeight: "1.0" }}>
                         <div>
@@ -128,7 +180,10 @@ export default function NovaTemplate({ product }: { product: any }) {
 
                 <div className="count-containers">
                     <div className={`count-item-wrapper ${selectedCount === 1 ? "active" : ""}`}
-                        onClick={() => setSelectedCount(1)}
+                        onClick={() => {
+                            setSelectedCount(1);
+                            setSelectedOption(dummyOrder.options[0]);
+                        }}
                     >
                         <div className="count-item">
                             <div className="d-flex align-items-center" style={{ gap: "18px" }}>
@@ -147,7 +202,10 @@ export default function NovaTemplate({ product }: { product: any }) {
                         </div>
                     </div>
                     <div className={`count-item-wrapper ${selectedCount === 2 ? "active" : ""}`}
-                        onClick={() => setSelectedCount(2)}
+                        onClick={() => {
+                            setSelectedCount(2);
+                            setSelectedOption(dummyOrder.options[1]);
+                        }}
                     >
                         <div className="count-item">
                             <div className="d-flex align-items-center" style={{ gap: "18px" }}>
@@ -166,7 +224,10 @@ export default function NovaTemplate({ product }: { product: any }) {
                         </div>
                     </div>
                     <div className={`count-item-wrapper ${selectedCount === 3 ? "active" : ""}`}
-                        onClick={() => setSelectedCount(3)}
+                        onClick={() => {
+                            setSelectedCount(3);
+                            setSelectedOption(dummyOrder.options[2]);
+                        }}
                     >
                         <div className="count-item">
                             <div className="d-flex align-items-center" style={{ gap: "18px" }}>
@@ -186,12 +247,12 @@ export default function NovaTemplate({ product }: { product: any }) {
                     </div>
                 </div>
                 <div className="button-container">
-                    <button type='button' className='add-to-cart w-100'>
+                    <button type='button' className='add-to-cart w-100' onClick={openModal}>
                         <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" data-id="508817629909549416">
                             <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M58,76a58,58,0,0,1,116,0,6,6,0,0,1-12,0,46,46,0,0,0-92,0,6,6,0,0,1-12,0Zm138,46a25.87,25.87,0,0,0-14.59,4.49A26,26,0,0,0,142,110.1V76a26,26,0,0,0-52,0v87l-7.53-12.1a26,26,0,0,0-45,26.13l29.32,50A6,6,0,0,0,77.16,221L47.87,171a14,14,0,0,1,24.25-14,1,1,0,0,0,.1.17l18.68,30A6,6,0,0,0,102,184V76a14,14,0,0,1,28,0v68a6,6,0,0,0,12,0V132a14,14,0,0,1,28,0v20a6,6,0,0,0,12,0v-4a14,14,0,0,1,28,0v36c0,22.13-7.3,37.18-7.37,37.32a6,6,0,0,0,2.69,8A5.83,5.83,0,0,0,208,230a6,6,0,0,0,5.38-3.32c.35-.7,8.63-17.55,8.63-42.68V148A26,26,0,0,0,196,122Z"></path></svg>
                         <span>Sepete Ekle</span>
                     </button>
-                    <button type="button" className='buy w-100'>
+                    <button type="button" className='buy w-100' onClick={openModal}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-bag-fill" viewBox="0 0 16 16">
                             <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4z" />
                         </svg>
@@ -220,221 +281,122 @@ export default function NovaTemplate({ product }: { product: any }) {
                         </span>
                     </div>
                 </div>
-            </div>
+                <div className="faq-container">
 
-
-            {/* FAQ Container */}
-            <div className="faq-container" style={{ padding: "20px 15px", marginTop: "20px" }}>
-
-                <div className="faq-list">
-                    <div className="faq-item">
-                        <div
-                            className="faq-question"
-                            onClick={() => setOpenFaq(openFaq === 1 ? null : 1)}
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: "15px 20px",
-                                backgroundColor: "#ffffff",
-                                borderRadius: "12px",
-                                border: "1px solid #e0e0e0",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            <span style={{
-                                fontSize: "16px",
-                                fontWeight: "600",
-                                color: "#000000"
-                            }}>
-                                Kurulumunu Nasıl Yaparım?
-                            </span>
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                style={{
-                                    transform: openFaq === 1 ? "rotate(180deg)" : "rotate(0deg)",
-                                    transition: "transform 0.3s ease",
-                                    color: "#8B4513"
-                                }}
+                    <div className="faq-list">
+                        <div className="faq-item">
+                            <div
+                                className="faq-question"
+                                onClick={() => setOpenFaq(openFaq === 1 ? null : 1)}
                             >
-                                <path
-                                    d="M6 9L12 15L18 9"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
-                        </div>
-                        <div
-                            className="faq-answer"
-                            style={{
-                                maxHeight: openFaq === 1 ? "200px" : "0",
-                                overflow: "hidden",
-                                transition: "max-height 0.5s ease-in-out, padding 0.5s ease-in-out",
-                                padding: openFaq === 1 ? "20px" : "0 20px",
-                                backgroundColor: "#f8f9fa",
-                                borderRadius: "0 0 12px 12px",
-                                marginTop: "-10px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            <p style={{
-                                margin: 0,
-                                fontSize: "14px",
-                                lineHeight: "1.6",
-                                color: "#555555"
-                            }}>
-                                Rexing Link adaptörünü kurmak çok kolaydır. Sadece adaptörü arabanızın USB portuna takın ve telefonunuzla Bluetooth bağlantısını kurun. Otomatik olarak CarPlay özelliği aktif hale gelecektir.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="faq-item">
-                        <div
-                            className="faq-question"
-                            onClick={() => setOpenFaq(openFaq === 2 ? null : 2)}
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: "15px 20px",
-                                backgroundColor: "#ffffff",
-                                borderRadius: "12px",
-                                border: "1px solid #e0e0e0",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            <span style={{
-                                fontSize: "16px",
-                                fontWeight: "600",
-                                color: "#000000"
-                            }}>
-                                Tüm Arabalarla Uyumlu Mu?
-                            </span>
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                style={{
-                                    transform: openFaq === 2 ? "rotate(180deg)" : "rotate(0deg)",
-                                    transition: "transform 0.3s ease",
-                                    color: "#8B4513"
-                                }}
+                                <span>
+                                    Kurulumunu Nasıl Yaparım?
+                                </span>
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className={openFaq === 1 ? "open" : "closed"}
+                                >
+                                    <path
+                                        d="M6 9L12 15L18 9"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                            <div
+                                className={`faq-answer ${openFaq === 1 ? "open" : "closed"}`}
                             >
-                                <path
-                                    d="M6 9L12 15L18 9"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
+                                <p>
+                                    Rexing Link adaptörünü kurmak çok kolaydır. Sadece adaptörü arabanızın USB portuna takın ve telefonunuzla Bluetooth bağlantısını kurun. Otomatik olarak CarPlay özelliği aktif hale gelecektir.
+                                </p>
+                            </div>
                         </div>
-                        <div
-                            className="faq-answer"
-                            style={{
-                                maxHeight: openFaq === 2 ? "200px" : "0",
-                                overflow: "hidden",
-                                transition: "max-height 0.5s ease-in-out, padding 0.5s ease-in-out",
-                                padding: openFaq === 2 ? "20px" : "0 20px",
-                                backgroundColor: "#f8f9fa",
-                                borderRadius: "0 0 12px 12px",
-                                marginTop: "-10px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            <p style={{
-                                margin: 0,
-                                fontSize: "14px",
-                                lineHeight: "1.6",
-                                color: "#555555"
-                            }}>
-                                Evet! Rexing Link adaptörü USB portu olan tüm araçlarla uyumludur. 2010 yılından sonra üretilen çoğu araçta sorunsuz çalışır. Android ve iOS telefonlarla da tam uyumludur.
-                            </p>
-                        </div>
-                    </div>
 
-                    <div className="faq-item">
-                        <div
-                            className="faq-question"
-                            onClick={() => setOpenFaq(openFaq === 3 ? null : 3)}
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: "15px 20px",
-                                backgroundColor: "#ffffff",
-                                borderRadius: "12px",
-                                border: "1px solid #e0e0e0",
-                                cursor: "pointer",
-                                transition: "all 0.3s ease",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            <span style={{
-                                fontSize: "16px",
-                                fontWeight: "600",
-                                color: "#000000"
-                            }}>
-                                Video İzleme Özelliği Var Mı?
-                            </span>
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                style={{
-                                    transform: openFaq === 3 ? "rotate(180deg)" : "rotate(0deg)",
-                                    transition: "transform 0.3s ease",
-                                    color: "#8B4513"
-                                }}
+                        <div className="faq-item">
+                            <div
+                                className="faq-question"
+                                onClick={() => setOpenFaq(openFaq === 2 ? null : 2)}
                             >
-                                <path
-                                    d="M6 9L12 15L18 9"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
+                                <span>
+                                    Tüm Arabalarla Uyumlu Mu?
+                                </span>
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className={openFaq === 2 ? "open" : "closed"}
+                                >
+                                    <path
+                                        d="M6 9L12 15L18 9"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                            <div
+                                className={`faq-answer ${openFaq === 2 ? "open" : "closed"}`}
+                            >
+                                <p>
+                                    Evet! Rexing Link adaptörü USB portu olan tüm araçlarla uyumludur. 2010 yılından sonra üretilen çoğu araçta sorunsuz çalışır. Android ve iOS telefonlarla da tam uyumludur.
+                                </p>
+                            </div>
                         </div>
-                        <div
-                            className="faq-answer"
-                            style={{
-                                maxHeight: openFaq === 3 ? "200px" : "0",
-                                overflow: "hidden",
-                                transition: "max-height 0.5s ease-in-out, padding 0.5s ease-in-out",
-                                padding: openFaq === 3 ? "20px" : "0 20px",
-                                backgroundColor: "#f8f9fa",
-                                borderRadius: "0 0 12px 12px",
-                                marginTop: "-10px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            <p style={{
-                                margin: 0,
-                                fontSize: "14px",
-                                lineHeight: "1.6",
-                                color: "#555555"
-                            }}>
-                                Evet! Netflix, YouTube ve diğer video platformlarında içerik izleyebilirsiniz. Yüksek çözünürlüklü video desteği ile araç içinde premium video deneyimi yaşayın.
-                            </p>
+
+                        <div className="faq-item">
+                            <div
+                                className="faq-question"
+                                onClick={() => setOpenFaq(openFaq === 3 ? null : 3)}
+                            >
+                                <span>
+                                    Video İzleme Özelliği Var Mı?
+                                </span>
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className={openFaq === 3 ? "open" : "closed"}
+                                >
+                                    <path
+                                        d="M6 9L12 15L18 9"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                            <div
+                                className={`faq-answer ${openFaq === 3 ? "open" : "closed"}`}
+                            >
+                                <p>
+                                    Evet! Netflix, YouTube ve diğer video platformlarında içerik izleyebilirsiniz. Yüksek çözünürlüklü video desteği ile araç içinde premium video deneyimi yaşayın.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <OrderModal
+                showModal={showModal}
+                onClose={closeModal}
+                product={dummyOrder}
+                selectedOption={selectedOption}
+                onOptionSelect={selectOption}
+            />
+
         </div>
     );
 }

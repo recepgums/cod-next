@@ -111,7 +111,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           comments: Array.isArray(commentsData) ? commentsData : [],
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
-          template: templateData,
+          // template: templateData,
+          template: "nova",
           settings: productData.settings // Include settings for variants
         };
 
