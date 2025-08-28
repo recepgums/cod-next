@@ -986,9 +986,7 @@ strong {
 }
 
 .modal-fullscreen {
-    width: 500px;
     max-width: 500px;
-    min-width: 500px;
     margin: 2rem auto;
     border-radius: 18px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
@@ -1478,3 +1476,9 @@ button.close {
     font-family: 'Poppins', sans-serif;
     letter-spacing: 0.6px;
 }
+/* .product-title strong{
+    font-size: 24px;
+}
+.product-title span{
+    font-size: 24px !important;
+} */
