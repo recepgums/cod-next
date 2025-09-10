@@ -208,7 +208,7 @@ export default function OrderModal({
         district_id: formData.get('district_id'),
         neighborhood_id: formData.get('neighborhood_id'),
         address: formData.get('address'),
-        paymentType: formData.get('paymentType'),
+        amount_type: formData.get('amount_type'),
         quantity: selectedOption?.quantity || 1,
         total_price: selectedOption?.price || product.price,
         product_id: product.id,
@@ -391,7 +391,7 @@ export default function OrderModal({
                           type="radio" 
                           className="form-check-input" 
                           value="nakit" 
-                          name="paymentType" 
+                          name="amount_type" 
                           data-additional-cost={getPaymentCost("nakit")} 
                           checked={selectedPaymentType === "nakit"}
                           onChange={() => handlePaymentTypeChange("nakit")}
@@ -406,7 +406,7 @@ export default function OrderModal({
                           type="radio" 
                           className="form-check-input" 
                           value="kart" 
-                          name="paymentType" 
+                          name="amount_type" 
                           data-additional-cost={getPaymentCost("kart")}
                           checked={selectedPaymentType === "kart"}
                           onChange={() => handlePaymentTypeChange("kart")}
