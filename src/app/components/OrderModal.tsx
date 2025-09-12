@@ -136,6 +136,16 @@ export default function OrderModal({
 
   const sendPurchaseEvent = (orderData: any) => {
     try {
+
+      const purchaseEvent = localStorage.getItem('purchase_event');
+      debugger
+      if (purchaseEvent) {
+        const purchaseEventData = JSON.parse(purchaseEvent);
+        if (purchaseEventData.expires && new Date(purchaseEventData.expires) > new Date()) {
+          return;
+        }
+      }
+
       // Facebook Pixel Purchase Event
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'Purchase', {
@@ -151,6 +161,15 @@ export default function OrderModal({
       // TikTok Pixel Purchase Event
       if (typeof window !== 'undefined' && (window as any).ttq) {
         (window as any).ttq.track('CompletePayment', {
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_id: product.id.toString(),
+          content_type: 'product',
+          content_name: product.name,
+          quantity: selectedOption?.quantity || 1
+        });
+
+        (window as any).ttq.track('PlaceAnOrder', {
           value: selectedOption?.price || product.price,
           currency: 'TRY',
           content_id: product.id.toString(),
@@ -176,6 +195,10 @@ export default function OrderModal({
           content_name: product.name
         }
       });
+      localStorage.setItem('purchase_event', JSON.stringify({
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        event: 'Purchase'
+      }));
     } catch (error) {
       console.error('Error sending purchase events:', error);
     }
