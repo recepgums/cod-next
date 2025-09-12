@@ -188,7 +188,8 @@ const AnalyticsScripts: React.FC = () => {
         }
 
         // Make AJAX request
-        fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/order/14458/add-to-cart`, {
+        let orderId = window.location.pathname.split('/')[2];
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/add-to-cart`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

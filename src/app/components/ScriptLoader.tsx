@@ -2,6 +2,88 @@
 
 import { useEffect } from 'react';
 
+// PixelScripts fonksiyonunu ScriptLoader içine taşıyalım
+const loadPixelScripts = (pixels: any[], product: any) => {
+  if (!pixels || !Array.isArray(pixels)) return;
+  
+  const facebookPixels = pixels.filter(p => p.platform === 'facebook');
+  const tiktokPixels = pixels.filter(p => p.platform === 'tiktok');
+
+  // Facebook Pixels
+  facebookPixels.forEach((pixel, idx) => {
+    const fbScript = document.createElement('script');
+    fbScript.innerHTML = `
+      !function(f,b,e,v,n,t,s) {
+        if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '${pixel.pixel_id}');
+        fbq('track', 'PageView');
+    `;
+    document.head.appendChild(fbScript);
+
+    // Noscript tag
+    const noscript = document.createElement('noscript');
+    const img = document.createElement('img');
+    img.height = '1';
+    img.width = '1';
+    img.style.display = 'none';
+    img.src = `https://www.facebook.com/tr?id=${pixel.pixel_id}&ev=PageView&noscript=1`;
+    noscript.appendChild(img);
+    document.head.appendChild(noscript);
+  });
+
+  // TikTok Pixels - Tek script ile tüm pixel'leri yükle
+  if (tiktokPixels.length > 0) {
+    const tiktokScript = document.createElement('script');
+    tiktokScript.innerHTML = `
+      console.log('🚀 Loading ${tiktokPixels.length} TikTok Pixels...');
+      
+      !function (w, d, t) {
+        w.TiktokAnalyticsObject = t;
+        var ttq = w[t] = w[t] || [];
+        ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie"];
+        ttq.setAndDefer = function(t, e) {
+          t[e] = function() {
+            t.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+          }
+        };
+        for(var i = 0; i < ttq.methods.length; i++) {
+          ttq.setAndDefer(ttq, ttq.methods[i]);
+        }
+        
+        // Tüm TikTok pixel'lerini yükle
+        ${tiktokPixels.map((pixel, idx) => `
+          console.log('📱 Loading TikTok Pixel ${idx + 1}: ${pixel.pixel_id}');
+          var s${idx} = d.createElement('script');
+          s${idx}.src = 'https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=${pixel.pixel_id}';
+          s${idx}.async = true;
+          s${idx}.onload = function() {
+            console.log('✅ TikTok Pixel ${idx + 1} loaded: ${pixel.pixel_id}');
+            ttq.page();
+            ttq.track('ViewContent', {
+              content_id: '${product.id}',
+              content_type: 'product',
+              content_name: '${product.name.replace(/'/g, "\\'")}',
+              currency: 'TRY',
+              value: ${product.price}
+            });
+          };
+          s${idx}.onerror = function() {
+            console.error('❌ TikTok Pixel ${idx + 1} failed: ${pixel.pixel_id}');
+          };
+          d.head.appendChild(s${idx});
+        `).join('')}
+      }(window, document, 'ttq');
+    `;
+    document.head.appendChild(tiktokScript);
+  }
+};
+
 // Global CSS and JS imports
 const addGlobalScripts = () => {
   // Google Analytics
@@ -26,74 +108,6 @@ const addGlobalScripts = () => {
   `;
   document.head.appendChild(tiktokScript);
 
-  // Facebook Pixel 1
-  const fbPixel1 = document.createElement('script');
-  fbPixel1.innerHTML = `
-    !function(f,b,e,v,n,t,s) {
-      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1512181132850860');
-      fbq('track', 'PageView');
-  `;
-  document.head.appendChild(fbPixel1);
-
-  // Facebook Pixel 2
-  const fbPixel2 = document.createElement('script');
-  fbPixel2.innerHTML = `
-    !function(f,b,e,v,n,t,s) {
-      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1245776343632366');
-      fbq('track', 'PageView');
-  `;
-  document.head.appendChild(fbPixel2);
-
-  // TikTok Pixel
-  const tiktokPixel = document.createElement('script');
-  tiktokPixel.innerHTML = `
-    !function (w, d, t) {
-      w.TiktokAnalyticsObject = t;
-      var ttq = w[t] = w[t] || [];
-      ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias", "group", "enableCookie", "disableCookie"];
-      ttq.setAndDefer = function(t, e) {
-        t[e] = function() {
-          t.push([e].concat(Array.prototype.slice.call(arguments, 0)))
-        }
-      };
-      for(var i = 0; i < ttq.methods.length; i++) {
-        ttq.setAndDefer(ttq, ttq.methods[i]);
-      }
-
-      var s = d.createElement('script');
-      s.src = 'https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=COCFFQBC77U3RPP2KRIG';
-      s.async = true;
-
-      s.onload = function() {
-        ttq.page();
-        ttq.track('ViewContent', {
-          content_id: '1',
-          content_type: 'product',
-          content_name: 'MagnoGlow Lamba',
-          currency: 'TRY',
-          value: 499.00
-        });
-      };
-
-      d.head.appendChild(s);
-    }(window, document, 'ttq');
-  `;
-  document.head.appendChild(tiktokPixel);
-
   // jQuery and other libraries
   const jquery = document.createElement('script');
   jquery.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js';
@@ -114,7 +128,7 @@ const addGlobalScripts = () => {
   // Bootstrap JS (version 5 - no jQuery required)
   const bootstrapJS = document.createElement('script');
   bootstrapJS.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js';
-  bootstrapJS.integrity = 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz';
+  // Integrity hash'i kaldırdık
   bootstrapJS.crossOrigin = 'anonymous';
   bootstrapJS.defer = true;
   document.head.appendChild(bootstrapJS);
@@ -153,4 +167,7 @@ export default function ScriptLoader() {
   }, []);
 
   return null; // This component doesn't render anything
-} 
+}
+
+// PixelScripts fonksiyonunu export edelim
+export { loadPixelScripts }; 

@@ -50,8 +50,59 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
 
+
+  // Add to Cart eventi gönderme fonksiyonu
+  const sendAddToCartEvent = () => {
+    try {
+      // Facebook Pixel AddToCart Event
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'AddToCart', {
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_ids: [product.id.toString()],
+          content_type: 'product',
+          content_name: product.name,
+          num_items: selectedOption?.quantity || 1
+        });
+      }
+
+      // TikTok Pixel AddToCart Event
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        (window as any).ttq.track('AddToCart', {
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_id: product.id.toString(),
+          content_type: 'product',
+          content_name: product.name,
+          quantity: selectedOption?.quantity || 1
+        });
+      }
+
+      console.log('AddToCart events sent:', {
+        facebook: {
+          event: 'AddToCart',
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_ids: [product.id.toString()],
+          content_name: product.name
+        },
+        tiktok: {
+          event: 'AddToCart',
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_id: product.id.toString(),
+          content_name: product.name
+        }
+      });
+    } catch (error) {
+      console.error('Error sending AddToCart events:', error);
+    }
+  };
+
+
   const openModal = () => {
     setShowModal(true);
+    sendAddToCartEvent();
   };
 
   const closeModal = () => {

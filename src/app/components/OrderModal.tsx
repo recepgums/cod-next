@@ -134,6 +134,54 @@ export default function OrderModal({
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
   };
 
+  const sendPurchaseEvent = (orderData: any) => {
+    try {
+      // Facebook Pixel Purchase Event
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Purchase', {
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_ids: [product.id.toString()],
+          content_type: 'product',
+          content_name: product.name,
+          num_items: selectedOption?.quantity || 1
+        });
+      }
+
+      // TikTok Pixel Purchase Event
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        (window as any).ttq.track('CompletePayment', {
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_id: product.id.toString(),
+          content_type: 'product',
+          content_name: product.name,
+          quantity: selectedOption?.quantity || 1
+        });
+      }
+
+      console.log('Purchase events sent:', {
+        facebook: {
+          event: 'Purchase',
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_ids: [product.id.toString()],
+          content_name: product.name
+        },
+        tiktok: {
+          event: 'CompletePayment',
+          value: selectedOption?.price || product.price,
+          currency: 'TRY',
+          content_id: product.id.toString(),
+          content_name: product.name
+        }
+      });
+    } catch (error) {
+      console.error('Error sending purchase events:', error);
+    }
+  };
+
+
   // Load variants from product settings
   useEffect(() => {
     if (product && product.settings) {
@@ -206,6 +254,7 @@ export default function OrderModal({
 
       if (response.data.success) {
         // Redirect to promotion page
+        sendPurchaseEvent(response.data);
         window.location.href = `/order/${response.data.order_id}/promosyon`;
       } else {
         setSubmitError(response.data.message || "Sipariş gönderilirken bir hata oluştu.");
