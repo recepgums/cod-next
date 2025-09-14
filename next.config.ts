@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       'main.vakuumcar.com.tr',
       '192.168.137.1:8000',
       'codpanel.com.tr'
+      
     ],
   },
 };
