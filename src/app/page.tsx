@@ -1,36 +1,48 @@
-'use client';
-
 import Header from './components/Header';
 import ProductGrid from './components/ProductGrid';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-import React, { useEffect, useState } from 'react';
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`);
-        const data = await res.json();
-        const productsArray = data.products || [];
-        const mapped = productsArray.map((item: any) => ({
-          name: item.name,
-          imgSrc: item.productImg,
-          productLink: item.productLink || '',
-          slug: item.slug || '',
-          rating: item.rating || null,
-          priceCurrent: item.priceCurrent,
-          priceOriginal: item.priceOriginal || null,
-        }));
-        setProducts(mapped);
-      } catch (e) {
-        setProducts([]);
+// Server-side data fetching
+async function getProducts() {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://codpanel.com.tr/api';
+    console.log('Fetching from:', `${apiUrl}/homepage`);
+    
+    const res = await fetch(`${apiUrl}/homepage`, {
+      cache: 'no-store', // Her istekte fresh data almak için
+      headers: {
+        'User-Agent': 'Next.js Server',
       }
+    });
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-    fetchProducts();
-  }, []);
+    
+    const data = await res.json();
+    console.log('API Response:', data);
+    
+    const productsArray = data.products || [];
+    return productsArray.map((item: any) => ({
+      name: item.name,
+      imgSrc: (item.images && item.images.length > 0 && item.images[0].thumbnail) 
+        ? item.images[0].thumbnail 
+        : item.productImg || '/images/1.webp', // fallback image
+      productLink: item.productLink || '',
+      slug: item.slug || '',
+      rating: item.rating || null,
+      priceCurrent: item.priceCurrent,
+      priceOriginal: item.priceOriginal || null,
+    }));
+  } catch (e) {
+    console.error('Error fetching products:', e);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const products = await getProducts();
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
