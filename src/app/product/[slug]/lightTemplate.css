@@ -1,0 +1,352 @@
+.light-template {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.light-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.light-nav {
+  display: flex;
+  gap: 30px;
+}
+
+.light-nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.light-logo {
+  font-size: 32px;
+  font-weight: bold;
+  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light-user-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.light-user-actions svg {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.light-main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-top: 40px;
+}
+
+.light-product-info {
+  padding: 20px 0;
+}
+
+.light-promo-banner {
+  border: 1.6px solid rgb(190, 41, 236);
+  color: rgb(190, 41, 236);
+  font-family: "Harmonia Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 27px;
+  text-align: center;
+  padding: 0 7.5px;
+  box-sizing: border-box;
+}
+
+.light-shipping-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0;
+    margin: 1.5rem 0;
+    column-gap: 11px;
+
+}
+
+.light-shipping-badge {
+    background: #CEFFDE;
+    color: #333;
+    font-size: 11px;
+    padding: 3px 5px;
+    border-radius: 8px;
+    margin: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    white-space: normal;
+    min-width: 100px;
+    text-align: center;
+}
+
+.rating-container {
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    padding: 0px;
+    margin-top: 0px;
+    margin-bottom: -15px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.star {
+    width: 12px;
+    height: 12px;
+    fill: #ED8A19;
+}
+
+.light-rating-text {
+  color: #666;
+  font-size: 14px;
+}
+
+.light-product-title {
+    font-family: "poppins", sans-serif;
+  font-size: 32.5px;
+  line-height: 40px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  margin-top: 14px;
+}
+.message-container {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+.message-list {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    animation: messageSlide 8s linear infinite;
+}
+
+@keyframes messageSlide {
+    0%, 20% {
+        top: 0;
+    }
+    25%, 45% {
+        top: -30px;
+    }
+    50%, 70% {
+        top: -60px;
+    }
+    75%, 95% {
+        top: -90px;
+    }
+    100% {
+        top: -90px;
+    }
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    width: 100%;
+    justify-content: flex-start;
+    white-space: nowrap;
+}
+
+.price-large {
+    font-size: 2rem;
+    line-height: 30px;
+    letter-spacing: .13rem;
+}
+
+.light-product-subtitle {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.light-pricing {
+  margin-bottom: 30px;
+}
+
+.light-current-price {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-right: 15px;
+}
+
+.light-old-price {
+  font-size: 20px;
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 15px;
+}
+
+.light-discount-badge {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.light-features {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 40px;
+}
+
+.light-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #333;
+}
+
+.light-features li::before {
+  content: '✨';
+  font-size: 18px;
+}
+
+.light-quantity-section {
+  margin-bottom: 40px;
+}
+
+.light-quantity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.light-quantity-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.light-quantity-subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+.light-quantity-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.light-quantity-option {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.light-quantity-option:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+.light-quantity-option.selected {
+  border-color: #8b5cf6;
+  background: #f8fafc;
+}
+
+.light-option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.light-option-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.light-option-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.light-option-old-price {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
+.light-option-subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+.light-option-badge {
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .light-main-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .light-product-title {
+    font-size: 32px;
+  }
+  
+  .light-current-price {
+    font-size: 28px;
+  }
+  
+  .light-nav {
+    display: none;
+  }
+}
