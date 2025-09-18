@@ -1,0 +1,951 @@
+<style>
+    .emoji-benefits-container,
+    .emoji-benefits-container p {
+        font-size: 1.4rem;
+        line-height: 1;
+    }
+
+
+    .quantity-breaks-container {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .quantity-breaks__title {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 1.4rem;
+        line-height: 1;
+        column-gap: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .quantity-breaks__title span:nth-of-type(1),
+    .quantity-breaks__title span:nth-of-type(3) {
+        display: block;
+        height: 2px;
+        flex-grow: 1;
+        background: #be29ec;
+    }
+
+    .quantity-break {
+        padding: 1.75rem 1.75rem 1.75rem 4rem;
+        margin-bottom: .95rem;
+        cursor: pointer;
+        border-radius: 1rem;
+        background: rgba(190, 41, 236, 0.1);
+        border: solid 2px rgba(190, 41, 236, .3);
+        position: relative;
+    }
+
+    .quantity-breaks-container input:checked+.quantity-break:before {
+        border: solid .2rem rgb(255, 255, 255);
+        background: rgb(190, 41, 236);
+        box-shadow: 0 0 0 .1rem #be29ec;
+    }
+
+    .quantity-break:before {
+        content: "";
+        display: block;
+        width: 1.5rem;
+        height: 1.5rem;
+        position: absolute;
+        left: 2rem;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        border: solid .2rem rgba(190, 41, 236, .3);
+    }
+
+    .quantity-break__content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .quantity-break__variants {
+        height: 0;
+        overflow: hidden;
+        padding-top: 0;
+    }
+
+    .quantity-breaks-container input:checked+.quantity-break .quantity-break__variants {
+        height: auto;
+        padding-top: 1rem;
+    }
+
+    .quantity-break__left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        row-gap: .5rem;
+        text-align: left;
+    }
+
+    .quantity-break__right {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        row-gap: .5rem;
+    }
+
+    .quantity-break__left .quantity-break__label {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity-break__left span,
+    .quantity-break__right span {
+        display: block;
+    }
+
+    .quantity-break__caption {
+        font-size: 1.4rem;
+        line-height: 1;
+    }
+
+    .quantity-break__label-text {
+        line-height: 1;
+    }
+
+    .quantity-break__price {
+        line-height: 1;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #be29ec;
+    }
+
+    .quantity-break__compare-price {
+        font-size: 1.4rem;
+        text-decoration: line-through;
+        line-height: 1;
+    }
+
+    .quantity-break__selector-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity-break__selector-item__number {
+        font-weight: 700;
+        margin-right: .4rem;
+        line-height: 1.5rem;
+    }
+
+    .quantity-break__selector-item .select {
+        width: fit-content;
+        display: flex;
+        position: relative;
+    }
+
+    .select--small .select__select,
+    .select--small:after,
+    .select--small:before {
+        border-radius: calc(7px / 2);
+    }
+
+    .customer .field:before,
+    .customer select:before,
+    .field:before,
+    .localization-form__select:before,
+    .select:before {
+        pointer-events: none;
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border-radius: 7px;
+        box-shadow: rgba(18, 18, 18, 0) 0px 4px 5px 0px;
+        z-index: -1;
+    }
+
+    .select__select {
+        height: 2.1rem;
+        font-size: 1.2rem;
+        height: 2.25em;
+        padding: 0 2.5rem 0 1rem;
+        cursor: pointer;
+        line-height: 19.2px;
+        margin: 1px;
+        min-height: 2px;
+        color: #121212e6;
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: white;
+        width: 100%;
+        box-sizing: border-box;
+        transition: box-shadow 0.1s ease;
+        min-width: 72px;
+        position: relative;
+        border: 0;
+    }
+
+
+    .select__select,
+    .text-area {
+        font-family: "Harmonia Sans", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        letter-spacing: .04rem;
+    }
+
+    .product__info-container .product-form,
+    .product__info-container .product__description,
+    .product__info-container .icon-with-text {
+        margin: 2.5rem 0;
+    }
+
+    .product-form {
+        display: block;
+    }
+
+    .product-form-buttons .add-to-cart {
+        text-transform: uppercase;
+        background-color: #be29ec;
+        justify-content: center;
+        align-items: center;
+        border: 0;
+        padding: 0 3rem;
+        cursor: pointer;
+        font: inherit;
+        text-decoration: none;
+        color: #fdfbf7;
+        transition: box-shadow 0, 1s ease;
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: #be29ec;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: .1rem;
+        display: flex;
+        width: 100%;
+        margin-bottom: 1rem;
+        font-size: 1.9rem;
+    }
+
+    .buy-button {
+        background: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
+        border-radius: 7px !important;
+        border: 0px solid rgb(190, 41, 236) !important;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 7px 0px !important;
+        font-size: calc(17.6px) !important;
+        display: flex;
+        margin-bottom: 10px;
+
+    }
+
+    .centered-container-limited-stock {
+        text-align: center;
+        width: 100%;
+        margin-top: -15px;
+        padding: 0;
+    }
+
+    .limited-stock-alert {
+        background: linear-gradient(to right, #ffe5e5 0%, #ffe5e5 100%);
+        color: #b22222;
+        font-size: 13px;
+        padding: 0 15px;
+        border-radius: 8px;
+        display: inline-block;
+        margin: 0px auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .blinking-circle {
+        width: 10px;
+        height: 10px;
+        background-color: #d60067;
+        border-radius: 50%;
+        display: inline-block;
+        animation: blink-animation 1s infinite;
+    }
+
+    @keyframes blink-animation {
+        50% {
+            opacity: 0;
+        }
+    }
+
+
+    .custom-image-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .custom-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .countdown-timer {
+        background: linear-gradient(135deg, #BE29EC, #6A0DAD);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        border-radius: 15px;
+        width: 100%;
+        max-width: 350px;
+        margin: auto;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .countdown-timer h2 {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    .countdown-timer p {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+
+    .countdown {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    .horizontal-ticker__container {
+        display: flex;
+        width: fit-content;
+        animation: horTicker 50s linear infinite forwards
+    }
+
+    @keyframes horTicker {
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    .horizontal-ticker__item {
+        margin: 0;
+        color: #fdfbf7;
+        line-height: 1;
+        white-space: nowrap;
+        font-size: 1.75rem;
+        padding: 0 3rem;
+    }
+
+    .kayan-yazi {
+        overflow-x: hidden;
+        max-width: 100%;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        background-color: #be29ec;
+        color: #fdfbf7e6;
+    }
+</style>
+
+
+
+
+
+
+<div class="emoji-benefits-container">
+    <p>👶
+        <strong>Düşmelere karşı yumuşak ve hafif koruma!</strong><br><br>✨ <strong>Ayarlanabilir kayışlarla her bebeğe
+            uygun tasarım.</strong><br><br>🔄 <strong>14 Gün İçinde İade Garantisi.</strong><br><br>💳 <strong>Kapıda
+            Ödeme ve Güvenli Alışveriş İmkanı.</strong><br><br>🎁 <strong>Yeni yürümeye başlayan bebekler için mükemmel
+            bir hediye!</strong>
+    </p>
+</div>
+
+<div class="quantity-breaks-container">
+    <h3 class="quantity-breaks__title">
+        <span></span>
+        <span>ÇOK AL - AZ ÖDE</span>
+        <span></span>
+    </h3>
+    <label for="quantity1" class="quantity-break" data-quantity="1">
+
+        <div class="quantity-break__content">
+            <div class="quantity-break__left">
+                <span class="quantity-break__label">
+                    <span class="quantity-break__label-text">1 Adet
+                    </span>
+
+                </span>
+
+                <span class="quantity-break__caption">
+
+                    Ücretsiz Kargo | Kapıda Ödeme
+
+                </span>
+
+            </div>
+            <div class="quantity-break__right" id="option-1-price-template--18301925163055__main">
+                <span class="quantity-break__price">
+
+
+
+                    629.90TL
+
+                </span><span class="quantity-break__compare-price">
+
+                    1,259.80TL
+
+                </span>
+            </div>
+        </div>
+
+
+        <div class="quantity-break__variants" id="option-1-variant-template--18301925163055__main">
+
+            <div class="quantity-break__selector-item">
+                <span class="quantity-break__selector-item__number">#1</span>
+                <div class="select select--small">
+                    <select class="quantity-break__variant-select select__select variant-dropdown" name="id"
+                        aria-label="Select variant" onchange="quantityBreakVariantChange(event, 1, 1)">
+
+                        <option value="44430292779055" data-compare-price="125980" data-price="62990" selected="">
+                            Arı
+                        </option>
+
+                        <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                            Kaplumbağa
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+
+    </label>
+
+    <label for="quantity2" class="quantity-break" data-quantity="2">
+
+        <p class="quantity-break__badge">
+            EN ÇOK SATAN
+        </p>
+
+        <div class="quantity-break__content">
+            <div class="quantity-break__left">
+                <span class="quantity-break__label">
+                    <span class="quantity-break__label-text">2 Adet
+                    </span>
+
+                    <span class="quantity-break__benefit">200 TL İndirim</span>
+
+                </span>
+
+                <span class="quantity-break__caption">
+
+                    Ücretsiz Kargo | Kapıda Ödeme
+
+                </span>
+
+            </div>
+            <div class="quantity-break__right" id="option-2-price-template--18301925163055__main">
+                <span class="quantity-break__price">
+
+
+
+
+                    1,059.80TL
+
+                </span><span class="quantity-break__compare-price">
+
+                    2,519.60TL
+
+                </span>
+            </div>
+        </div>
+
+        <div class="quantity-break__variants" id="option-2-variant-template--18301925163055__main">
+
+            <div class="quantity-break__selector-item">
+                <span class="quantity-break__selector-item__number">#1</span>
+                <div class="select select--small">
+                    <select class="quantity-break__variant-select select__select variant-dropdown" name="id"
+                        aria-label="Select variant" onchange="quantityBreakVariantChange(event, 2, 1)">
+
+                        <option value="44430292779055" data-compare-price="125980" data-price="62990" selected="">
+                            Arı
+                        </option>
+
+                        <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                            Kaplumbağa
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="quantity-break__selector-item">
+                <span class="quantity-break__selector-item__number">#2</span>
+                <div class="select select--small">
+                    <select class="quantity-break__variant-select select__select variant-dropdown" name="id"
+                        aria-label="Select variant" onchange="quantityBreakVariantChange(event, 2, 2)">
+
+                        <option value="44430292779055" data-compare-price="125980" data-price="62990" selected="">
+                            Arı
+                        </option>
+
+                        <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                            Kaplumbağa
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+    </label>
+
+    <label for="quantity3" class="quantity-break" data-quantity="3">
+
+        <div class="quantity-break__content">
+            <div class="quantity-break__left">
+                <span class="quantity-break__label">
+                    <span class="quantity-break__label-text">3 Adet
+                    </span>
+
+                    <span class="quantity-break__benefit">300 TL İndirim</span>
+
+                </span>
+
+                <span class="quantity-break__caption">
+
+                    Ücretsiz Kargo | Kapıda Ödeme
+
+                </span>
+
+            </div>
+            <div class="quantity-break__right" id="option-3-price-template--18301925163055__main">
+                <span class="quantity-break__price">
+
+
+
+
+                    1,589.70TL
+
+                </span><span class="quantity-break__compare-price">
+
+                    3,779.40TL
+
+                </span>
+            </div>
+        </div>
+
+        <div class="quantity-break__variants" id="option-3-variant-template--18301925163055__main">
+
+            <div class="quantity-break__selector-item">
+                <span class="quantity-break__selector-item__number">#1</span>
+                <div class="select select--small">
+                    <select class="quantity-break__variant-select select__select variant-dropdown" name="id"
+                        aria-label="Select variant" onchange="quantityBreakVariantChange(event, 3, 1)">
+
+                        <option value="44430292779055" data-compare-price="125980" data-price="62990" selected="">
+                            Arı
+                        </option>
+
+                        <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                            Kaplumbağa
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="quantity-break__selector-item">
+                <span class="quantity-break__selector-item__number">#2</span>
+                <div class="select select--small">
+                    <select class="quantity-break__variant-select select__select variant-dropdown" name="id"
+                        aria-label="Select variant" onchange="quantityBreakVariantChange(event, 3, 2)">
+
+                        <option value="44430292779055" data-compare-price="125980" data-price="62990" selected="">
+                            Arı
+                        </option>
+
+                        <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                            Kaplumbağa
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+            <div class="quantity-break__selector-item">
+                <span class="quantity-break__selector-item__number">#3</span>
+                <div class="select select--small">
+                    <select class="quantity-break__variant-select select__select variant-dropdown" name="id"
+                        aria-label="Select variant" onchange="quantityBreakVariantChange(event, 3, 3)">
+
+                        <option value="44430292779055" data-compare-price="125980" data-price="62990" selected="">
+                            Arı
+                        </option>
+
+                        <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                            Kaplumbağa
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+    </label>
+
+
+</div>
+
+<div>
+    <div class="product-form-buttons">
+        <button class="add-to-cart">
+            <span>Sepete Ekle</span>
+        </button>
+
+        <button class="buy-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25.3px" viewBox="0 0 24 24"
+                class="_rsi-button-icon _rsi-button-icon-left" fill="rgba(255,255,255,1)">
+                <path d="M0 0h24v24H0V0z" fill="none"></path>
+                <path
+                    d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45zM6.16 6h12.15l-2.76 5H8.53L6.16 6zM7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z">
+                </path>
+            </svg>
+            <span>Kapıda Ödeme ile Satın Al</span>
+            <span>ÜCRETSİZ KARGO</span>
+        </button>
+    </div>
+</div>
+
+
+<div class="centered-container-limited-stock">
+    <div class="limited-stock-alert">
+        <span class="blinking-circle"></span>
+        Stoklar Tükenmek Üzere
+    </div>
+</div>
+
+
+<div class="custom-image-container">
+    <img src="//techmisty.com/cdn/shop/files/odemeyontemleri.jpg?v=11923979855570504591" alt="Ödeme Yöntemleri"
+        class="custom-image">
+</div>
+
+
+<div
+    style="border: 1px solid #d0d4eb; padding: 10px; text-align: center; font-family: Arial, sans-serif; max-width: 600px; margin: auto; margin-bottom: 20px;">
+    <h4 style="margin-bottom: 5px; font-size: 14px;"> Bugün sipariş verirseniz kargonuz <strong id="delivery-date">11
+            Eylül</strong> tarihinde teslim edilecek!</h4>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px;">
+        <div style="text-align: center; flex-basis: 30%; font-size: 12px;">
+            <div style="font-size: 20px;">🛍️</div>
+            <div style="margin-top: 5px; font-size: 12px;">Sipariş Verildi</div>
+            <div style="font-size: 10px; color: gray;">Bugün</div>
+        </div>
+
+        <div style="text-align: center; flex-basis: 30%; font-size: 12px;">
+            <div style="font-size: 20px;">🚚</div>
+            <div style="margin-top: 5px; font-size: 12px;">Gönderildi</div>
+            <div style="font-size: 10px; color: gray;" id="dispatch-date">9 Eylül</div>
+        </div>
+
+        <div style="text-align: center; flex-basis: 30%; font-size: 12px;">
+            <div style="font-size: 20px;">📍</div>
+            <div style="margin-top: 5px; font-size: 12px;">Teslim Edildi</div>
+            <div style="font-size: 10px; color: gray;" id="delivered-date">11 Eylül</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="countdown-timer">
+    <h2>Sana Özel İndirimi Kaçırma</h2>
+    <p>İndirim şu sürede sona eriyor:</p>
+    <div class="countdown">Süre Doldu!</div>
+</div>
+
+<!-- ayrı section -->
+
+<div class="kayan-yazi">
+    <div class="horizontal-ticker__container">
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+
+        <p class="horizontal-ticker__item">
+            KAPIDA ÖDEME
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            ŞEFFAF KARGO
+        </p>
+
+
+
+
+        <p class="horizontal-ticker__item">
+            2. ÜRÜN 200₺ İNİDİRİMLİ
+        </p>
+
+
+
+
+
+
+    </div>
+</div>

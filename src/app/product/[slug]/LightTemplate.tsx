@@ -158,20 +158,389 @@ const LightTemplate: React.FC = () => {
                         <span className="light-discount-badge">İNDİRİM 50%</span>
                     </div> */}
 
-                    <ul className="light-features">
-                        <li>Düşmelere karşı yumuşak ve hafif koruma!</li>
-                        <li>Ayarlanabilir kayışlarla her bebeğe uygun tasarım.</li>
-                        <li>14 Gün İçinde İade Garantisi.</li>
-                        <li>Kapıda Ödeme ve Güvenli Alışveriş İmkanı.</li>
-                        <li>Yeni yürümeye başlayan bebekler için mükemmel bir hediye!</li>
-                    </ul>
+                    <div className="emoji-benefits-container">
+                        <p>👶
+                            <strong>Düşmelere karşı yumuşak ve hafif koruma!</strong><br /><br />✨ <strong>Ayarlanabilir kayışlarla her bebeğe
+                                uygun tasarım.</strong><br /><br />🔄 <strong>14 Gün İçinde İade Garantisi.</strong><br /><br />💳 <strong>Kapıda
+                                    Ödeme ve Güvenli Alışveriş İmkanı.</strong><br /><br />🎁 <strong>Yeni yürümeye başlayan bebekler için mükemmel
+                                        bir hediye!</strong>
+                        </p>
+                    </div>
 
-                    <div className="light-quantity-section">
-                        <div className="light-quantity-header">
-                            <div className="light-quantity-title">ÇOK AL - AZ ÖDE</div>
+                    <div className="quantity-breaks-container">
+                        <h3 className="quantity-breaks__title">
+                            <span></span>
+                            <span>ÇOK AL - AZ ÖDE</span>
+                            <span></span>
+                        </h3>
+                        <label htmlFor="quantity1" className="quantity-break" data-quantity="1">
+                            <div className="quantity-break__content">
+                                <div className="quantity-break__left">
+                                    <span className="quantity-break__label">
+                                        <span className="quantity-break__label-text">1 Adet</span>
+                                    </span>
+                                    <span className="quantity-break__caption">
+                                        Ücretsiz Kargo | Kapıda Ödeme
+                                    </span>
+                                </div>
+                                <div className="quantity-break__right" id="option-1-price-template--18301925163055__main">
+                                    <span className="quantity-break__price">629.90TL</span>
+                                    <span className="quantity-break__compare-price">1,259.80TL</span>
+                                </div>
+                            </div>
+                            <div className="quantity-break__variants" id="option-1-variant-template--18301925163055__main">
+                                <div className="quantity-break__selector-item">
+                                    <span className="quantity-break__selector-item__number">#1</span>
+                                    <div className="select select--small">
+                                        <select
+                                            className="quantity-break__variant-select select__select variant-dropdown"
+                                            name="id"
+                                            aria-label="Select variant"
+                                            defaultValue="44430292779055"
+                                        // onChange={e => quantityBreakVariantChange(e, 1, 1)}
+                                        >
+                                            <option value="44430292779055" data-compare-price="125980" data-price="62990">
+                                                Arı
+                                            </option>
+                                            <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                                                Kaplumbağa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label htmlFor="quantity2" className="quantity-break" data-quantity="2">
+                            <p className="quantity-break__badge">
+                                EN ÇOK SATAN
+                            </p>
+                            <div className="quantity-break__content">
+                                <div className="quantity-break__left">
+                                    <span className="quantity-break__label">
+                                        <span className="quantity-break__label-text">2 Adet</span>
+                                        <span className="quantity-break__benefit">200 TL İndirim</span>
+                                    </span>
+                                    <span className="quantity-break__caption">
+                                        Ücretsiz Kargo | Kapıda Ödeme
+                                    </span>
+                                </div>
+                                <div className="quantity-break__right" id="option-2-price-template--18301925163055__main">
+                                    <span className="quantity-break__price">1,059.80TL</span>
+                                    <span className="quantity-break__compare-price">2,519.60TL</span>
+                                </div>
+                            </div>
+                            <div className="quantity-break__variants" id="option-2-variant-template--18301925163055__main">
+                                <div className="quantity-break__selector-item">
+                                    <span className="quantity-break__selector-item__number">#1</span>
+                                    <div className="select select--small">
+                                        <select
+                                            className="quantity-break__variant-select select__select variant-dropdown"
+                                            name="id"
+                                            aria-label="Select variant"
+                                            defaultValue="44430292779055"
+                                        // onChange={e => quantityBreakVariantChange(e, 2, 1)}
+                                        >
+                                            <option value="44430292779055" data-compare-price="125980" data-price="62990">
+                                                Arı
+                                            </option>
+                                            <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                                                Kaplumbağa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="quantity-break__selector-item">
+                                    <span className="quantity-break__selector-item__number">#2</span>
+                                    <div className="select select--small">
+                                        <select
+                                            className="quantity-break__variant-select select__select variant-dropdown"
+                                            name="id"
+                                            aria-label="Select variant"
+                                            defaultValue="44430292779055"
+                                        // onChange={e => quantityBreakVariantChange(e, 2, 2)}
+                                        >
+                                            <option value="44430292779055" data-compare-price="125980" data-price="62990">
+                                                Arı
+                                            </option>
+                                            <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                                                Kaplumbağa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label htmlFor="quantity3" className="quantity-break" data-quantity="3">
+                            <div className="quantity-break__content">
+                                <div className="quantity-break__left">
+                                    <span className="quantity-break__label">
+                                        <span className="quantity-break__label-text">3 Adet</span>
+                                        <span className="quantity-break__benefit">300 TL İndirim</span>
+                                    </span>
+                                    <span className="quantity-break__caption">
+                                        Ücretsiz Kargo | Kapıda Ödeme
+                                    </span>
+                                </div>
+                                <div className="quantity-break__right" id="option-3-price-template--18301925163055__main">
+                                    <span className="quantity-break__price">1,589.70TL</span>
+                                    <span className="quantity-break__compare-price">3,779.40TL</span>
+                                </div>
+                            </div>
+                            <div className="quantity-break__variants" id="option-3-variant-template--18301925163055__main">
+                                <div className="quantity-break__selector-item">
+                                    <span className="quantity-break__selector-item__number">#1</span>
+                                    <div className="select select--small">
+                                        <select
+                                            className="quantity-break__variant-select select__select variant-dropdown"
+                                            name="id"
+                                            aria-label="Select variant"
+                                            defaultValue="44430292779055"
+                                        // onChange={e => quantityBreakVariantChange(e, 3, 1)}
+                                        >
+                                            <option value="44430292779055" data-compare-price="125980" data-price="62990">
+                                                Arı
+                                            </option>
+                                            <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                                                Kaplumbağa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="quantity-break__selector-item">
+                                    <span className="quantity-break__selector-item__number">#2</span>
+                                    <div className="select select--small">
+                                        <select
+                                            className="quantity-break__variant-select select__select variant-dropdown"
+                                            name="id"
+                                            aria-label="Select variant"
+                                            defaultValue="44430292779055"
+                                        // onChange={e => quantityBreakVariantChange(e, 3, 2)}
+                                        >
+                                            <option value="44430292779055" data-compare-price="125980" data-price="62990">
+                                                Arı
+                                            </option>
+                                            <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                                                Kaplumbağa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="quantity-break__selector-item">
+                                    <span className="quantity-break__selector-item__number">#3</span>
+                                    <div className="select select--small">
+                                        <select
+                                            className="quantity-break__variant-select select__select variant-dropdown"
+                                            name="id"
+                                            aria-label="Select variant"
+                                            defaultValue="44430292779055"
+                                        // onChange={e => quantityBreakVariantChange(e, 3, 3)}
+                                        >
+                                            <option value="44430292779055" data-compare-price="125980" data-price="62990">
+                                                Arı
+                                            </option>
+                                            <option value="43692722454575" data-compare-price="125980" data-price="62990">
+                                                Kaplumbağa
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+
+                    <div>
+                        <div className="product-form-buttons">
+                            <button className="add-to-cart">
+                                <span>Sepete Ekle</span>
+                            </button>
+
+                            <button className="buy-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25.3px" viewBox="0 0 24 24"
+                                    className="_rsi-button-icon _rsi-button-icon-left" fill="rgba(255,255,255,1)">
+                                    <path d="M0 0h24v24H0V0z" fill="none"></path>
+                                    <path
+                                        d="M15.55 13c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.37-.66-.11-1.48-.87-1.48H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45zM6.16 6h12.15l-2.76 5H8.53L6.16 6zM7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z">
+                                    </path>
+                                </svg>
+                                <span>Kapıda Ödeme ile Satın Al</span>
+                                <span>ÜCRETSİZ KARGO</span>
+                            </button>
                         </div>
                     </div>
+                    <div className="centered-container-limited-stock">
+                        <div className="limited-stock-alert">
+                            <span className="blinking-circle"></span>
+                            Stoklar Tükenmek Üzere
+                        </div>
+                    </div>
+
+                    <div className="custom-image-container">
+                        <img src="//techmisty.com/cdn/shop/files/odemeyontemleri.jpg?v=11923979855570504591" alt="Ödeme Yöntemleri"
+                            className="custom-image" />
+                    </div>
+
+                    <div
+                        style={{
+                            border: "1px solid #d0d4eb",
+                            padding: "10px",
+                            textAlign: "center",
+                            fontFamily: "Arial, sans-serif",
+                            maxWidth: "600px",
+                            margin: "auto",
+                            marginBottom: "20px"
+                        }}
+                    >
+                        <h4 style={{ marginBottom: "5px", fontSize: "14px" }}>
+                            Bugün sipariş verirseniz kargonuz <strong id="delivery-date">11 Eylül</strong> tarihinde teslim edilecek!
+                        </h4>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px" }}>
+                            <div style={{ textAlign: "center", flexBasis: "30%", fontSize: "12px" }}>
+                                <div style={{ fontSize: "20px" }}>🛍️</div>
+                                <div style={{ marginTop: "5px", fontSize: "12px" }}>Sipariş Verildi</div>
+                                <div style={{ fontSize: "10px", color: "gray" }}>Bugün</div>
+                            </div>
+
+                            <div style={{ textAlign: "center", flexBasis: "30%", fontSize: "12px" }}>
+                                <div style={{ fontSize: "20px" }}>🚚</div>
+                                <div style={{ marginTop: "5px", fontSize: "12px" }}>Gönderildi</div>
+                                <div style={{ fontSize: "10px", color: "gray" }} id="dispatch-date">9 Eylül</div>
+                            </div>
+
+                            <div style={{ textAlign: "center", flexBasis: "30%", fontSize: "12px" }}>
+                                <div style={{ fontSize: "20px" }}>📍</div>
+                                <div style={{ marginTop: "5px", fontSize: "12px" }}>Teslim Edildi</div>
+                                <div style={{ fontSize: "10px", color: "gray" }} id="delivered-date">11 Eylül</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="countdown-timer">
+                        <h2>Sana Özel İndirimi Kaçırma</h2>
+                        <p>İndirim şu sürede sona eriyor:</p>
+                        <div className="countdown">Süre Doldu!</div>
+                    </div>
                 </div>
+
+                <div className="kayan-yazi">
+                    <div className="horizontal-ticker__container">
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+
+                        <p className="horizontal-ticker__item">
+                            KAPIDA ÖDEME
+                        </p>
+                        
+                        <p className="horizontal-ticker__item">
+                            ŞEFFAF KARGO
+                        </p>
+                        <p className="horizontal-ticker__item">
+                            2. ÜRÜN 200₺ İNİDİRİMLİ
+                        </p>
+                    </div>
+                </div>
+                {/*  */}
+
             </div>
         </div>
     );

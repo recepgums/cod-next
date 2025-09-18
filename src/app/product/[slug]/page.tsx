@@ -8,6 +8,7 @@ import axios from 'axios';
 import Footer from '../../components/Footer';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
+import LightTemplate from './LightTemplate';
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 const ImageOnlyTemplate = dynamic(() => import('./ImageOnlyTemplate'), { ssr: false });
 const TwoStepLandingTemplate = dynamic(() => import('./TwoStepLandingTemplate'), { ssr: false });
@@ -111,8 +112,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           comments: Array.isArray(commentsData) ? commentsData : [],
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
-          template: templateData,
+          // template: templateData,
           // template: "nova",
+          template: "light",
           settings: productData.settings // Include settings for variants
         };
 
@@ -276,6 +278,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   if (product.template === "nova") {
     return <NovaTemplate product={product} />;
   }
+  if (product.template === "light") {
+    return <LightTemplate product={product} />;
+  } 
+
 
   if (product.template === "2step") {
     return <TwoStepLandingTemplate product={product} />;
