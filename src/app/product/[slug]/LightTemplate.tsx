@@ -7,11 +7,34 @@ const LightTemplate: React.FC = () => {
 
     // Static data matching the image
     const staticImages = [
-        'https://techmisty.com/cdn/shop/files/kap1.png?v=1746228208&width=713',
-        'https://techmisty.com/cdn/shop/files/foto11.png?v=1746228208&width=713',
-        'https://techmisty.com/cdn/shop/files/3.png?v=1746228208&width=713',
-        'https://techmisty.com/cdn/shop/files/uuuuu333.png?v=1755289728&width=713',
-
+        {
+            thumbnail: 'https://techmisty.com/cdn/shop/files/kap1.png?v=1746228208&width=713',
+            medium: 'https://techmisty.com/cdn/shop/files/kap1.png?v=1746228208&width=713',
+            large: 'https://techmisty.com/cdn/shop/files/kap1.png?v=1746228208&width=713',
+            mobile: 'https://techmisty.com/cdn/shop/files/kap1.png?v=1746228208&width=713',
+            original: 'https://techmisty.com/cdn/shop/files/kap1.png?v=1746228208&width=713'
+        },
+        {
+            thumbnail: 'https://techmisty.com/cdn/shop/files/foto11.png?v=1746228208&width=713',
+            medium: 'https://techmisty.com/cdn/shop/files/foto11.png?v=1746228208&width=713',
+            large: 'https://techmisty.com/cdn/shop/files/foto11.png?v=1746228208&width=713',
+            mobile: 'https://techmisty.com/cdn/shop/files/foto11.png?v=1746228208&width=713',
+            original: 'https://techmisty.com/cdn/shop/files/foto11.png?v=1746228208&width=713'
+        },
+        {
+            thumbnail: 'https://techmisty.com/cdn/shop/files/3.png?v=1746228208&width=713',
+            medium: 'https://techmisty.com/cdn/shop/files/3.png?v=1746228208&width=713',
+            large: 'https://techmisty.com/cdn/shop/files/3.png?v=1746228208&width=713',
+            mobile: 'https://techmisty.com/cdn/shop/files/3.png?v=1746228208&width=713',
+            original: 'https://techmisty.com/cdn/shop/files/3.png?v=1746228208&width=713'
+        },
+        {
+            thumbnail: 'https://techmisty.com/cdn/shop/files/uuuuu333.png?v=1755289728&width=713',
+            medium: 'https://techmisty.com/cdn/shop/files/uuuuu333.png?v=1755289728&width=713',
+            large: 'https://techmisty.com/cdn/shop/files/uuuuu333.png?v=1755289728&width=713',
+            mobile: 'https://techmisty.com/cdn/shop/files/uuuuu333.png?v=1755289728&width=713',
+            original: 'https://techmisty.com/cdn/shop/files/uuuuu333.png?v=1755289728&width=713'
+        }
     ];
 
 
@@ -427,16 +450,6 @@ const LightTemplate: React.FC = () => {
 
                 <div className="kayan-yazi">
                     <div className="horizontal-ticker__container">
-                        <p className="horizontal-ticker__item">
-                            KAPIDA ÖDEME
-                        </p>
-                        <p className="horizontal-ticker__item">
-                            ŞEFFAF KARGO
-                        </p>
-                        <p className="horizontal-ticker__item">
-                            2. ÜRÜN 200₺ İNİDİRİMLİ
-                        </p>
-
                         <p className="horizontal-ticker__item">
                             KAPIDA ÖDEME
                         </p>
