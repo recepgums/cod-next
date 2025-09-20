@@ -7,6 +7,14 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
+interface ProductImage {
+  thumbnail: string;
+  medium: string;
+  large: string;
+  mobile: string;
+  original: string;
+}
+
 interface ProductOption {
   quantity: number;
   price: number;
@@ -25,7 +33,7 @@ interface Product {
   price: number;
   oldPrice: number;
   discount: string;
-  images: string[];
+  images: ProductImage[];
   options: ProductOption[];
   features: string[];
   rating: number;
@@ -131,10 +139,10 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         </div>
 
         {/* Full-width images stacked vertically */}
-        {product.images && product.images.length > 0 && product.images.map((img: string, idx: number) => (
+        {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
           <img 
-            key={img + idx}
-            src={img}
+            key={img.original + idx}
+            src={img.original}
             style={{width: '100%', maxWidth: '100%'}}
             alt="product image"
             onClick={openModal}

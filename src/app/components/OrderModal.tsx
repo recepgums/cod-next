@@ -15,6 +15,14 @@ interface ProductOption {
   finalDiscount?: number;
 }
 
+interface ProductImage {
+  thumbnail: string;
+  medium: string;
+  large: string;
+  mobile: string;
+  original: string;
+}
+
 interface OrderModalProps {
   showModal: boolean;
   onClose: () => void;
@@ -22,7 +30,7 @@ interface OrderModalProps {
     id: number;
     name: string;
     price: number;
-    images: string[];
+    images: ProductImage[];
     options: ProductOption[];
     cities?: any[];
     settings?: string; // Added settings to product prop
@@ -354,7 +362,7 @@ export default function OrderModal({
                   {/* Product Options in Modal */}
                   {product.options.map((opt, idx) => (
                     <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption?.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => onOptionSelect(opt)}>
-                      <img src={product.images[0]} width={60} height={60} className="img-fluid" alt="product image" />
+                      <img src={product.images[0].thumbnail} width={60} height={60} className="img-fluid" alt="product image" />
                       <div className="details">
                         <div className="info">
                           <span className="title">

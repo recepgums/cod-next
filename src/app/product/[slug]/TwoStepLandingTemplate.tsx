@@ -6,6 +6,14 @@ import StickyFooter from '../../components/StickyFooter';
 import dynamic from 'next/dynamic';
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
+interface ProductImage {
+  thumbnail: string;
+  medium: string;
+  large: string;
+  mobile: string;
+  original: string;
+}
+
 interface ProductOption {
   quantity: number;
   price: number;
@@ -24,7 +32,7 @@ interface Product {
   price: number;
   oldPrice: number;
   discount: string;
-  images: string[];
+  images: ProductImage[];
   options: ProductOption[];
   features: string[];
   rating: number;
@@ -112,11 +120,11 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
       </div>
 
       {/* Product Images */}
-      {product.images && product.images.length > 0 && product.images.map((img: string, idx: number) => (
-        <div key={img + idx} style={{width: '100%', paddingTop: '18%'}}>
+      {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
+        <div key={img.original + idx} style={{width: '100%', paddingTop: '18%'}}>
           <img 
             style={{width: '100%', maxWidth: '100%'}} 
-            src={img}
+            src={img.original}
             onClick={redirectToOrder}
             alt="product image"
             loading="lazy"

@@ -35,13 +35,21 @@ interface ProductComment {
   order?: number | null;
 }
 
+interface ProductImage {
+  thumbnail: string;
+  medium: string;
+  large: string;
+  mobile: string;
+  original: string;
+}
+
 interface Product {
   id: number;
   name: string;
   price: number;
   oldPrice: number;
   discount: string;
-  images: string[];
+  images: ProductImage[];
   options: ProductOption[];
   features: string[];
   rating: number;
@@ -304,15 +312,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
               </div>
               <div className="main-image-container">
-          <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg] || product.images[0]) : '/images/default-product.png'} height={375} alt="product image" loading="lazy" />
+          <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg]?.medium || product.images[0]?.medium) : '/images/default-product.png'} height={375} alt="product image" loading="lazy" />
               </div>
         <div className="thumbnail-wrapper">
           <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>
           <div className="thumbnail-container" ref={thumbnailRef}>
-            {product.images && product.images.length > 0 && product.images.map((img: string, idx: number) => (
+            {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
               <img
-                key={img + idx}
-                        src={img}
+                key={img.medium + idx}
+                        src={img.medium}
                 height={100}
                         alt="thumbnail image"
                         onClick={() => setMainImg(idx)}
@@ -389,7 +397,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         <div>
           {product.options.map((opt, idx) => (
             <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${idx === 0 ? ' active' : ''}`} data-quantity={opt.quantity}>
-              <img src={product.images[0]} width={60} height={60} className="img-fluid" alt="product image" />
+              <img src={product.images[0]?.medium} width={60} height={60} className="img-fluid" alt="product image" />
               <div className="details">
                 <div className="info">
                   <span className="title">
