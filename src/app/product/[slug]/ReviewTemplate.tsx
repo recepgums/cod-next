@@ -239,7 +239,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
             {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
               <img
                 key={img.medium + idx}
-                        src={product.images[idx]?.medium}
+                        src={product.images[idx]?.thumbnail}
                 height={100}
                         alt="thumbnail image"
                         onClick={() => setMainImg(idx)}
