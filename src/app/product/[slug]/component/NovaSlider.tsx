@@ -4,8 +4,16 @@ import React, { useEffect, useRef } from 'react';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 
+interface ProductImage {
+    thumbnail: string;
+    medium: string;
+    large: string;
+    mobile: string;
+    original: string;
+}
+
 interface NovaSliderProps {
-    images: string[];
+    images: ProductImage[];
     productName: string;
 }
 
@@ -61,9 +69,9 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                     }}
                     aria-label="Product gallery"
                 >
-                    {images.map((img: string, i: number) => (
-                        <SplideSlide key={img + i}>
-                            <img src={img} alt={`${productName} - ${i + 1}`} />
+                    {images.map((img: ProductImage, i: number) => (
+                        <SplideSlide key={img.medium + i}>
+                            <img src={img.medium} alt={`${productName} - ${i + 1}`} />
                         </SplideSlide>
                     ))}
                 </Splide>
@@ -89,9 +97,9 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                     }}
                     aria-label="Thumbnails"
                 >
-                    {images.map((img: string, i: number) => (
-                        <SplideSlide key={'thumb-' + img + i}>
-                            <img src={img} alt={`Thumb ${i + 1}`} />
+                    {images.map((img: ProductImage, i: number) => (
+                        <SplideSlide key={'thumb-' + img.medium + i}>
+                            <img src={img.thumbnail} alt={`Thumb ${i + 1}`} />
                         </SplideSlide>
                     ))}
                 </Splide>

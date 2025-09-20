@@ -47,15 +47,20 @@ export default function NovaTemplate({ product }: { product: any }) {
         name: "Rexing Link Kablosuz CarPlay Adaptör",
         price: 2599.99,
         images: [
-            "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-            "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296"
+            {
+                thumbnail: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
+                medium: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
+                large: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
+                mobile: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
+                original: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296"
+            },
+            {
+                thumbnail: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
+                medium: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
+                large: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
+                mobile: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
+                original: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296"
+            }
         ],
         options: [
             {
