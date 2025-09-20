@@ -112,9 +112,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           comments: Array.isArray(commentsData) ? commentsData : [],
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
-          // template: templateData,
+          template: templateData,
           // template: "nova",
-          template: "light",
+          // template: "light",
           settings: productData.settings // Include settings for variants
         };
 
@@ -278,9 +278,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   if (product.template === "nova") {
     return <NovaTemplate product={product} />;
   }
-  if (product.template === "light") {
-    return <LightTemplate product={product} />;
-  } 
+  // if (product.template === "light") {
+  //   return <LightTemplate product={product} />;
+  // } 
 
 
   if (product.template === "2step") {
