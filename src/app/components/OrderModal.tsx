@@ -490,7 +490,7 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("kart")}
                         />
                         <span>Kapıda Kartlı Ödeme</span>
-                        <span>19.00TL</span>
+                        <span>{JSON.parse(product.settings).card_payment_cost == "0" ? "Ücretsiz" : (JSON.parse(product.settings).card_payment_cost).toFixed(2) + "TL"}</span>
                       </label>
                     </div>
                   </div>
