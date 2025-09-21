@@ -139,10 +139,10 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     const firstDate = `${firstDeliveryDate.getDate()} ${monthNames[firstDeliveryDate.getMonth()]} ${dayNames[firstDeliveryDate.getDay()]}`;
     const lastDate = `${lastDeliveryDate.getDate()} ${monthNames[lastDeliveryDate.getMonth()]} ${dayNames[lastDeliveryDate.getDay()]}`;
 
-     setDeliveryDates({
-        start: firstDate,
-       end: lastDate
-     });
+    setDeliveryDates({
+      start: firstDate,
+      end: lastDate
+    });
 
   }, []);
 
@@ -163,7 +163,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       const handleMouseOver = () => {
         scrollingText.style.animationPlayState = 'paused';
       };
-      
+
       const handleMouseOut = () => {
         scrollingText.style.animationPlayState = 'running';
       };
@@ -228,25 +228,25 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       {/* Gallery */}
       <div className="gallery-container mt-1">
         <div className="header text-center mx-auto">
-          <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
-              </div>
-              <div className="main-image-container">
+          <a href="/"><img style={{ height: 50 }} src="/images/logo.png" alt="TrendyGoods" /></a>
+        </div>
+        <div className="main-image-container">
           <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg]?.large || product.images[0]?.large) : '/images/default-product.png'} height={400} alt="product image" loading="lazy" />
-              </div>
+        </div>
         <div className="thumbnail-wrapper">
           <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>
           <div className="thumbnail-container" ref={thumbnailRef}>
             {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
               <img
                 key={img.medium + idx}
-                        src={product.images[idx]?.thumbnail}
+                src={product.images[idx]?.thumbnail}
                 height={100}
-                        alt="thumbnail image"
-                        onClick={() => setMainImg(idx)}
-                style={{cursor: 'pointer'}}
-                      />
-                    ))}
-                  </div>
+                alt="thumbnail image"
+                onClick={() => setMainImg(idx)}
+                style={{ cursor: 'pointer' }}
+              />
+            ))}
+          </div>
           <span className="arrow" onClick={() => scrollThumbnails('right')}>&#10095;</span>
         </div>
       </div>
@@ -261,28 +261,28 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
             <div className="timer">
               <span>{timer.hours}</span>:<span>{timer.minutes}</span>:<span>{timer.seconds}</span>
             </div>
-                </div>
+          </div>
           <div className="sales-info">
             <span>57 adet satıldı</span>
             <div className="progress-bar">
               <div className="progress" />
             </div>
-              </div>
-                </div>
-              </div>
+          </div>
+        </div>
+      </div>
 
       {/* Product Info Section */}
       <div className="container-fluid mt-4">
-        <h2 className="title-detail" style={{marginBottom: 0}}>{product.name}</h2>
+        <h2 className="title-detail" style={{ marginBottom: 0 }}>{product.name}</h2>
         <div className="product-detail-rating d-flex justify-content-between align-items-center mb-3">
           <div className="product-rate-cover text-end d-flex align-items-center">
             <span className="font-small ml-1 text-muted"><strong>{product.rating}</strong></span>
             <div className="star-rating d-inline-block mx-2">
               {[...Array(5)].map((_, starIndex) => (
-                <i 
+                <i
                   key={starIndex}
                   className={`fas fa-star${starIndex < product.rating ? '' : '-o'}`}
-                  style={{ 
+                  style={{
                     color: starIndex < product.rating ? '#F27A1A' : '#ccc',
                     fontSize: '14px',
                     marginRight: '1px'
@@ -321,35 +321,40 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                 <div className="info">
                   <span className="title">
                     {opt.displayText || `${opt.quantity} Adet`}
-                    
+
                     {opt.isCampaign && (
-                      <p style={{color: 'red', fontWeight: 'bold', fontSize: '.9rem'}}>
+                      <p style={{ color: 'red', fontWeight: 'bold', fontSize: '.9rem' }}>
                         {opt.quantity} {opt.unit || 'Adet'} BEDAVA
                       </p>
                     )}
-                    
+
                     <small className="kargo-bedava">Ücretsiz Kargo</small>
                     {opt.discount > 0 && (
-                      <div className="discount" style={{maxWidth: 115}}>
+                      <div className="discount" style={{ maxWidth: 115 }}>
+                        {opt.discount}TL İndirim
+                      </div>
+                    )}
+                    {opt.quantity > 1 && (
+                      <div className="unit-price" style={{ fontSize: '.8rem', color: '#666' }}>
                         Tanesi {Math.round(opt.price / opt.quantity)}TL
                       </div>
                     )}
                   </span>
                   <span className="price">
-                    {opt.price.toFixed(2)}TL
+                    {(opt.price-opt.discount).toFixed(2)}
                     <br />
-                    {opt.original && opt.original > opt.price && (
-                      <div className="original-price">{opt.original.toFixed(2)}TL</div>
+                    {opt.discount > 0 && (
+                      <div className="original-price">{opt.price.toFixed(2)}TL</div>
                     )}
                   </span>
                 </div>
               </div>
             </div>
           ))}
-              </div>
-            </div>
+        </div>
+      </div>
 
-            <div className="border-top my-3"></div>
+      <div className="border-top my-3"></div>
 
       {/* Delivery Info */}
       <div className="delivery-info mb-4">
@@ -365,52 +370,52 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           Kapıda Ödemeli Sipariş Ver
         </button>
       </div>
-      
+
       {/* Product Content */}
       {product.content && (
         <div className="product-content mb-3" dangerouslySetInnerHTML={{ __html: product.content }} />
       )}
-      
+
       <div className="product-extra-link2 mb-3 w-100">
         <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
           Şimdi Sipariş Ver
         </button>
       </div>
 
-            {/* comments Section Title */}
+      {/* comments Section Title */}
       <h6 className="section-title style-1 my-30 text-center" id="comments">
         Tüm Değerlendirmeler ({product.commentCount || 0})
       </h6>
-              <div className="comment-grid" id="comment-container" ref={commentGridRef}>
-          {product.comments?.map((comment, idx) => (
-            <div className="comment-item" key={idx}>
-              <div className="comment-card">
-                {comment.photo && <img src={comment.photo} className="comment-img" alt="Comment Image" />}
-                <div className="comment-content">
-                  <div>
-                    <div className="star-rating mb-1">
-                      {[...Array(5)].map((_, starIndex) => (
-                        <i 
-                          key={starIndex}
-                          className={`fas fa-star${starIndex < comment.rating ? '' : '-o'}`}
-                          style={{ 
-                            color: starIndex < comment.rating ? '#FFD700' : '#ccc',
-                            fontSize: '14px',
-                            marginRight: '2px'
-                          }}
-                        />
-                      ))}
-            </div>
-                                      <h6 className="mb-1">{comment.author}</h6>
-            </div>
-                <small>{comment.content}</small>
+      <div className="comment-grid" id="comment-container" ref={commentGridRef}>
+        {product.comments?.map((comment, idx) => (
+          <div className="comment-item" key={idx}>
+            <div className="comment-card">
+              {comment.photo && <img src={comment.photo} className="comment-img" alt="Comment Image" />}
+              <div className="comment-content">
+                <div>
+                  <div className="star-rating mb-1">
+                    {[...Array(5)].map((_, starIndex) => (
+                      <i
+                        key={starIndex}
+                        className={`fas fa-star${starIndex < comment.rating ? '' : '-o'}`}
+                        style={{
+                          color: starIndex < comment.rating ? '#FFD700' : '#ccc',
+                          fontSize: '14px',
+                          marginRight: '2px'
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <h6 className="mb-1">{comment.author}</h6>
                 </div>
+                <small>{comment.content}</small>
               </div>
             </div>
-          )) || (
+          </div>
+        )) || (
             <div className="text-center w-100">
               <p>Henüz yorum bulunmuyor.</p>
-          </div>
+            </div>
           )}
       </div>
 
@@ -425,19 +430,19 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         selectedOption={selectedOption}
         onOptionSelect={selectOption}
       />
-      
+
       {/* Sticky Footer */}
       <div className="sticky-footer">
         <div className="product-info">
           <div className="product-name">{product.name}</div>
           <div className="product-price">
             <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
-            <span className="text-danger" style={{fontWeight: 'bolder', fontSize: '1.1rem'}}>{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</span>
+            <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</span>
           </div>
         </div>
         <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
       </div>
-      
+
       {/* Footer */}
       <Footer />
       {product && product.pixels && (

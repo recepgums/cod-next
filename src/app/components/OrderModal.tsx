@@ -377,6 +377,11 @@ export default function OrderModal({
                             
                             {opt.discount > 0 && (
                               <div className="discount" style={{maxWidth: 115}}>
+                                {opt.discount}TL İndirim
+                              </div>
+                            )}
+                            {opt.quantity > 1 && (
+                              <div className="unit-price" style={{ fontSize: '.8rem', color: '#666' }}>
                                 Tanesi {Math.round(opt.price / opt.quantity)}TL
                               </div>
                             )}
@@ -388,13 +393,10 @@ export default function OrderModal({
                             )}
                           </span>
                           <span className="price">
-                            {opt.price.toFixed(2)}TL
+                            {(opt.price-opt.discount).toFixed(2)}
                             <br />
-                            {opt.original && opt.original > opt.price && (
-                              <div className="original-price">{opt.original.toFixed(2)}TL</div>
-                            )}
-                            {opt.quantity > 1 && (product.price * opt.quantity) > opt.price && (
-                              <div className="original-price">{(product.price * opt.quantity).toFixed(2)}TL</div>
+                            {opt.discount > 0 && (
+                              <div className="original-price">{opt.price.toFixed(2)}TL</div>
                             )}
                           </span>
                         </div>
