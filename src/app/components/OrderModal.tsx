@@ -39,14 +39,14 @@ interface OrderModalProps {
   onOptionSelect: (option: ProductOption) => void;
 }
 
-export default function OrderModal({ 
-  showModal, 
-  onClose, 
-  product, 
-  selectedOption, 
-  onOptionSelect 
+export default function OrderModal({
+  showModal,
+  onClose,
+  product,
+  selectedOption,
+  onOptionSelect
 }: OrderModalProps) {
-  
+
   const [districts, setDistricts] = useState<any[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedDistrict, setSelectedDistrict] = useState<string>("");
@@ -74,7 +74,7 @@ export default function OrderModal({
   // Calculate discount amount
   const calculateDiscount = () => {
     if (!selectedOption) return 0;
-    
+
     // Calculate original total price (price * quantity)
     const originalTotal = (product.price * selectedOption.quantity);
     // Calculate discounted total
@@ -101,7 +101,7 @@ export default function OrderModal({
     setSelectedNeighborhood("");
     setDistricts([]);
     setNeighborhoods([]);
-    
+
     if (cityId) {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cities/${cityId}/districts`);
@@ -118,7 +118,7 @@ export default function OrderModal({
     setSelectedDistrict(districtId);
     setSelectedNeighborhood("");
     setNeighborhoods([]);
-    
+
     if (districtId) {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/districts/${districtId}/neighborhoods`);
@@ -265,7 +265,7 @@ export default function OrderModal({
     setSubmitError("");
 
     const formData = new FormData(e.target as HTMLFormElement);
-    
+
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
@@ -301,7 +301,7 @@ export default function OrderModal({
     const startDate = new Date();
     const endDate = new Date();
     endDate.setDate(startDate.getDate() + 3);
-    
+
     setDeliveryDates({
       start: startDate.toLocaleDateString('tr-TR'),
       end: endDate.toLocaleDateString('tr-TR')
@@ -325,8 +325,8 @@ export default function OrderModal({
     <>
       {/* Modal Backdrop */}
       {showModal && (
-        <div 
-          className="modal-backdrop show" 
+        <div
+          className="modal-backdrop show"
           style={{
             position: 'fixed',
             top: 0,
@@ -341,7 +341,7 @@ export default function OrderModal({
       )}
 
       {/* Order Modal */}
-      <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{display: showModal ? 'block' : 'none'}}>
+      <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{ display: showModal ? 'block' : 'none' }}>
         <div className="modal-dialog modal-dialog-centered modal-fullscreen" role="document">
           <div className="modal-content">
             <div className="modal-header">
@@ -350,7 +350,7 @@ export default function OrderModal({
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div className="modal-body" style={{overflow: 'scroll'}}>
+            <div className="modal-body" style={{ overflow: 'scroll' }}>
               <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
                 <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
@@ -366,30 +366,30 @@ export default function OrderModal({
                         <div className="info">
                           <span className="title">
                             {opt.displayText || `${opt.quantity} Adet`}
-                            
+
                             {opt.isCampaign && (
-                              <p style={{color: 'red', fontWeight: 'bold', fontSize: '.9rem'}}>
+                              <p style={{ color: 'red', fontWeight: 'bold', fontSize: '.9rem' }}>
                                 {opt.quantity} {opt.unit || 'Adet'} BEDAVA
                               </p>
                             )}
-                            
+
                             <small className="kargo-bedava">Ücretsiz Kargo</small>
-                            
+
                             {opt.discount > 0 && (
-                              <div className="discount" style={{maxWidth: 115}}>
-                                {opt.discount}TL İndirim
+                              <div className="discount" style={{ maxWidth: "max-content" }}>
+                                Tanesi {((opt.price - opt.discount) / opt.quantity).toFixed(2)}TL
                               </div>
                             )}
 
-                            
+
                             {opt.quantity > 1 && (product.price * opt.quantity) > opt.price && (
-                              <div className="discount-badge" style={{color: 'red', fontWeight: 'bold', fontSize: '.8rem'}}>
+                              <div className="discount-badge" style={{ color: 'red', fontWeight: 'bold', fontSize: '.8rem' }}>
                                 %{Math.round(((product.price * opt.quantity - opt.price) / (product.price * opt.quantity)) * 100)} İndirim
                               </div>
                             )}
                           </span>
                           <span className="price">
-                            {(opt.price-opt.discount).toFixed(2)}
+                            {(opt.price - opt.discount).toFixed(2)}
                             <br />
                             {opt.discount > 0 && (
                               <div className="original-price">{opt.price.toFixed(2)}TL</div>
@@ -399,7 +399,7 @@ export default function OrderModal({
                       </div>
                     </div>
                   ))}
-                  
+
                   {/* Variant Selection */}
                   {(() => {
                     return Object.keys(variants).length > 0 && (
@@ -433,7 +433,7 @@ export default function OrderModal({
                       </div>
                     );
                   })()}
-                  
+
                   {/* Total Section */}
                   <div className="total-section mb-1">
                     <div className="row justify-content-between">
@@ -465,12 +465,12 @@ export default function OrderModal({
                   <div className="shipping-section mb-3">
                     <div className={`form-check ${selectedPaymentType === "nakit" ? "active" : ""}`}>
                       <label className="form-check-label">
-                        <input 
-                          type="radio" 
-                          className="form-check-input" 
-                          value="nakit" 
-                          name="paymentType" 
-                          data-additional-cost=".00TL" 
+                        <input
+                          type="radio"
+                          className="form-check-input"
+                          value="nakit"
+                          name="paymentType"
+                          data-additional-cost=".00TL"
                           checked={selectedPaymentType === "nakit"}
                           onChange={() => handlePaymentTypeChange("nakit")}
                         />
@@ -480,11 +480,11 @@ export default function OrderModal({
                     </div>
                     <div className={`form-check ${selectedPaymentType === "kart" ? "active" : ""}`}>
                       <label className="form-check-label">
-                        <input 
-                          type="radio" 
-                          className="form-check-input" 
-                          value="kart" 
-                          name="paymentType" 
+                        <input
+                          type="radio"
+                          className="form-check-input"
+                          value="kart"
+                          name="paymentType"
                           data-additional-cost="19.00"
                           checked={selectedPaymentType === "kart"}
                           onChange={() => handlePaymentTypeChange("kart")}
@@ -504,14 +504,14 @@ export default function OrderModal({
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-phone"></i></span>
-                      <input 
-                        name="phone" 
-                        autoComplete="off" 
-                        required 
-                        type="tel" 
+                      <input
+                        name="phone"
+                        autoComplete="off"
+                        required
+                        type="tel"
                         className={`form-control ${phoneError ? 'is-invalid' : isPhoneValid ? 'is-valid' : ''}`}
-                        id="phoneInput" 
-                        placeholder="05XXXXXXXXX" 
+                        id="phoneInput"
+                        placeholder="05XXXXXXXXX"
                         onChange={handlePhoneChange}
                         maxLength={11}
                       />
@@ -521,12 +521,12 @@ export default function OrderModal({
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select 
-                        required 
-                        name="city_id" 
-                        className="form-control" 
-                        id="citySelect" 
-                        value={selectedCity} 
+                      <select
+                        required
+                        name="city_id"
+                        className="form-control"
+                        id="citySelect"
+                        value={selectedCity}
                         onChange={e => handleCityChange(e.target.value)}
                       >
                         <option value="">İl Seçiniz</option>
@@ -539,12 +539,12 @@ export default function OrderModal({
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select 
-                        required 
-                        name="district_id" 
-                        className="form-control" 
-                        id="districtSelect" 
-                        value={selectedDistrict} 
+                      <select
+                        required
+                        name="district_id"
+                        className="form-control"
+                        id="districtSelect"
+                        value={selectedDistrict}
                         onChange={e => handleDistrictChange(e.target.value)}
                         disabled={!selectedCity}
                       >
@@ -558,11 +558,11 @@ export default function OrderModal({
                   <div className="mb-1">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-map-marker"></i></span>
-                      <select 
-                        name="neighborhood_id" 
-                        className="form-control" 
-                        id="neighborhoodSelect" 
-                        value={selectedNeighborhood} 
+                      <select
+                        name="neighborhood_id"
+                        className="form-control"
+                        id="neighborhoodSelect"
+                        value={selectedNeighborhood}
                         onChange={e => setSelectedNeighborhood(e.target.value)}
                         disabled={!selectedDistrict}
                       >
@@ -581,9 +581,9 @@ export default function OrderModal({
                     </div>
                   </div>
                   <div className="product-extra-link2 fixed-bottom-button">
-                    <button 
-                      type="submit" 
-                      className="btn btn-success btn-block complete-order" 
+                    <button
+                      type="submit"
+                      className="btn btn-success btn-block complete-order"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
@@ -596,13 +596,13 @@ export default function OrderModal({
                       )}
                     </button>
                   </div>
-                  
+
                   {submitError && (
                     <div className="alert alert-danger mt-3" role="alert">
                       {submitError}
                     </div>
                   )}
-                  
+
                   <div className="mt-3 text-center">
                     Lütfen teslim almayacağınız siparişleri VERMEYİN!
                   </div>
