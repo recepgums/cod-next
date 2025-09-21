@@ -365,7 +365,9 @@ export default function OrderModal({
                       <div className="details">
                         <div className="info">
                           <span className="title">
+                            <p>
                             {opt.displayText || `${opt.quantity} Adet`}
+                            </p>
 
                             {opt.isCampaign && (
                               <p style={{ color: 'red', fontWeight: 'bold', fontSize: '.9rem' }}>
@@ -373,11 +375,11 @@ export default function OrderModal({
                               </p>
                             )}
 
-                            <small className="kargo-bedava">Ücretsiz Kargo</small>
+                            <p className="kargo-bedava">Ücretsiz Kargo</p>
 
                             {opt.discount > 0 && (
                               <div className="discount" style={{ maxWidth: "max-content" }}>
-                                Tanesi {((opt.price - opt.discount) / opt.quantity).toFixed(2)}TL
+                                Tanesi {Math.ceil((opt.price - opt.discount) / opt.quantity)}TL
                               </div>
                             )}
 
@@ -389,7 +391,7 @@ export default function OrderModal({
                             )}
                           </span>
                           <span className="price">
-                            {(opt.price - opt.discount).toFixed(2)}
+                            {(opt.price - opt.discount).toFixed(2)}TL
                             <br />
                             {opt.discount > 0 && (
                               <div className="original-price">{opt.price.toFixed(2)}TL</div>
@@ -443,10 +445,6 @@ export default function OrderModal({
                     <div className="row justify-content-between">
                       <div className="col-8 label">Kargo</div>
                       <div className="col-4 value text-end" id="shipping-cost">Ücretsiz</div>
-                    </div>
-                    <div className="row justify-content-between">
-                      <div className="col-8 label">Ödeme Ücreti</div>
-                      <div className="col-4 value text-end">{selectedPaymentType === "kart" ? "19.00TL" : "Ücretsiz"}</div>
                     </div>
                     {calculateDiscount() > 0 && (
                       <div className="row justify-content-between" id="discounts">
