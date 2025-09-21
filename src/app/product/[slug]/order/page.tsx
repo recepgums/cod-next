@@ -59,7 +59,7 @@ export default function TwoStepOrderForm() {
       {product.images && product.images.length > 0 && (
         <div className="text-center mb-4">
           <img 
-            src={product.images[0]} 
+            src={product.images[0]?.medium || '/placeholder-product.jpg'} 
             style={{maxWidth: '100%', height: 'auto'}}
             alt={product.name}
           />

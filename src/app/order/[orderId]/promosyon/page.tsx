@@ -12,12 +12,20 @@ interface ProductVariant {
   stock: number;
 }
 
+interface ProductImage {
+  thumbnail: string;
+  medium: string;
+  large: string;
+  mobile: string;
+  original: string;
+}
+
 interface UpsellProduct {
   id: number;
   name: string;
   priceCurrent: number;
   priceOriginal: number;
-  images: string[];
+  images: ProductImage[];
   variants?: ProductVariant[];
   settings?: any;
   emoji_benefits?: string;
@@ -280,7 +288,7 @@ export default function PromosyonPage() {
                         <div className="product-img product-img-zoom">
                           <img 
                             className="default-img"
-                            src={product.images[0] || '/placeholder-product.jpg'}
+                            src={product.images[0]?.large || '/placeholder-product.jpg'}
                             alt={product.name}
                             style={{width: '100%', height: 'auto', borderRadius: '10px'}}
                           />
