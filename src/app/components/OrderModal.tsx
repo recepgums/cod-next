@@ -380,11 +380,7 @@ export default function OrderModal({
                                 {opt.discount}TL İndirim
                               </div>
                             )}
-                            {opt.quantity > 1 && (
-                              <div className="unit-price" style={{ fontSize: '.8rem', color: '#666' }}>
-                                Tanesi {Math.round(opt.price / opt.quantity)}TL
-                              </div>
-                            )}
+
                             
                             {opt.quantity > 1 && (product.price * opt.quantity) > opt.price && (
                               <div className="discount-badge" style={{color: 'red', fontWeight: 'bold', fontSize: '.8rem'}}>

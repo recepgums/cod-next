@@ -330,13 +330,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
                     <small className="kargo-bedava">Ücretsiz Kargo</small>
                     {opt.discount > 0 && (
-                      <div className="discount" style={{ maxWidth: 115 }}>
-                        {opt.discount}TL İndirim
-                      </div>
-                    )}
-                    {opt.quantity > 1 && (
-                      <div className="unit-price" style={{ fontSize: '.8rem', color: '#666' }}>
-                        Tanesi {Math.round(opt.price / opt.quantity)}TL
+                      <div className="discount" style={{ maxWidth: "max-content" }}>
+                        Tanesi {((opt.price-opt.discount) / opt.quantity).toFixed(2)}TL
                       </div>
                     )}
                   </span>
