@@ -366,7 +366,7 @@ export default function OrderModal({
                 <input type="hidden" name="product_id" value={product.id} />
                 <div>
                   {/* Product Options in Modal */}
-                  {product.options.map((opt, idx) => (
+                  {product.options?.map((opt, idx) => (
                     <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption?.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => onOptionSelect(opt)}>
                       <img src={product.images[0]?.thumbnail || '/placeholder-product.jpg'} width={60} height={60} className="img-fluid" alt="product image" />
                       <div className="details">
