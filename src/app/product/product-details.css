@@ -1514,7 +1514,7 @@ button.close {
     color: #f27a1a
 }
 
-@media (min-width: 768px) {
+@media (min-width: 250px) {
     .social-proof-social-proof-wrapper .social-proof-item-social-proof-item {
         gap:8px;
         font-size: 14px!important;
