@@ -447,7 +447,7 @@ export default function OrderModal({
                   <div className="total-section mb-1">
                     <div className="row justify-content-between">
                       <div className="col-8 label">Ara Toplam</div>
-                      <div className="col-4 value text-end">{(selectedOption?.price || product?.price || 0).toFixed(2)}TL</div>
+                      <div className="col-4 value text-end">{calculateTotalPrice().toFixed(2)}TL</div>
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-8 label">Kargo</div>
