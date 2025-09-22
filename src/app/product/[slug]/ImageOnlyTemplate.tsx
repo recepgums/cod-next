@@ -127,9 +127,9 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">
-          {announcementTexts.map((t, i) => <span key={i}>{t}</span>)}
-          {announcementTexts.map((t, i) => <span key={i + 10}>{t}</span>)}
-          {announcementTexts.map((t, i) => <span key={i + 20}>{t}</span>)}
+          {announcementTexts?.map((t, i) => <span key={i}>{t}</span>)}
+          {announcementTexts?.map((t, i) => <span key={i + 10}>{t}</span>)}
+          {announcementTexts?.map((t, i) => <span key={i + 20}>{t}</span>)}
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         </div>
 
         {/* Full-width images stacked vertically */}
-        {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
+        {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => (
           <img 
             key={img.original + idx}
             src={img.original}
