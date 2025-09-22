@@ -52,7 +52,7 @@ export default function TwoStepOrderForm() {
     <div className="two-step-order-form">
       {/* Header */}
       <div className="header text-center mx-auto mb-4">
-        <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
+        <a href="/"><img style={{height: 50}} src={product.logoUrl || "/images/logo.png"} alt="Logo" /></a>
       </div>
 
       {/* Product Image */}

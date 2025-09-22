@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import NovaSlider from './component/NovaSlider';
 import './lightTemplate.css';
 
-const LightTemplate: React.FC = () => {
+interface LightTemplateProps {
+    product: any;
+}
+
+const LightTemplate: React.FC<LightTemplateProps> = ({ product }) => {
     const [selectedOption, setSelectedOption] = useState(0);
 
     // Static data matching the image
@@ -46,7 +50,13 @@ const LightTemplate: React.FC = () => {
                     <a href="#">Ürünler</a>
                     <a href="#">İletişim</a>
                 </div>
-                <div className="light-logo">Tech Misty</div>
+                <div className="light-logo">
+                    {product.logoUrl ? (
+                        <img src={product.logoUrl} alt="Logo" style={{height: '40px'}} />
+                    ) : (
+                        "Tech Misty"
+                    )}
+                </div>
                 <div className="light-user-actions">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" fill="none" />

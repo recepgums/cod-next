@@ -42,6 +42,7 @@ interface Product {
   cities: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
+  logoUrl?: string;
 }
 
 const announcementTexts = [
@@ -135,7 +136,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       {/* Gallery Container */}
       <div className="gallery-container mt-1">
         <div className="header text-center mx-auto">
-          <a href="/"><img style={{height: 50}} src="/images/logo.png" alt="TrendyGoods" /></a>
+          <a href="/"><img style={{height: 50}} src={product.logoUrl || "/images/logo.png"} alt="Logo" /></a>
         </div>
 
         {/* Full-width images stacked vertically */}

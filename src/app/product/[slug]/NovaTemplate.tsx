@@ -109,8 +109,8 @@ export default function NovaTemplate({ product }: { product: any }) {
     return (
         <>
             <NovaHeader
-                logoSrc="https://rexingtr.com/cdn/shop/files/blue_rexinglogo_hd.png?v=1743567206&width=500"
-                logoAlt="REXING"
+                logoSrc={product.logoUrl || "https://rexingtr.com/cdn/shop/files/blue_rexinglogo_hd.png?v=1743567206&width=500"}
+                logoAlt="Logo"
                 categories={categories}
                 backgroundColor="#ffffff"
                 textColor="#333333"

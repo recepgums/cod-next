@@ -53,6 +53,7 @@ interface Product {
   cities: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
+  logoUrl?: string;
   content?: string;
   settings?: string;
 }
@@ -247,7 +248,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       {/* Gallery */}
       <div className="gallery-container mt-1">
         <div className="header text-center mx-auto">
-          <a href="/"><img style={{ height: 50 }} src="/images/logo.png" alt="TrendyGoods" /></a>
+          <a href="/"><img style={{ height: 50 }} src={product.logoUrl || "/images/logo.png"} alt="Logo" /></a>
         </div>
         <div className="main-image-container">
           <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg]?.large || product.images[0]?.large) : '/images/default-product.png'} height={400} alt="product image" loading="lazy" />

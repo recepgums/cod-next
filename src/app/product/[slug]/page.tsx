@@ -57,6 +57,7 @@ interface Product {
   cities: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string; // Added for 2-step template
+  logoUrl?: string; // Dynamic logo URL
   content?: string; // Added for product content
   settings?: string; // Added for product settings including variants
 }
@@ -95,6 +96,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           template: templateData,
+          logoUrl: res.data.logoUrl, // Logo is in the outer response object
           // template: "nova",
           // template: "light",
           settings: productData.settings // Include settings for variants
@@ -138,9 +140,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   if (product.template === "nova") {
     return <NovaTemplate product={product} />;
   }
-  // if (product.template === "light") {
-  //   return <LightTemplate product={product} />;
-  // } 
+  if (product.template === "light") {
+    return <LightTemplate product={product} />;
+  } 
 
   if (product.template === "2step") {
     return <TwoStepLandingTemplate product={product} />;
