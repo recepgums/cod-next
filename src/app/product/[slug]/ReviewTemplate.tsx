@@ -217,6 +217,16 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
   }, [product.options]);
 
   useEffect(() => {
+    const previousTitle = document.title;
+    if (product?.name) {
+      document.title = product.name;
+    }
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [product?.name]);
+
+  useEffect(() => {
     const socialProofElement = document.querySelector('.social-proof-social-proof') as HTMLElement;
     if (!socialProofElement) return;
 
