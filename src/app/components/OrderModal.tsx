@@ -348,9 +348,9 @@ export default function OrderModal({
       )}
 
       {/* Order Modal */}
-      <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{ display: showModal ? 'block' : 'none' }}>
-        <div className="modal-dialog modal-dialog-centered modal-fullscreen" role="document">
-          <div className="modal-content">
+      <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{ display: showModal ? 'block' : 'none' }} onClick={onClose}>
+        <div className="modal-dialog modal-dialog-centered modal-fullscreen" role="document" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h5 className="modal-title text-center" id="fullScreenModalLabel">Sipariş Formu</h5>
               <button type="button" className="close" onClick={onClose} aria-label="Close">
