@@ -66,9 +66,16 @@ export default function OrderModal({
 
   // Calculate total price including payment method cost
   const calculateTotalPrice = () => {
-    const basePrice = selectedOption?.price || product?.price || 0;
-    const paymentCost = selectedPaymentType === "kart" ? 19.00 : 0;
-    return basePrice + paymentCost;
+
+    const basePrice = selectedOption 
+      ? (selectedOption.price - selectedOption.discount)
+      : (product?.price || 0);
+    
+    const cardPaymentCost = selectedPaymentType === "kart" 
+      ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
+      : 0;
+    
+    return basePrice + cardPaymentCost;
   };
 
   // Calculate discount amount
