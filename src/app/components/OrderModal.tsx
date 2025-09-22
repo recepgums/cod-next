@@ -361,7 +361,7 @@ export default function OrderModal({
               <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
                 <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
-                <input type="hidden" name="total_price" id="total_price" value={selectedOption?.price.toFixed(2) || product.price.toFixed(2)} />
+                <input type="hidden" name="total_price" id="total_price" value={selectedOption?.price?.toFixed(2) || product.price?.toFixed(2)} />
                 <input type="hidden" name="products" value={product.name} />
                 <input type="hidden" name="product_id" value={product.id} />
                 <div>
@@ -398,10 +398,10 @@ export default function OrderModal({
                             )}
                           </span>
                           <span className="price">
-                            {(opt.price - opt.discount).toFixed(2)}TL
+                            {(opt.price - opt.discount)?.toFixed(2)}TL
                             <br />
                             {opt.discount > 0 && (
-                              <div className="original-price">{opt.price.toFixed(2)}TL</div>
+                              <div className="original-price">{opt.price?.toFixed(2)}TL</div>
                             )}
                           </span>
                         </div>
@@ -447,7 +447,7 @@ export default function OrderModal({
                   <div className="total-section mb-1">
                     <div className="row justify-content-between">
                       <div className="col-8 label">Ara Toplam</div>
-                      <div className="col-4 value text-end">{calculateTotalPrice().toFixed(2)}TL</div>
+                      <div className="col-4 value text-end">{calculateTotalPrice()?.toFixed(2)}TL</div>
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-8 label">Kargo</div>
@@ -457,13 +457,13 @@ export default function OrderModal({
                       <div className="row justify-content-between" id="discounts">
                         <div className="col-8 label">İndirimler</div>
                         <div className="col-4 discount text-end" id="discount_amount">
-                          -{calculateDiscount().toFixed(2)}TL ({getDiscountPercentage()}%)
+                          -{calculateDiscount()?.toFixed(2)}TL ({getDiscountPercentage()}%)
                         </div>
                       </div>
                     )}
                     <div className="row justify-content-between total-row mt-2 pt-2 border-top">
                       <div className="col-8 label">Toplam</div>
-                      <div className="col-4 total text-end" id="total-price">{calculateTotalPrice().toFixed(2)}TL</div>
+                      <div className="col-4 total text-end" id="total-price">{calculateTotalPrice()?.toFixed(2)}TL</div>
                     </div>
                   </div>
                   {/* Shipping Section */}
@@ -495,7 +495,7 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("kart")}
                         />
                         <span>Kapıda Kartlı Ödeme</span>
-                        <span>{JSON.parse(product.settings).card_payment_cost == "0" ? "Ücretsiz" : (JSON.parse(product.settings).card_payment_cost).toFixed(2) + "TL"}</span>
+                        <span>{JSON.parse(product.settings).card_payment_cost == "0" ? "Ücretsiz" : ((JSON.parse(product.settings).card_payment_cost)?.toFixed(2)) ?? "Ücretsiz" + "TL"}</span>
                       </label>
                     </div>
                   </div>
@@ -597,7 +597,7 @@ export default function OrderModal({
                           Sipariş Gönderiliyor...
                         </>
                       ) : (
-                        `SİPARİŞİ TAMAMLAYIN - ${calculateTotalPrice().toFixed(2)}TL`
+                        `SİPARİŞİ TAMAMLAYIN - ${calculateTotalPrice()?.toFixed(2)}TL`
                       )}
                     </button>
                   </div>
