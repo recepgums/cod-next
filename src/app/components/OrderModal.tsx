@@ -244,7 +244,7 @@ export default function OrderModal({
   useEffect(() => {
     if (selectedOption && Object.keys(variants).length > 0) {
       const quantity = selectedOption.quantity;
-      const newSelectedVariants = Array(quantity).fill(null).map(() => ({}));
+      const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
       setSelectedVariants(newSelectedVariants);
     }
   }, [selectedOption, variants]);
@@ -414,11 +414,11 @@ export default function OrderModal({
                     return Object.keys(variants).length > 0 && (
                       <div className="variant-selection mb-3">
                         <div id="variant-container">
-                          {selectedVariants.map((selectedVariant, index) => (
+                          {selectedVariants?.map((selectedVariant, index) => (
                             <div key={index} className="variant-item mb-3">
                               <div className="variant-item-title mb-2">{index + 1}. Ürün</div>
                               <div className="variant-options">
-                                {Object.entries(variants).map(([type, variantData]: [string, any]) => (
+                                {Object.entries(variants)?.map(([type, variantData]: [string, any]) => (
                                   <select
                                     key={type}
                                     name={`variants[${index}][${type}]`}
@@ -428,7 +428,7 @@ export default function OrderModal({
                                     onChange={(e) => handleVariantChange(index, type, e.target.value)}
                                   >
                                     <option value="">{variantData.title || type} Seçin</option>
-                                    {variantData.options.map((option: string) => (
+                                    {variantData.options?.map((option: string) => (
                                       <option key={option} value={option}>
                                         {option}
                                       </option>
@@ -535,7 +535,7 @@ export default function OrderModal({
                         onChange={e => handleCityChange(e.target.value)}
                       >
                         <option value="">İl Seçiniz</option>
-                        {cities.map((city: any) => (
+                        {cities?.map((city: any) => (
                           <option key={city.id} value={city.id}>{city.name}</option>
                         ))}
                       </select>
@@ -554,7 +554,7 @@ export default function OrderModal({
                         disabled={!selectedCity}
                       >
                         <option value="">İlçe Seçiniz</option>
-                        {districts.map((district: any) => (
+                        {districts?.map((district: any) => (
                           <option key={district.id || district.fest_id} value={district.id || district.fest_id}>{district.name}</option>
                         ))}
                       </select>
@@ -572,7 +572,7 @@ export default function OrderModal({
                         disabled={!selectedDistrict}
                       >
                         <option value="">Mahalle Seçiniz</option>
-                        {neighborhoods.map((neighborhood: any) => (
+                        {neighborhoods?.map((neighborhood: any) => (
                           <option key={neighborhood.id || neighborhood.fest_id} value={neighborhood.id || neighborhood.fest_id}>{neighborhood.name}</option>
                         ))}
                       </select>
