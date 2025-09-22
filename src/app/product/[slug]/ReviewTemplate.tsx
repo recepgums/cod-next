@@ -297,7 +297,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           <div className="product-price primary-color">
             <span className="text-brand h4">{product.price?.toFixed(2)}₺</span>
             <ins><span className="old-price font-md ml-3 text-muted">{product.oldPrice.toFixed(2)}₺</span></ins>
-            <span className="save-price font-md ml-3 text-white bg-danger p-1 rounded">{product.discount} indirim</span>
+            <span className="save-price font-md ml-3 text-white bg-danger p-1 rounded">{product.discount}</span>
           </div>
         </div>
         {/* Features/Benefits */}
