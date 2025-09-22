@@ -215,6 +215,25 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     }
   }, [product.options]);
 
+  useEffect(() => {
+    const socialProofElement = document.querySelector('.social-proof-social-proof') as HTMLElement;
+    if (!socialProofElement) return;
+
+    const positions = ['-24px', '-48px', '-72px'];
+    let currentIndex = 0;
+
+    const animateSocialProof = () => {
+      socialProofElement.style.top = positions[currentIndex];
+      currentIndex = (currentIndex + 1) % positions.length;
+    };
+    animateSocialProof();
+    
+    // Continue animation every second
+    const interval = setInterval(animateSocialProof, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="product-details-container">
       {/* Announcement Bar */}
@@ -293,6 +312,41 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
             <a className="font-small ml-3 text-muted" href="#comments">( {product.commentCount || 0} değerlendirme)</a>
           </div>
         </div>
+        <div>
+          <section className="social-proof-social-proof-wrapper">
+            <div className="social-proof-social-proof" style={{ transition: "1s" }}>
+              <div className="social-proof-item-social-proof-item">
+                <img alt="basket-count" height="16"
+                  src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
+                  data-testid="image" />
+                  <p className="social-proof-content"><span className="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                    tükenmeden al!</p>
+              </div>
+              <div className="social-proof-item-social-proof-item">
+                <img alt="favorite-count" height="16"
+                  src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/orange-heart_1f9e1.png" width="16"
+                  data-testid="image" />
+                  <p className="social-proof-content">Sevilen ürün! <span className="social-proof-item-focused-text">9,6B</span> kişi
+                    favoriledi!</p>
+              </div>
+              <div className="social-proof-item-social-proof-item">
+                <img alt="page-view-count" height="16"
+                  src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/view3.png" width="16"
+                  data-testid="image" />
+                  <p className="social-proof-content">Popüler ürün! Son 24 saatte <span
+                    className="social-proof-item-focused-text">1,7B kişi</span> görüntüledi!</p>
+              </div>
+              <div className="social-proof-item-social-proof-item">
+                <img alt="basket-count" height="16"
+                  src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
+                  data-testid="image" />
+                  <p className="social-proof-content"><span className="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                    tükenmeden al!</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
         <div className="clearfix product-price-cover my-3">
           <div className="product-price primary-color">
             <span className="text-brand h4">{product.price?.toFixed(2)}₺</span>
@@ -336,7 +390,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                     )}
                   </span>
                   <span className="price">
-                    {(opt.price-opt.discount).toFixed(2)}TL
+                    {(opt.price - opt.discount).toFixed(2)}TL
                     <br />
                     {opt.discount > 0 && (
                       <div className="original-price">{opt.price.toFixed(2)}TL</div>
