@@ -1481,3 +1481,66 @@ button.close {
 .product-title span{
     font-size: 24px !important;
 } */
+
+
+.social-proof-social-proof-wrapper {
+    width: calc(100% - 16px);
+    height: 16px;
+    position: relative;
+    overflow: hidden
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-social-proof-item {
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    display: flex
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-social-proof-item img {
+    width: auto;
+    height: 16px
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-social-proof-item .social-proof-content {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-focused-text {
+    color: #f27a1a
+}
+
+@media (min-width: 768px) {
+    .social-proof-social-proof-wrapper .social-proof-item-social-proof-item {
+        gap:8px;
+        font-size: 14px!important;
+        line-height: 18px!important
+    }
+
+    .social-proof-social-proof-wrapper .social-proof-item-social-proof-item img {
+        width: auto;
+        height: 18px
+    }
+}
+
+.social-proof-social-proof-wrapper .social-proof-social-proof {
+    top: 0;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 1s;
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 0
+}
+
+@media (min-width: 768px) {
+    .social-proof-social-proof-wrapper {
+        height:18px;
+        margin: 4px 0 0
+    }
+}

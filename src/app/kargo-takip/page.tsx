@@ -24,7 +24,7 @@ export default function CargoTrackingPage() {
     setTrackingResult(null);
 
     try {
-      const response = await fetch(`https://codpanel.com.tr/api/order-track?phone=${trackingNumber}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-track?phone=${trackingNumber}`);
 
       if (!response.ok) {
         throw new Error('Sipariş bulunamadı');

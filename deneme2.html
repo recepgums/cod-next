@@ -1,0 +1,97 @@
+<section class="social-proof-social-proof-wrapper" data-testid="social-proof">
+    <div class="social-proof-social-proof" style="transition: 1s; top: -24px;">
+        <div class="social-proof-item-social-proof-item">
+            <img alt="basket-count" height="16"
+                src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
+                data-testid="image">
+            <p class="social-proof-content"><span class="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                tükenmeden al!</p>
+        </div>
+        <div class="social-proof-item-social-proof-item">
+            <img alt="favorite-count" height="16"
+                src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/orange-heart_1f9e1.png" width="16"
+                data-testid="image">
+            <p class="social-proof-content">Sevilen ürün! <span class="social-proof-item-focused-text">9,6B</span> kişi
+                favoriledi!</p>
+        </div>
+        <div class="social-proof-item-social-proof-item">
+            <img alt="page-view-count" height="16"
+                src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/view3.png" width="16"
+                data-testid="image">
+            <p class="social-proof-content">Popüler ürün! Son 24 saatte <span
+                    class="social-proof-item-focused-text">1,7B kişi</span> görüntüledi!</p>
+        </div>
+        <div class="social-proof-item-social-proof-item">
+            <img alt="basket-count" height="16"
+                src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
+                data-testid="image">
+            <p class="social-proof-content"><span class="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                tükenmeden al!</p>
+        </div>
+    </div>
+</section>
+
+
+<style>
+ .social-proof-social-proof-wrapper {
+    width: calc(100% - 16px);
+    height: 16px;
+    position: relative;
+    overflow: hidden
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-social-proof-item {
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    display: flex
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-social-proof-item img {
+    width: auto;
+    height: 16px
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-social-proof-item .social-proof-content {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden
+}
+
+.social-proof-social-proof-wrapper .social-proof-item-focused-text {
+    color: #f27a1a
+}
+
+@media (min-width: 768px) {
+    .social-proof-social-proof-wrapper .social-proof-item-social-proof-item {
+        gap:8px;
+        font-size: 14px!important;
+        line-height: 18px!important
+    }
+
+    .social-proof-social-proof-wrapper .social-proof-item-social-proof-item img {
+        width: auto;
+        height: 18px
+    }
+}
+
+.social-proof-social-proof-wrapper .social-proof-social-proof {
+    top: 0;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 1s;
+    display: flex;
+    position: absolute;
+    left: 0;
+    right: 0
+}
+
+@media (min-width: 768px) {
+    .social-proof-social-proof-wrapper {
+        height:18px;
+        margin: 4px 0 0
+    }
+}
+</style>
