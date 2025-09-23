@@ -1,5 +1,6 @@
 'use client';
 
+import '../Nova.css';
 import React, { useState } from 'react';
 import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
@@ -189,4 +190,4 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       )}
     </div>
   );
-} 
+}

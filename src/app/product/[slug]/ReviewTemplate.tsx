@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
 import '../Nova.css';
+import React, { useState, useEffect, useRef } from 'react';
 import '../product-details.css'
 import Footer from '../../components/Footer';
 import OrderModal from '../../components/OrderModal';

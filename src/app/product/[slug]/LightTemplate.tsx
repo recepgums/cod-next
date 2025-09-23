@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import NovaSlider from './component/NovaSlider';
 import './lightTemplate.css';

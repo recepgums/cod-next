@@ -1,5 +1,6 @@
 'use client';
 
+import '../../Nova.css';
 import React, { useState } from 'react';
 
 interface Category {
