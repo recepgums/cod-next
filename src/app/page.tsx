@@ -15,6 +15,9 @@ async function fetchProducts() {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr', // ENV'den oku
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`, // ENV'den oku
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
     });
     
