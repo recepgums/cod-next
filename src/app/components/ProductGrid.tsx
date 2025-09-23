@@ -5,7 +5,7 @@ export type Product = {
   name: string;
   imgSrc: string;
   productLink: string;
-  rating?: string | null;
+  rating?: number | null; // string yerine number olmalı
   priceCurrent: string;
   priceOriginal?: string | null;
   slug: string;
@@ -22,11 +22,11 @@ export default function ProductGrid({ products }: ProductGridProps) {
         <div className="container">
           <div className="row">
             {products.map((product, idx) => (
-              <div key={idx} className="col-lg-3 col-md-4 col-sm-6 col-6 px-1">
+              <div key={product.slug || idx} className="col-lg-3 col-md-4 col-sm-6 col-6 px-1">
                 <ProductCard
                   image={product.imgSrc}
                   title={product.name}
-                  rating={product.rating ? parseFloat(product.rating) : null}
+                  rating={product.rating} // parseFloat artık gerekli değil
                   price={product.priceCurrent}
                   oldPrice={product.priceOriginal}
                   slug={product.slug}
@@ -39,4 +39,4 @@ export default function ProductGrid({ products }: ProductGridProps) {
       </section>
     </main>
   );
-} 
+}

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -35,6 +37,22 @@ function StarRating({ rating }: { rating: number }) {
   return <span>{stars}</span>;
 }
 
+// Optimized image URL helper
+function getOptimizedImageUrl(originalUrl: string): string {
+  // Eğer URL zaten proxy üzerinden geliyorsa, olduğu gibi kullan
+  if (originalUrl.includes('/api/image-proxy')) {
+    return originalUrl;
+  }
+  
+  // Laravel API'dan gelen resimler için proxy kullan
+  if (originalUrl.includes(process.env.NEXT_PUBLIC_API_URL || '')) {
+    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+  }
+  
+  // Diğer durumlar için orijinal URL'i kullan
+  return originalUrl;
+}
+
 export default function ProductCard({
   image,
   title,
@@ -44,19 +62,44 @@ export default function ProductCard({
   slug,
   productLink,
 }: ProductCardProps) {
+  const optimizedImageUrl = getOptimizedImageUrl(image);
+  
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    // Daha temiz error logging - sadece gerekli bilgileri göster
+    console.warn('Image failed to load:', {
+      src: e.currentTarget.src,
+      alt: e.currentTarget.alt,
+      productTitle: title
+    });
+    
+    // Fallback image göster
+    const target = e.target as HTMLImageElement;
+    target.src = '/images/placeholder.svg';
+  };
+  
   return (
     <div className="product-cart-wrap mb-3 shadow-sm" style={{borderRadius: '10px'}}>
       <div className="product-img-action-wrap" style={{padding: 0}}>
         <div className="product-img product-img-zoom" style={{borderRadius: '10px 10px 0 0', overflow: 'hidden'}}>
           <Link href={productLink}>
             <Image
-              src={image}
+              src={optimizedImageUrl}
               alt={title}
               width={320}
               height={200}
               className="lozad default-img w-100"
               style={{height: '200px', objectFit: 'cover'}}
-              priority={false}
+              // Performance optimizasyonları
+              priority={false} // İlk 4 ürün için true yapılabilir
+              quality={80} // next.config.ts'deki ayarla uyumlu
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 320px"
+              // Modern format desteği
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+              // Loading stratejisi
+              loading="lazy"
+              // Error handling - Client Component'te çalışır
+              onError={handleImageError}
             />
           </Link>
         </div>
@@ -76,9 +119,9 @@ export default function ProductCard({
           </div>
         )}
         <div className="product-price mt-1">
-          <span style={{fontSize: '1.2em', color: '#ff6a00'}}>{price} TL</span>
+          <span style={{fontSize: '1.2em', color: '#ff6a00'}}>{price}</span>
           {oldPrice && (
-            <span className="old-price" style={{fontSize: '0.9em', color: '#aaa', textDecoration: 'line-through'}}>{oldPrice} TL</span>
+            <span className="old-price" style={{fontSize: '0.9em', color: '#aaa', textDecoration: 'line-through', marginLeft: '8px'}}>{oldPrice}</span>
           )}
         </div>
       </div>
