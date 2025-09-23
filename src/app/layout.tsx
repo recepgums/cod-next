@@ -33,20 +33,16 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://cdn-uicons.flaticon.com" />
         
-        {/* Critical CSS - Load asynchronously to avoid render blocking */}
+        {/* Critical CSS - Load with simple preload */}
         <link 
           rel="preload" 
           href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css" 
           as="style" 
-          onLoad={(e) => {
-            const target = e.target as HTMLLinkElement;
-            target.onload = null;
-            target.rel = 'stylesheet';
-          }}
         />
-        <noscript>
-          <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css" />
-        </noscript>
+        <link 
+          rel="stylesheet" 
+          href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css" 
+        />
         
         {/* Optimize Google Fonts loading - Combine multiple font families */}
         <link 
