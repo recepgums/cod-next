@@ -1,0 +1,151 @@
+import React from 'react';
+import '../Nova.css';
+import '../product-details.css'
+import dynamic from 'next/dynamic';
+import LightTemplate from './LightTemplate';
+
+// Dynamic imports for client components
+const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
+const ImageOnlyTemplate = dynamic(() => import('./ImageOnlyTemplate'), { ssr: false });
+const TwoStepLandingTemplate = dynamic(() => import('./TwoStepLandingTemplate'), { ssr: false });
+const NovaTemplate = dynamic(() => import('./NovaTemplate'), { ssr: false });
+const ReviewTemplate = dynamic(() => import('./ReviewTemplate'), { ssr: false });
+
+interface ProductOption {
+  quantity: number;
+  price: number;
+  original?: number;
+  discount: number;
+  badge: string;
+  isCampaign?: boolean;
+  unit?: string;
+  displayText?: string;
+  finalDiscount?: number;
+}
+
+interface ProductComment {
+  id: number;
+  author: string;
+  content: string;
+  rating: number;
+  photo?: string;
+  order?: number | null;
+}
+
+interface ProductImage {
+  thumbnail: string;
+  medium: string;
+  large: string;
+  mobile: string;
+  original: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  oldPrice: number;
+  discount: string;
+  images: ProductImage[];
+  options: ProductOption[];
+  features: string[];
+  rating: number;
+  commentCount: number;
+  comments: ProductComment[];
+  cities: any[];
+  pixels?: { platform: string; pixel_id: string }[];
+  template?: string;
+  logoUrl?: string;
+  content?: string;
+  settings?: string;
+}
+
+// Server-side data fetching
+async function fetchProductData(slug: string) {
+  try {
+    console.log(`🔍 Fetching product data for slug: ${slug}`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
+      },
+      next: { revalidate: 300 }, // 5 dakika cache
+    });
+
+    if (!response.ok) {
+      throw new Error(`Product API failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    const productData = data.product;
+    const commentsData = data.comments;
+    const pixelsData = data.pixels;
+    const templateData = data.template;
+    const citiesData = Array.isArray(data.cities) ? data.cities : [];
+    
+    // Merge all data into product object
+    const product: Product = {
+      ...productData,
+      comments: Array.isArray(commentsData) ? commentsData : [],
+      cities: Array.isArray(citiesData) ? citiesData : [],
+      pixels: Array.isArray(pixelsData) ? pixelsData : [],
+      template: templateData,
+      logoUrl: data.logoUrl,
+    };
+
+    console.log('✅ Product data fetched successfully:', product.name);
+    return { product, cities: citiesData };
+    
+  } catch (error) {
+    console.error('❌ Error fetching product:', error);
+    return { product: null, cities: [] };
+  }
+}
+
+export default async function ProductDetailPage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
+  const { slug } = await params;
+  const { product, cities } = await fetchProductData(slug);
+
+  if (!product) {
+    return (
+      <div className="container text-center py-5">
+        <h3>Ürün bulunamadı</h3>
+        <p>Aradığınız ürün mevcut değil veya kaldırılmış olabilir.</p>
+      </div>
+    );
+  }
+
+  // Template selection based on product data
+  const renderTemplate = () => {
+    switch (product.template) {
+      case 'nova':
+        return <NovaTemplate product={product} cities={cities} />;
+      case 'reviews':
+        return <ReviewTemplate product={product} cities={cities} />;
+      case 'light':
+        return <LightTemplate product={product} cities={cities} />;
+      case 'image-only':
+        return <ImageOnlyTemplate product={product} cities={cities} />;
+      case '2-step':
+        return <TwoStepLandingTemplate product={product} cities={cities} />;
+      default:
+        return <NovaTemplate product={product} cities={cities} />;
+    }
+  };
+
+  return (
+    <>
+      {renderTemplate()}
+      <PixelScripts pixels={product.pixels || []} />
+    </>
+  );
+}
