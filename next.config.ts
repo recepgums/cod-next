@@ -3,11 +3,17 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     domains: [
+      // Production domains
       'codpanel.com.tr', // Laravel API server
       'trendygoods.com.tr', // Ana website
+      // Development domains
       'localhost',
       '127.0.0.1',
+      'cod.laravel',
       // Other domains
+      'main.trendygoods.com.tr',
+      'demo.trendygoods.com.tr',
+      'api.trendygoods.com.tr',
       'main.vakuumcar.com.tr',
       // Local development IPs
       '10.171.250.230:8000',
@@ -23,14 +29,11 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
   },
   // Performans optimizasyonları
-  experimental: {
-    // Modern bundling
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },

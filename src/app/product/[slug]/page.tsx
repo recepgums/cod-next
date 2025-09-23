@@ -1,15 +1,14 @@
 import React from 'react';
 import '../Nova.css';
 import '../product-details.css'
-import dynamic from 'next/dynamic';
 import LightTemplate from './LightTemplate';
 
-// Dynamic imports for client components
-const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
-const ImageOnlyTemplate = dynamic(() => import('./ImageOnlyTemplate'), { ssr: false });
-const TwoStepLandingTemplate = dynamic(() => import('./TwoStepLandingTemplate'), { ssr: false });
-const NovaTemplate = dynamic(() => import('./NovaTemplate'), { ssr: false });
-const ReviewTemplate = dynamic(() => import('./ReviewTemplate'), { ssr: false });
+// Regular imports for server components (no dynamic with ssr: false)
+import PixelScripts from './PixelScripts';
+import ImageOnlyTemplate from './ImageOnlyTemplate';
+import TwoStepLandingTemplate from './TwoStepLandingTemplate';
+import NovaTemplate from './NovaTemplate';
+import ReviewTemplate from './ReviewTemplate';
 
 interface ProductOption {
   quantity: number;
@@ -60,6 +59,8 @@ interface Product {
   settings?: string;
 }
 
+import type { Metadata } from "next";
+
 // Server-side data fetching
 async function fetchProductData(slug: string) {
   try {
@@ -105,6 +106,33 @@ async function fetchProductData(slug: string) {
     console.error('❌ Error fetching product:', error);
     return { product: null };
   }
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { product } = await fetchProductData(slug);
+
+  if (!product) {
+    return {
+      title: 'Ürün Bulunamadı - TrendyGoods',
+      description: 'Aradığınız ürün bulunamadı.',
+    };
+  }
+
+  return {
+    title: `${product.name} - TrendyGoods`,
+    description: product.content ? product.content.substring(0, 160) : `${product.name} ürününü TrendyGoods'da keşfedin.`,
+    openGraph: {
+      title: `${product.name} - TrendyGoods`,
+      description: product.content ? product.content.substring(0, 160) : `${product.name} ürününü TrendyGoods'da keşfedin.`,
+      images: product.images && product.images.length > 0 ? [product.images[0].large] : [],
+    },
+  };
 }
 
 export default async function ProductDetailPage({ 
