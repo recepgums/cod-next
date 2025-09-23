@@ -99,11 +99,11 @@ async function fetchProductData(slug: string) {
     };
 
     console.log('✅ Product data fetched successfully:', product.name);
-    return { product, cities: citiesData };
+    return { product };
     
   } catch (error) {
     console.error('❌ Error fetching product:', error);
-    return { product: null, cities: [] };
+    return { product: null };
   }
 }
 
@@ -113,7 +113,7 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }> 
 }) {
   const { slug } = await params;
-  const { product, cities } = await fetchProductData(slug);
+  const { product } = await fetchProductData(slug);
 
   if (!product) {
     return (
@@ -128,17 +128,17 @@ export default async function ProductDetailPage({
   const renderTemplate = () => {
     switch (product.template) {
       case 'nova':
-        return <NovaTemplate product={product} cities={cities} />;
+        return <NovaTemplate product={product} />;
       case 'reviews':
-        return <ReviewTemplate product={product} cities={cities} />;
+        return <ReviewTemplate product={product} />;
       case 'light':
-        return <LightTemplate product={product} cities={cities} />;
+        return <LightTemplate product={product} />;
       case 'image-only':
-        return <ImageOnlyTemplate product={product} cities={cities} />;
+        return <ImageOnlyTemplate product={product} />;
       case '2-step':
-        return <TwoStepLandingTemplate product={product} cities={cities} />;
+        return <TwoStepLandingTemplate product={product} />;
       default:
-        return <NovaTemplate product={product} cities={cities} />;
+        return <NovaTemplate product={product} />;
     }
   };
 
