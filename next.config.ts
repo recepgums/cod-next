@@ -3,20 +3,16 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     domains: [
-      'cod.laravel',
+      'codpanel.com.tr', // Laravel API server
+      'trendygoods.com.tr', // Ana website
       'localhost',
       '127.0.0.1',
-      'main.trendygoods.com.tr',
-      'demo.trendygoods.com.tr',
+      // Other domains
+      'main.vakuumcar.com.tr',
+      // Local development IPs
       '10.171.250.230:8000',
       '10.0.19.82',
-      'main.vakuumcar.com.tr',
       '192.168.137.1:8000',
-      'codpanel.com.tr',
-      'trendygoods.com.tr', // Ana domain eklendi
-      'api.trendygoods.com.tr', // API domain eklendi
-
-      
     ],
     // Modern image formatları için optimizasyon
     formats: ['image/avif', 'image/webp'],
