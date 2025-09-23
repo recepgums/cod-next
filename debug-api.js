@@ -6,8 +6,7 @@ const testAPI = async () => {
     console.log('🔍 Testing Laravel API...');
     
     // Laravel API'yi test et
-    const response = await fetch('http://localhost/homepage');
-    
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/homepage');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
