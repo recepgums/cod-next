@@ -1,12 +1,10 @@
-'use client';
-
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import '../Nova.css';
 import '../product-details.css'
-
-import axios from 'axios';
 import dynamic from 'next/dynamic';
 import LightTemplate from './LightTemplate';
+
+// Dynamic imports for client components
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 const ImageOnlyTemplate = dynamic(() => import('./ImageOnlyTemplate'), { ssr: false });
 const TwoStepLandingTemplate = dynamic(() => import('./TwoStepLandingTemplate'), { ssr: false });
@@ -56,98 +54,98 @@ interface Product {
   comments: ProductComment[];
   cities: any[];
   pixels?: { platform: string; pixel_id: string }[];
-  template?: string; // Added for 2-step template
-  logoUrl?: string; // Dynamic logo URL
-  content?: string; // Added for product content
-  settings?: string; // Added for product settings including variants
+  template?: string;
+  logoUrl?: string;
+  content?: string;
+  settings?: string;
 }
 
-declare global {
-  interface Window {
-    Masonry?: any;
+// Server-side data fetching
+async function fetchProductData(slug: string) {
+  try {
+    console.log(`🔍 Fetching product data for slug: ${slug}`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
+      },
+      next: { revalidate: 300 }, // 5 dakika cache
+    });
+
+    if (!response.ok) {
+      throw new Error(`Product API failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    const productData = data.product;
+    const commentsData = data.comments;
+    const pixelsData = data.pixels;
+    const templateData = data.template;
+    const citiesData = Array.isArray(data.cities) ? data.cities : [];
+    
+    // Merge all data into product object
+    const product: Product = {
+      ...productData,
+      comments: Array.isArray(commentsData) ? commentsData : [],
+      cities: Array.isArray(citiesData) ? citiesData : [],
+      pixels: Array.isArray(pixelsData) ? pixelsData : [],
+      template: templateData,
+      logoUrl: data.logoUrl,
+    };
+
+    console.log('✅ Product data fetched successfully:', product.name);
+    return { product };
+    
+  } catch (error) {
+    console.error('❌ Error fetching product:', error);
+    return { product: null };
   }
 }
 
-
-export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-
-  // State for gallery
-  const { slug } = React.use(params);
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  
-
-
-  useEffect(() => {
-    if (!slug) return; // Wait for router to be ready
-
-    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
-      .then(res => {
-        const productData = res.data.product;
-        const commentsData = res.data.comments;
-        const pixelsData = res.data.pixels;
-        const templateData = res.data.template;
-        const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];
-        
-        // Merge comments into product data
-        const product = {
-          ...productData,
-          comments: Array.isArray(commentsData) ? commentsData : [],
-          cities: Array.isArray(citiesData) ? citiesData : [],
-          pixels: Array.isArray(pixelsData) ? pixelsData : [],
-          template: templateData,
-          logoUrl: res.data.logoUrl, // Logo is in the outer response object
-          // template: "nova",
-          // template: "light",
-          settings: productData.settings // Include settings for variants
-        };
-
-        setProduct(product);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to fetch product:', err);
-        setLoading(false);
-      });
-  }, [slug]);
-
-
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+export default async function ProductDetailPage({ 
+  params 
+}: { 
+  params: Promise<{ slug: string }> 
+}) {
+  const { slug } = await params;
+  const { product } = await fetchProductData(slug);
 
   if (!product) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
-        <div className="text-center">
-          <h4>Ürün bulunamadı</h4>
-          <p>Lütfen tekrar deneyin.</p>
-        </div>
+      <div className="container text-center py-5">
+        <h3>Ürün bulunamadı</h3>
+        <p>Aradığınız ürün mevcut değil veya kaldırılmış olabilir.</p>
       </div>
     );
   }
 
-  // Render different templates based on product.template
-  if (product.template === "image") {
-    return <ImageOnlyTemplate product={product} />;
-  }
-  if (product.template === "nova") {
-    return <NovaTemplate product={product} />;
-  }
-  if (product.template === "light") {
-    return <LightTemplate product={product} />;
-  } 
+  // Template selection based on product data
+  const renderTemplate = () => {
+    switch (product.template) {
+      case 'nova':
+        return <NovaTemplate product={product} />;
+      case 'reviews':
+        return <ReviewTemplate product={product} />;
+      case 'light':
+        return <LightTemplate product={product} />;
+      case 'image-only':
+        return <ImageOnlyTemplate product={product} />;
+      case '2-step':
+        return <TwoStepLandingTemplate product={product} />;
+      default:
+        return <NovaTemplate product={product} />;
+    }
+  };
 
-  if (product.template === "2step") {
-    return <TwoStepLandingTemplate product={product} />;
-  }
-
-  // Default template (review)
-  return <ReviewTemplate product={product} />;
-} 
+  return (
+    <>
+      {renderTemplate()}
+      <PixelScripts pixels={product.pixels || []} />
+    </>
+  );
+}
