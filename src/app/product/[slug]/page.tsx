@@ -173,7 +173,7 @@ export default async function ProductDetailPage({
   return (
     <>
       {renderTemplate()}
-      <PixelScripts pixels={product.pixels || []} />
+      <PixelScripts pixels={product.pixels || []} product={product} />
     </>
   );
 }
