@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
       'codpanel.com.tr',
       'trendygoods.com.tr', // Ana domain eklendi
       'api.trendygoods.com.tr', // API domain eklendi
+
+      
     ],
     // Modern image formatları için optimizasyon
     formats: ['image/avif', 'image/webp'],
