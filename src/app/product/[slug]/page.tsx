@@ -121,16 +121,67 @@ export async function generateMetadata({
     return {
       title: 'Ürün Bulunamadı - TrendyGoods',
       description: 'Aradığınız ürün bulunamadı.',
+      openGraph: {
+        title: 'Ürün Bulunamadı - TrendyGoods',
+        description: 'Aradığınız ürün bulunamadı.',
+        url: `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/product/${slug}`,
+        siteName: 'TrendyGoods',
+        locale: 'tr_TR',
+        type: 'website',
+      },
     };
   }
 
+  // Ürün açıklaması için content veya features kullan
+  const description = product.content 
+    ? product.content.substring(0, 160) 
+    : product.features && product.features.length > 0 
+      ? product.features.slice(0, 3).join(', ') 
+      : `${product.name} ürününü TrendyGoods'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
+
+  // Ürün resmi URL'si
+  const imageUrl = product.images && product.images.length > 0 
+    ? product.images[0].large 
+    : `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/images/placeholder.svg`;
+
+  // Ürün URL'si
+  const productUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/product/${slug}`;
+
   return {
     title: `${product.name} - TrendyGoods`,
-    description: product.content ? product.content.substring(0, 160) : `${product.name} ürününü TrendyGoods'da keşfedin.`,
+    description: description,
+    keywords: [
+      product.name,
+      'TrendyGoods',
+      'online alışveriş',
+      'kapıda ödeme',
+      'ücretsiz kargo',
+      ...(product.features || [])
+    ].join(', '),
     openGraph: {
-      title: `${product.name} - TrendyGoods`,
-      description: product.content ? product.content.substring(0, 160) : `${product.name} ürününü TrendyGoods'da keşfedin.`,
-      images: product.images && product.images.length > 0 ? [product.images[0].large] : [],
+      title: product.name,
+      description: description,
+      url: productUrl,
+      siteName: 'TrendyGoods',
+      locale: 'tr_TR',
+      type: 'product',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        }
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.name,
+      description: description,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: productUrl,
     },
   };
 }
