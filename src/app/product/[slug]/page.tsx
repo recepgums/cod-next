@@ -159,21 +159,21 @@ export async function generateMetadata({
       ...(product.features || [])
     ].join(', '),
     openGraph: {
-      title: product.name,
-      description: description,
-      url: productUrl,
-      siteName: 'TrendyGoods',
-      locale: 'tr_TR',
-      type: 'product',
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: product.name,
-        }
-      ],
-    },
+       title: product.name,
+       description: description,
+       url: productUrl,
+       siteName: 'TrendyGoods',
+       locale: 'tr_TR',
+       type: 'website',
+       images: [
+         {
+           url: imageUrl,
+           width: 1200,
+           height: 630,
+           alt: product.name,
+         }
+       ],
+     },
     twitter: {
       card: 'summary_large_image',
       title: product.name,
