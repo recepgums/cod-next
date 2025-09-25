@@ -303,7 +303,7 @@ export default function OrderModal({
         address: formData.get('address'),
         amount_type: formData.get('paymentType'),
         quantity: selectedOption?.quantity || 1,
-        total_price: selectedOption?.price || product.price,
+        total_price: calculateTotalPrice(),
         product_id: product.id,
         products: product.name,
         ref_url: window.location.href
@@ -381,7 +381,7 @@ export default function OrderModal({
               <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
                 <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
-                <input type="hidden" name="total_price" id="total_price" value={selectedOption?.price?.toFixed(2) || product.price?.toFixed(2)} />
+                <input type="hidden" name="total_price" id="total_price" value={calculateTotalPrice().toFixed(2) || product.price?.toFixed(2)} />
                 <input type="hidden" name="products" value={product.name} />
                 <input type="hidden" name="product_id" value={product.id} />
                 <div>
