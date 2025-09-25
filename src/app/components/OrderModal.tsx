@@ -58,7 +58,7 @@ export default function OrderModal({
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>("");
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
-  const [variants, setVariants] = useState<any[]>([]);
+  const [variants, setVariants] = useState<any>({});
   const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
 
   // Use cities from product prop
@@ -219,24 +219,44 @@ export default function OrderModal({
   };
 
 
-  // Load variants from product settings
+  // Load variants from product settings (supports array or object structures)
   useEffect(() => {
-    if (product && product.settings) {
-      try {
-        const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : product.settings;
-        if (settings.variants) {
-          // Handle double-encoded JSON string
-          let variantsData;
-          if (typeof settings.variants === 'string') {
-            variantsData = JSON.parse(settings.variants);
-          } else {
-            variantsData = settings.variants;
-          }
-          setVariants(variantsData);
+    if (!product?.settings) return;
+    try {
+      const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : product.settings;
+      let rawVariants = settings?.variants;
+
+      // If variants is a JSON string, parse it
+      if (typeof rawVariants === 'string') {
+        try {
+          rawVariants = JSON.parse(rawVariants);
+        } catch {
+          rawVariants = undefined;
         }
-      } catch (error) {
-        console.error('Error parsing variants:', error);
       }
+
+      // If variants is an array like [{ name, type, stock, alias }, ...],
+      // group by type to build select options per type.
+      if (Array.isArray(rawVariants)) {
+        const grouped: Record<string, { title: string; options: string[] }> = {};
+        rawVariants.forEach((v: any) => {
+          const typeKey = (v?.type || 'Seçenek').toString();
+          const optionName = (v?.name || '').toString();
+          if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+          if (optionName && !grouped[typeKey].options.includes(optionName)) {
+            grouped[typeKey].options.push(optionName);
+          }
+        });
+        setVariants(grouped);
+        return;
+      }
+
+      // If variants is already an object map { type: { title, options[] }, ... }
+      if (rawVariants && typeof rawVariants === 'object') {
+        setVariants(rawVariants);
+      }
+    } catch (error) {
+      console.error('Error parsing variants:', error);
     }
   }, [product]);
 
@@ -411,24 +431,24 @@ export default function OrderModal({
 
                   {/* Variant Selection */}
                   {(() => {
-                    return Object.keys(variants).length > 0 && (
+                    return Object.keys(variants || {}).length > 0 && (
                       <div className="variant-selection mb-3">
                         <div id="variant-container">
-                          {selectedVariants?.map((selectedVariant, index) => (
+                          {(selectedVariants ?? []).map((selectedVariant, index) => (
                             <div key={index} className="variant-item mb-3">
                               <div className="variant-item-title mb-2">{index + 1}. Ürün</div>
                               <div className="variant-options">
-                                {Object.entries(variants)?.map(([type, variantData]: [string, any]) => (
+                                {(Object.entries(variants ?? {}) as [string, any][])?.map(([type, variantData]) => (
                                   <select
                                     key={type}
                                     name={`variants[${index}][${type}]`}
                                     className="form-control mb-2"
                                     required
-                                    value={selectedVariant[type] || ''}
+                                    value={(selectedVariant?.[type] ?? '')}
                                     onChange={(e) => handleVariantChange(index, type, e.target.value)}
                                   >
-                                    <option value="">{variantData.title || type} Seçin</option>
-                                    {variantData.options?.map((option: string) => (
+                                    <option value="">{variantData?.title || type} Seçin</option>
+                                    {(variantData?.options ?? []).map((option: string) => (
                                       <option key={option} value={option}>
                                         {option}
                                       </option>

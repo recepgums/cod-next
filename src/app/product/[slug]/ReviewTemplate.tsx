@@ -380,7 +380,12 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         {/* Product Options */}
         <div>
           {product.options?.map((opt, idx) => (
-            <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${idx === 0 ? ' active' : ''}`} data-quantity={opt.quantity}>
+                          <div
+              key={opt.quantity}
+              className={`product-option d-flex align-items-center mb-1${selectedOption?.quantity === opt.quantity ? ' active' : ''}`}
+              data-quantity={opt.quantity}
+              onClick={() => selectOption(opt)}
+            >
               <img src={product.images[0]?.medium} width={60} height={60} className="img-fluid" alt="product image" />
               <div className="details">
                 <div className="info">
