@@ -82,11 +82,11 @@ async function fetchProductData(slug: string) {
     }
 
     const data = await response.json();
-    
     const productData = data.product;
     const commentsData = data.comments;
     const pixelsData = data.pixels;
     const templateData = data.template;
+
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
     
     // Merge all data into product object

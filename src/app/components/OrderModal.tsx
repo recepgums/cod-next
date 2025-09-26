@@ -149,6 +149,19 @@ export default function OrderModal({
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
   };
 
+  // Safely read card payment cost from settings
+  const getCardPaymentCostText = () => {
+    try {
+      const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : (product.settings || {});
+      const raw = settings?.card_payment_cost;
+      const num = raw == null || raw === '' ? 0 : Number(raw);
+      if (!isFinite(num) || num <= 0) return 'Ücretsiz';
+      return `${num.toFixed(2)}TL`;
+    } catch {
+      return 'Ücretsiz';
+    }
+  };
+
   const sendPurchaseEvent = (orderData: any) => {
     try {
 
@@ -515,7 +528,7 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("kart")}
                         />
                         <span>Kapıda Kartlı Ödeme</span>
-                        <span>{JSON.parse(product.settings).card_payment_cost == "0" ? "Ücretsiz" : ((JSON.parse(product.settings).card_payment_cost)?.toFixed(2)) ?? "Ücretsiz" + "TL"}</span>
+                         <span>{getCardPaymentCostText()}</span>
                       </label>
                     </div>
                   </div>
