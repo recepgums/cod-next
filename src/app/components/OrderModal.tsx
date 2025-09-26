@@ -53,6 +53,7 @@ export default function OrderModal({
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
   const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
   const [phoneError, setPhoneError] = useState<string>("");
+  const [inputPhone, setInputPhone] = useState<string>("");
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -147,6 +148,9 @@ export default function OrderModal({
     const isValid = validatePhone(phone);
     setIsPhoneValid(isValid);
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
+    if (phone?.[0] == "0" || phone?.[1] == "5"){
+      setInputPhone(phone);
+    }
   };
 
   // Safely read card payment cost from settings
@@ -546,6 +550,7 @@ export default function OrderModal({
                         name="phone"
                         autoComplete="off"
                         required
+                        value={inputPhone}
                         type="tel"
                         className={`form-control ${phoneError ? 'is-invalid' : isPhoneValid ? 'is-valid' : ''}`}
                         id="phoneInput"
