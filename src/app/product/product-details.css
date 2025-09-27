@@ -1507,6 +1507,8 @@ button.close {
 .social-proof-social-proof-wrapper .social-proof-item-social-proof-item .social-proof-content {
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-weight: 600;
+    font-size: 1rem;
     overflow: hidden
 }
 

@@ -398,7 +398,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                       </p>
                     )}
 
-                    <small className="kargo-bedava">Ücretsiz Kargo</small>
+                    <small className="kargo-bedava mx-2">Ücretsiz Kargo</small>
                     {opt.discount > 0 && (
                       <div className="discount" style={{ maxWidth: "max-content" }}>
                         Tanesi {Math.ceil((opt.price - opt.discount) / opt.quantity)}TL
@@ -451,7 +451,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       <h6 className="section-title style-1 my-30 text-center" id="comments">
         Tüm Değerlendirmeler ({product.commentCount || 0})
       </h6>
-      <div className="comment-grid" id="comment-container" ref={commentGridRef}>
+      <div className="comment-grid mx-1" id="comment-container" ref={commentGridRef}>
         {product.comments?.map((comment, idx) => (
           <div className="comment-item" key={idx}>
             <div className="comment-card">
