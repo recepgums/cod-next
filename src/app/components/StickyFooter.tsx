@@ -32,7 +32,7 @@ export default function StickyFooter({ product, selectedOption, onOrderClick }: 
         <div className="product-price">
           <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
           <span className="text-danger" style={{fontWeight: 'bolder', fontSize: '1.1rem'}}>
-            {selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL
+            {product.price.toFixed(2)}TL
           </span>
         </div>
       </div>

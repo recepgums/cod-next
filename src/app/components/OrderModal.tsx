@@ -53,6 +53,7 @@ export default function OrderModal({
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
   const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
   const [phoneError, setPhoneError] = useState<string>("");
+  const [inputPhone, setInputPhone] = useState<string>("");
   const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -147,6 +148,22 @@ export default function OrderModal({
     const isValid = validatePhone(phone);
     setIsPhoneValid(isValid);
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
+    if (phone?.[0] == "0" || phone?.[1] == "5"){
+      setInputPhone(phone);
+    }
+  };
+
+  // Safely read card payment cost from settings
+  const getCardPaymentCostText = () => {
+    try {
+      const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : (product.settings || {});
+      const raw = settings?.card_payment_cost;
+      const num = raw == null || raw === '' ? 0 : Number(raw);
+      if (!isFinite(num) || num <= 0) return 'Ücretsiz';
+      return `${num.toFixed(2)}TL`;
+    } catch {
+      return 'Ücretsiz';
+    }
   };
 
   const sendPurchaseEvent = (orderData: any) => {
@@ -303,7 +320,7 @@ export default function OrderModal({
         address: formData.get('address'),
         amount_type: formData.get('paymentType'),
         quantity: selectedOption?.quantity || 1,
-        total_price: selectedOption?.price || product.price,
+        total_price: calculateTotalPrice(),
         product_id: product.id,
         products: product.name,
         ref_url: window.location.href
@@ -381,7 +398,7 @@ export default function OrderModal({
               <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
                 <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
-                <input type="hidden" name="total_price" id="total_price" value={selectedOption?.price?.toFixed(2) || product.price?.toFixed(2)} />
+                <input type="hidden" name="total_price" id="total_price" value={calculateTotalPrice().toFixed(2) || product.price?.toFixed(2)} />
                 <input type="hidden" name="products" value={product.name} />
                 <input type="hidden" name="product_id" value={product.id} />
                 <div>
@@ -515,7 +532,7 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("kart")}
                         />
                         <span>Kapıda Kartlı Ödeme</span>
-                        <span>{JSON.parse(product.settings).card_payment_cost == "0" ? "Ücretsiz" : ((JSON.parse(product.settings).card_payment_cost)?.toFixed(2)) ?? "Ücretsiz" + "TL"}</span>
+                         <span>{getCardPaymentCostText()}</span>
                       </label>
                     </div>
                   </div>
@@ -533,6 +550,7 @@ export default function OrderModal({
                         name="phone"
                         autoComplete="off"
                         required
+                        value={inputPhone}
                         type="tel"
                         className={`form-control ${phoneError ? 'is-invalid' : isPhoneValid ? 'is-valid' : ''}`}
                         id="phoneInput"

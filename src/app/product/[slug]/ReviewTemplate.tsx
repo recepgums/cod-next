@@ -502,7 +502,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           <div className="product-name">{product.name}</div>
           <div className="product-price">
             <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
-            <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{selectedOption?.price.toFixed(2) || product.price.toFixed(2)}TL</span>
+            <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{product.price.toFixed(2)}TL</span>
           </div>
         </div>
         <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>

@@ -82,20 +82,21 @@ async function fetchProductData(slug: string) {
     }
 
     const data = await response.json();
-    
+    console.log(data);
     const productData = data.product;
     const commentsData = data.comments;
     const pixelsData = data.pixels;
     const templateData = data.template;
+
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
     
     // Merge all data into product object
     const product: Product = {
-      ...productData,
-      comments: Array.isArray(commentsData) ? commentsData : [],
-      cities: Array.isArray(citiesData) ? citiesData : [],
-      pixels: Array.isArray(pixelsData) ? pixelsData : [],
-      template: templateData,
+          ...productData,
+          comments: Array.isArray(commentsData) ? commentsData : [],
+          cities: Array.isArray(citiesData) ? citiesData : [],
+          pixels: Array.isArray(pixelsData) ? pixelsData : [],
+          template: templateData,
       logoUrl: data.logoUrl,
     };
 
@@ -213,12 +214,12 @@ export default async function ProductDetailPage({
       case 'light':
         return <LightTemplate product={product} />;
       case 'image-only':
-        return <ImageOnlyTemplate product={product} />;
+    return <ImageOnlyTemplate product={product} />;
       case '2-step':
         return <TwoStepLandingTemplate product={product} />;
       default:
-        return <NovaTemplate product={product} />;
-    }
+    return <NovaTemplate product={product} />;
+  }
   };
 
   return (
@@ -227,4 +228,4 @@ export default async function ProductDetailPage({
       <PixelScripts pixels={product.pixels || []} product={product} />
     </>
   );
-}
+} 
