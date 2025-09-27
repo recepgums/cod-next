@@ -1544,3 +1544,7 @@ button.close {
         margin: 4px 0 0
     }
 }
+
+.product-content  img{
+    max-width:100vw
+}
