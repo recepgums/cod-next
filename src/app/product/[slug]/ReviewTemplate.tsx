@@ -398,7 +398,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                       </p>
                     )}
 
-                    <small className="kargo-bedava">Ücretsiz Kargo</small>
+                    <small className="kargo-bedava mx-2">Ücretsiz Kargo</small>
                     {opt.discount > 0 && (
                       <div className="discount" style={{ maxWidth: "max-content" }}>
                         Tanesi {Math.ceil((opt.price - opt.discount) / opt.quantity)}TL

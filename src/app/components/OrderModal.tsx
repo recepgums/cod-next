@@ -370,14 +370,14 @@ export default function OrderModal({
       {/* Order Modal */}
       <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{ display: showModal ? 'block' : 'none' }} onClick={onClose}>
         <div className="modal-dialog modal-dialog-centered modal-fullscreen" role="document" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+          <div className="modal-content p-0" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header py-2">
               <h5 className="modal-title text-center" id="fullScreenModalLabel">Sipariş Formu</h5>
               <button type="button" className="close" onClick={onClose} aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div className="modal-body" style={{ overflow: 'scroll' }}>
+            <div className="modal-body p-2" style={{ overflow: 'scroll' }}>
               <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
                 <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
@@ -387,7 +387,7 @@ export default function OrderModal({
                 <div>
                   {/* Product Options in Modal */}
                   {product.options?.map((opt, idx) => (
-                    <div key={opt.quantity} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption?.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => onOptionSelect(opt)}>
+                    <div key={opt.quantity} style={{ padding: '3px' }} className={`product-option d-flex align-items-center mb-1${opt.quantity === selectedOption?.quantity ? ' active' : ''}`} data-quantity={opt.quantity} onClick={() => onOptionSelect(opt)}>
                       <img src={product.images[0]?.thumbnail || '/placeholder-product.jpg'} width={60} height={60} className="img-fluid" alt="product image" />
                       <div className="details">
                         <div className="info">
@@ -402,7 +402,7 @@ export default function OrderModal({
                               </p>
                             )}
 
-                            <p className="kargo-bedava">Ücretsiz Kargo</p>
+                            <p className="kargo-bedava mx-2">Ücretsiz Kargo</p>
 
                             {opt.discount > 0 && (
                               <div className="discount" style={{ maxWidth: "max-content" }}>
