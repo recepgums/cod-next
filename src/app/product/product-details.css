@@ -1,5 +1,21 @@
 /* Custom CSS - Additional styles from Laravel */
 
+/* Social Proof Animation - Prevents JavaScript re-renders */
+@keyframes socialProofSlide {
+    0%, 25% {
+        transform: translateY(0px);
+    }
+    33%, 58% {
+        transform: translateY(-24px);
+    }
+    66%, 91% {
+        transform: translateY(-48px);
+    }
+    100% {
+        transform: translateY(-72px);
+    }
+}
+
 
 
 

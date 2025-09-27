@@ -1,7 +1,7 @@
 'use client';
 
 import '../Nova.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import '../product-details.css'
 import Footer from '../../components/Footer';
 import OrderModal from '../../components/OrderModal';
@@ -77,6 +77,11 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const commentGridRef = useRef<HTMLDivElement>(null);
 
+  // Memoize product content to prevent unnecessary re-renders
+  const memoizedProductContent = useMemo(() => {
+    return product.content ? { __html: product.content } : null;
+  }, [product.content]);
+
   const openModal = () => {
     setShowModal(true);
   };
@@ -89,25 +94,40 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     setSelectedOption(option);
   };
 
-  // Timer state
+  // Timer state - optimized to prevent unnecessary re-renders
   useEffect(() => {
     let countdownEndTime = Math.floor(Date.now() / 1000) + 2 * 60 * 60 + Math.floor(Math.random() * 59 + 1) * 60;
+    let intervalId: NodeJS.Timeout;
+    
     const updateTimer = () => {
-      let now = Math.floor(Date.now() / 1000);
+      const now = Math.floor(Date.now() / 1000);
       let timeLeft = countdownEndTime - now;
+      
       if (timeLeft <= 0) {
         const randomMinutes = Math.floor(Math.random() * 59) + 1;
         countdownEndTime = now + (2 * 60 * 60) + (randomMinutes * 60);
         timeLeft = countdownEndTime - now;
       }
+      
       const hours = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
       const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
       const seconds = String(timeLeft % 60).padStart(2, '0');
-      setTimer({ hours, minutes, seconds });
+      
+      // Only update state if values actually changed
+      setTimer(prev => {
+        if (prev.hours !== hours || prev.minutes !== minutes || prev.seconds !== seconds) {
+          return { hours, minutes, seconds };
+        }
+        return prev;
+      });
     };
+    
     updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
+    intervalId = setInterval(updateTimer, 1000);
+    
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   // Calculate delivery dates
@@ -226,23 +246,12 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     };
   }, [product?.name]);
 
+  // Social proof animation - optimized with CSS to prevent re-renders
   useEffect(() => {
     const socialProofElement = document.querySelector('.social-proof-social-proof') as HTMLElement;
-    if (!socialProofElement) return;
-
-    const positions = ['-24px', '-48px', '-72px'];
-    let currentIndex = 0;
-
-    const animateSocialProof = () => {
-      socialProofElement.style.top = positions[currentIndex];
-      currentIndex = (currentIndex + 1) % positions.length;
-    };
-    animateSocialProof();
-    
-    // Continue animation every second
-    const interval = setInterval(animateSocialProof, 4000);
-
-    return () => clearInterval(interval);
+    if (socialProofElement) {
+      socialProofElement.style.animation = 'socialProofSlide 12s infinite';
+    }
   }, []);
 
   return (
@@ -324,9 +333,9 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           </div>
         </div>
         <div>
-          <section className="social-proof-social-proof-wrapper">
-            <div className="social-proof-social-proof" style={{ transition: "1s" }}>
-              <div className="social-proof-item-social-proof-item">
+           <section className="social-proof-social-proof-wrapper">
+             <div className="social-proof-social-proof">
+               <div className="social-proof-item-social-proof-item">
                 <img alt="basket-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
                   data-testid="image" />
@@ -437,8 +446,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       </div>
 
       {/* Product Content */}
-      {product.content && (
-        <div className="product-content mb-3" dangerouslySetInnerHTML={{ __html: product.content }} />
+      {memoizedProductContent && (
+        <div className="product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
       )}
 
       <div className="product-extra-link2 mb-3 w-100">
