@@ -144,8 +144,8 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         {/* Full-width images stacked vertically */}
         {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => (
           <Image 
-            key={img.medium + idx}
-            src={img.medium}
+            key={img.large + idx}
+            src={img.large}
             alt="product image"
             width={800}
             height={600}
