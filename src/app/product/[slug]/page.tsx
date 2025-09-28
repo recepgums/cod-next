@@ -74,7 +74,8 @@ async function fetchProductData(slug: string) {
         'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      next: { revalidate: 300 }, // 5 dakika cache
+
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {
