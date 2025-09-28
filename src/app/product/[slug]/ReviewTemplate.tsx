@@ -2,6 +2,7 @@
 
 import '../Nova.css';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import Image from 'next/image';
 import '../product-details.css'
 import Footer from '../../components/Footer';
 import OrderModal from '../../components/OrderModal';
@@ -396,7 +397,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
               onClick={() => selectOption(opt)}
             >
               <Image 
-                src={product.images[0]?.medium} 
+                src={product.images[0]?.medium || '/images/default-product.png'} 
                 width={60} 
                 height={60} 
                 className="img-fluid" 
