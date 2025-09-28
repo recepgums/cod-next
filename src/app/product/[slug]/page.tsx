@@ -75,7 +75,7 @@ async function fetchProductData(slug: string) {
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
 
-      next: { revalidate: 300 },
+      // next: { revalidate: 3 },
     });
 
     if (!response.ok) {
