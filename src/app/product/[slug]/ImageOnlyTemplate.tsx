@@ -143,8 +143,8 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         {/* Full-width images stacked vertically */}
         {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => (
           <img 
-            key={img.original + idx}
-            src={img.original}
+            key={img.medium + idx}
+            src={img.medium}
             style={{width: '100%', maxWidth: '100%'}}
             alt="product image"
             onClick={openModal}
