@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
 interface ProductOption {
@@ -65,9 +65,8 @@ export default function OrderModal({
   // Use cities from product prop
   const cities = product.cities || [];
 
-  // Calculate total price including payment method cost
-  const calculateTotalPrice = () => {
-
+  // Calculate total price including payment method cost - memoized to prevent flickering
+  const totalPrice = useMemo(() => {
     const basePrice = selectedOption 
       ? (selectedOption.price - selectedOption.discount)
       : (product?.price || 0);
@@ -77,7 +76,13 @@ export default function OrderModal({
       : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
     
     return basePrice + cardPaymentCost;
-  };
+  }, [selectedOption, selectedPaymentType, product.price, product.settings]);
+
+  // Memoized values for form inputs to prevent flickering
+  const memoizedQuantity = useMemo(() => selectedOption?.quantity || 1, [selectedOption?.quantity]);
+  const memoizedTotalPrice = useMemo(() => totalPrice.toFixed(2), [totalPrice]);
+  const memoizedProductName = useMemo(() => product.name, [product.name]);
+  const memoizedProductId = useMemo(() => product.id, [product.id]);
 
   // Calculate discount amount
   const calculateDiscount = () => {
@@ -320,7 +325,7 @@ export default function OrderModal({
         address: formData.get('address'),
         amount_type: formData.get('paymentType'),
         quantity: selectedOption?.quantity || 1,
-        total_price: calculateTotalPrice(),
+        total_price: totalPrice,
         product_id: product.id,
         products: product.name,
         ref_url: window.location.href
@@ -397,10 +402,10 @@ export default function OrderModal({
             <div className="modal-body p-2" style={{ overflow: 'scroll' }}>
               <form method="post" className="order-form" id="order-form" onSubmit={handleFormSubmit}>
                 <input type="hidden" name="ref_url" id="ref_url" />
-                <input type="hidden" name="quantity" id="quantity" value={selectedOption?.quantity || 1} />
-                <input type="hidden" name="total_price" id="total_price" value={calculateTotalPrice().toFixed(2) || product.price?.toFixed(2)} />
-                <input type="hidden" name="products" value={product.name} />
-                <input type="hidden" name="product_id" value={product.id} />
+                <input type="hidden" name="quantity" id="quantity" value={memoizedQuantity} />
+                <input type="hidden" name="total_price" id="total_price" value={memoizedTotalPrice} />
+                <input type="hidden" name="products" value={memoizedProductName} />
+                <input type="hidden" name="product_id" value={memoizedProductId} />
                 <div>
                   {/* Product Options in Modal */}
                   {product.options?.map((opt, idx) => (
@@ -484,7 +489,7 @@ export default function OrderModal({
                   <div className="total-section mb-1">
                     <div className="row justify-content-between">
                       <div className="col-8 label">Ara Toplam</div>
-                      <div className="col-4 value text-end">{calculateTotalPrice()?.toFixed(2)}TL</div>
+                      <div className="col-4 value text-end">{totalPrice?.toFixed(2)}TL</div>
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-8 label">Kargo</div>
@@ -500,7 +505,7 @@ export default function OrderModal({
                     )}
                     <div className="row justify-content-between total-row mt-2 pt-2 border-top">
                       <div className="col-8 label">Toplam</div>
-                      <div className="col-4 total text-end" id="total-price">{calculateTotalPrice()?.toFixed(2)}TL</div>
+                      <div className="col-4 total text-end" id="total-price">{totalPrice?.toFixed(2)}TL</div>
                     </div>
                   </div>
                   {/* Shipping Section */}
@@ -635,7 +640,7 @@ export default function OrderModal({
                           Sipariş Gönderiliyor...
                         </>
                       ) : (
-                        `SİPARİŞİ TAMAMLAYIN - ${calculateTotalPrice()?.toFixed(2)}TL`
+                        `SİPARİŞİ TAMAMLAYIN - ${totalPrice?.toFixed(2)}TL`
                       )}
                     </button>
                   </div>
