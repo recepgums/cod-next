@@ -532,7 +532,15 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("nakit")}
                         />
                         <span>Kapıda Nakit Ödeme</span>
-                        <span>{parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost)?.toFixed(2)+"TL" || "Ücretsiz"}</span>
+                        <span>
+                          {(() => {
+                            const cost = parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost);
+                            if (!cost) {
+                              return "Ücretsiz";
+                            }
+                            return cost.toFixed(2) + "TL";
+                          })()}
+                        </span>
                       </label>
                     </div>
                     <div className={`form-check ${selectedPaymentType === "kart" ? "active" : ""}`}>
