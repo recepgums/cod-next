@@ -2,6 +2,7 @@
 
 import '../Nova.css';
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import dynamic from 'next/dynamic';
@@ -115,7 +116,13 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
             href={`${process.env.NEXT_PUBLIC_BASE_URL}/product/${product.id}/order`}
             style={{textDecoration: 'none', color: 'white'}}
           >
-            <img src="/images/assets/sayac.png" style={{maxHeight: '44px'}} alt="Order" />
+            <Image 
+              src="/images/assets/sayac.png" 
+              width={44}
+              height={44}
+              style={{maxHeight: '44px', width: 'auto'}} 
+              alt="Order" 
+            />
           </a>
         </div>
       </div>

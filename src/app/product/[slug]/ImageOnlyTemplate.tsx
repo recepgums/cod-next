@@ -2,6 +2,7 @@
 
 import '../Nova.css';
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
@@ -142,13 +143,18 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
 
         {/* Full-width images stacked vertically */}
         {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => (
-          <img 
+          <Image 
             key={img.medium + idx}
             src={img.medium}
-            style={{width: '100%', maxWidth: '100%'}}
             alt="product image"
+            width={800}
+            height={600}
+            style={{width: '100%', maxWidth: '100%', height: 'auto', cursor: 'pointer'}}
             onClick={openModal}
             loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ))}
 

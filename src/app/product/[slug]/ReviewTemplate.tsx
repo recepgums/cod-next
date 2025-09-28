@@ -395,7 +395,15 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
               data-quantity={opt.quantity}
               onClick={() => selectOption(opt)}
             >
-              <img src={product.images[0]?.medium} width={60} height={60} className="img-fluid" alt="product image" />
+              <Image 
+                src={product.images[0]?.medium} 
+                width={60} 
+                height={60} 
+                className="img-fluid" 
+                alt="product image"
+                style={{objectFit: 'cover'}}
+                loading="lazy"
+              />
               <div className="details">
                 <div className="info">
                   <span className="title">
