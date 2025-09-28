@@ -138,7 +138,17 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       {/* Gallery Container */}
       <div className="gallery-container mt-1">
         <div className="header text-center mx-auto">
-          <a href="/"><img style={{height: 50}} src={product.logoUrl || "/images/logo.png"} alt="Logo" /></a>
+          <a href="/">
+            <Image 
+              src={product.logoUrl || "/images/logo.png"} 
+              alt="Logo" 
+              width={200}
+              height={50}
+              style={{height: 50}}
+              loading="lazy"
+              priority={false}
+            />
+          </a>
         </div>
 
         {/* Full-width images stacked vertically */}
@@ -151,7 +161,8 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
             height={600}
             style={{width: '100%', maxWidth: '100%', height: 'auto', cursor: 'pointer'}}
             onClick={openModal}
-            loading="lazy"
+            loading={idx === 0 ? "eager" : "lazy"}
+            priority={idx === 0}
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
