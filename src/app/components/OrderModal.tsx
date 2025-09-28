@@ -74,7 +74,7 @@ export default function OrderModal({
     
     const cardPaymentCost = selectedPaymentType === "kart" 
       ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
-      : 0;
+      : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
     
     return basePrice + cardPaymentCost;
   };
@@ -488,7 +488,7 @@ export default function OrderModal({
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-8 label">Kargo</div>
-                      <div className="col-4 value text-end" id="shipping-cost">Ücretsiz</div>
+                      <div className="col-4 value text-end" id="shipping-cost">{parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0")?.toFixed(2)+"TL" || "Ücretsiz"}</div>
                     </div>
                     {calculateDiscount() > 0 && (
                       <div className="row justify-content-between" id="discounts">
@@ -517,7 +517,7 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("nakit")}
                         />
                         <span>Kapıda Nakit Ödeme</span>
-                        <span>Ücretsiz</span>
+                        <span>{parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0").toFixed(2)+"TL" || "Ücretsiz"}</span>
                       </label>
                     </div>
                     <div className={`form-check ${selectedPaymentType === "kart" ? "active" : ""}`}>
