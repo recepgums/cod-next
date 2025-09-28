@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShieldHalved, faClock } from '@fortawesome/free-solid-svg-icons';
 
 interface ProductOption {
   quantity: number;
@@ -62,6 +64,10 @@ export default function OrderModal({
   const [variants, setVariants] = useState<any>({});
   const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
 
+  const PROTECTED_SHIPPING_AVAILABLE = false; 
+  const PROTECTED_SHIPPING_PRICE = 89.00; 
+  const [isProtectedShippingEnabled, setIsProtectedShippingEnabled] = useState<boolean>(false);
+
   // Use cities from product prop
   const cities = product.cities || [];
 
@@ -75,8 +81,10 @@ export default function OrderModal({
       ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
       : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
     
-    return basePrice + cardPaymentCost;
-  }, [selectedOption, selectedPaymentType, product.price, product.settings]);
+    const protectedShippingCost = isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0;
+    
+    return basePrice + cardPaymentCost + protectedShippingCost;
+  }, [selectedOption, selectedPaymentType, product.price, product.settings, isProtectedShippingEnabled]);
 
   // Memoized values for form inputs to prevent flickering
   const memoizedQuantity = useMemo(() => selectedOption?.quantity || 1, [selectedOption?.quantity]);
@@ -328,7 +336,9 @@ export default function OrderModal({
         total_price: totalPrice,
         product_id: product.id,
         products: product.name,
-        ref_url: window.location.href
+        ref_url: window.location.href,
+        protected_shipping: isProtectedShippingEnabled,
+        protected_shipping_cost: isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0
       });
 
       if (response.data.success) {
@@ -522,7 +532,7 @@ export default function OrderModal({
                           onChange={() => handlePaymentTypeChange("nakit")}
                         />
                         <span>Kapıda Nakit Ödeme</span>
-                        <span>{parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0").toFixed(2)+"TL" || "Ücretsiz"}</span>
+                        <span>{parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost)?.toFixed(2)+"TL" || "Ücretsiz"}</span>
                       </label>
                     </div>
                     <div className={`form-check ${selectedPaymentType === "kart" ? "active" : ""}`}>
@@ -541,6 +551,68 @@ export default function OrderModal({
                       </label>
                     </div>
                   </div>
+                  
+                  {/* Protected Shipping Section (Korumalı Kargo) */}
+                  {PROTECTED_SHIPPING_AVAILABLE && (
+                    <div className="protected-shipping-section mb-3">
+                      <div className="protected-shipping-item d-flex align-items-center justify-content-between p-3 border rounded">
+                        <div className="d-flex align-items-center">
+                          <div className="protected-shipping-icon me-3 position-relative">
+                            <div className="shield-icon" style={{
+                              width: '40px',
+                              height: '40px',
+                              backgroundColor: '#e3f2fd',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              position: 'relative'
+                            }}>
+                              <FontAwesomeIcon icon={faShieldHalved} style={{ color: '#1976d2', fontSize: '20px' }} />
+                              <div style={{
+                                position: 'absolute',
+                                bottom: '-2px',
+                                right: '-2px',
+                                width: '16px',
+                                height: '16px',
+                                backgroundColor: '#1976d2',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                <FontAwesomeIcon icon={faClock} style={{ color: 'white', fontSize: '8px' }} />
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="fw-bold">Korumalı Kargo</div>
+                            <div className="text-muted small">
+                              Siparişini kargolama esnasında oluşabilecek hasar, kayıp veya hırsızlıktan koru
+                            </div>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center">
+                          <span className="me-3 fw-bold text-primary">{PROTECTED_SHIPPING_PRICE.toFixed(2)}TL</span>
+                          <div className="form-check form-switch">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id="protectedShipping"
+                              checked={isProtectedShippingEnabled}
+                              onChange={(e) => setIsProtectedShippingEnabled(e.target.checked)}
+                              style={{
+                                width: '50px',
+                                height: '25px',
+                                backgroundColor: isProtectedShippingEnabled ? '#28a745' : '#6c757d'
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
                   {/* Form Fields */}
                   <div className="mb-3">
                     <div className="input-group">
