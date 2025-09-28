@@ -57,6 +57,7 @@ interface Product {
   logoUrl?: string;
   content?: string;
   settings?: string;
+  merchant_phone?: string;
 }
 
 interface ReviewTemplateProps {
@@ -516,7 +517,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
       <div className="whatsapp-icon-container">
         <a 
-          href={`https://wa.me/905393116119?text=Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`}
+          href={`https://wa.me/${product.merchant_phone}?text=Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`}
           target="_blank"
           rel="noopener noreferrer"
           className="whatsapp-icon"
