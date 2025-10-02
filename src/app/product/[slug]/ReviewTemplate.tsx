@@ -222,14 +222,24 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       return;
     }
 
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       if ((window as any).Masonry) {
-        clearInterval(timer);
         init();
+      } else {
+        const checkMasonry = setInterval(() => {
+          if ((window as any).Masonry) {
+            clearInterval(checkMasonry);
+            init();
+          }
+        }, 50);
+        
+        setTimeout(() => clearInterval(checkMasonry), 10000);
       }
-    }, 50);
-
-    return () => clearInterval(timer);
+    }, 2000);
+  
+    return () => {
+      clearTimeout(timer);
+    };
   }, [product?.comments]);
 
   // Auto-select first option
