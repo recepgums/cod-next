@@ -158,10 +158,11 @@ export default function OrderModal({
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phone = e.target.value;
+    console.log(phone);
     const isValid = validatePhone(phone);
     setIsPhoneValid(isValid);
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
-    if (phone?.[0] == "0" || phone?.[1] == "5"){
+    if ((phone?.[0] == "0" && phone.length <2) ||  phone?.[1] == "5"){
       setInputPhone(phone);
     }
   };
