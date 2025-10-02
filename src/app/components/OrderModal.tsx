@@ -15,7 +15,8 @@ interface ProductOption {
   unit?: string;
   displayText?: string;
   finalDiscount?: number;
-}
+  title?: string;
+  }
 
 interface ProductImage {
   thumbnail: string;
@@ -426,7 +427,7 @@ export default function OrderModal({
                         <div className="info">
                           <span className="title">
                             <span>
-                            {opt.displayText || `${opt.quantity} Adet`}
+                            {opt.title || `${opt.quantity} Adet`}
                             </span>
 
                             {opt.isCampaign && (
