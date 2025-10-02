@@ -26,6 +26,32 @@ interface ProductImage {
   original: string;
 }
 
+interface ShippingOption {
+  code: string;
+  company: string;
+  accepts: {
+    cash: boolean;
+    card: boolean;
+  };
+}
+
+const normalizeCompanyName = (name: string) =>
+  name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/\s+/g, '')
+    .replace(/[^a-z0-9]/g, '');
+
+const getShippingLogo = (company: string): string => {
+  const key = normalizeCompanyName(company);
+  if (key.includes('aras')) return '/aras.png';
+  if (key.includes('ptt')) return '/ptt.png';
+  if (key.includes('kargoturk') || key.includes('kargoturk')) return '/kargotürk.png';
+  if (key.includes('hepsijet')) return '/hepsijet.jpg';
+  return '/images/placeholder.svg';
+};
+
 interface OrderModalProps {
   showModal: boolean;
   onClose: () => void;
@@ -37,6 +63,7 @@ interface OrderModalProps {
     options: ProductOption[];
     cities?: any[];
     settings?: string; // Added settings to product prop
+    shipping?: ShippingOption[];
   };
   selectedOption?: ProductOption | null;
   onOptionSelect: (option: ProductOption) => void;
@@ -64,6 +91,7 @@ export default function OrderModal({
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [variants, setVariants] = useState<any>({});
   const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
+  const [selectedShippingCode, setSelectedShippingCode] = useState<string>(product?.shipping?.[0]?.code || "");
 
   const PROTECTED_SHIPPING_AVAILABLE = false; 
   const PROTECTED_SHIPPING_PRICE = 89.00; 
@@ -340,7 +368,8 @@ export default function OrderModal({
         products: product.name,
         ref_url: window.location.href,
         protected_shipping: isProtectedShippingEnabled,
-        protected_shipping_cost: isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0
+        protected_shipping_cost: isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0,
+        shipping_code: selectedShippingCode || null
       });
 
       if (response.data.success) {
@@ -520,6 +549,42 @@ export default function OrderModal({
                       <div className="col-4 total text-end" id="total-price">{totalPrice?.toFixed(2)}TL</div>
                     </div>
                   </div>
+
+                  {/* Shipping Company Selection */}
+                  {Array.isArray(product?.shipping) && product.shipping.length > 0 && (
+                    <div className="mb-3">
+                      <div className="mb-2 fw-bold">Kargo Firması Seçin</div>
+                      <div className="list-group">
+                        {product.shipping.map((opt) => {
+                          const acceptsText = opt.accepts.cash && opt.accepts.card
+                            ? 'Nakit ve Kart kabul edilir'
+                            : opt.accepts.cash
+                              ? 'Sadece Nakit kabul edilir'
+                              : opt.accepts.card
+                                ? 'Sadece Kart kabul edilir'
+                                : 'Ödeme kabul bilgisi yok';
+                          return (
+                            <label key={opt.code} className={`list-group-item d-flex align-items-center justify-content-between ${selectedShippingCode === opt.code ? 'active' : ''}`} style={{ cursor: 'pointer' }}>
+                              <div className="d-flex align-items-center gap-2">
+                                <img src={getShippingLogo(opt.company)} alt={`${opt.company} logo`} style={{ width: 60, height: 'auto' }} />
+                                <div>
+                                  <div className="fw-semibold">{opt.company}</div>
+                                  <small className="text-muted">{acceptsText}</small>
+                                </div>
+                              </div>
+                              <input
+                                type="radio"
+                                name="shipping_code"
+                                value={opt.code}
+                                checked={selectedShippingCode === opt.code}
+                                onChange={() => setSelectedShippingCode(opt.code)}
+                              />
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                   {/* Shipping Section */}
                   <div className="shipping-section mb-3">
                     <div className={`form-check ${selectedPaymentType === "nakit" ? "active" : ""}`}>
