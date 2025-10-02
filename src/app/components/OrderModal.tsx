@@ -425,17 +425,17 @@ export default function OrderModal({
                       <div className="details">
                         <div className="info">
                           <span className="title">
-                            <p>
+                            <span>
                             {opt.displayText || `${opt.quantity} Adet`}
-                            </p>
+                            </span>
 
                             {opt.isCampaign && (
-                              <p style={{ color: 'red', fontWeight: 'bold', fontSize: '.9rem' }}>
+                              <span style={{ color: 'red', fontWeight: 'bold', fontSize: '.9rem' }}>
                                 {opt.quantity} {opt.unit || 'Adet'} BEDAVA
-                              </p>
+                              </span>
                             )}
 
-                            <p className="kargo-bedava mx-2">Ücretsiz Kargo</p>
+                            <span className="kargo-bedava mx-2">Ücretsiz Kargo</span>
 
                             {opt.discount > 0 && (
                               <div className="discount" style={{ maxWidth: "max-content" }}>
