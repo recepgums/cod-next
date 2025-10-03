@@ -1,58 +1,13 @@
 'use client';
 
-import '../Nova.css';
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Footer from '../../components/Footer';
-import StickyFooter from '../../components/StickyFooter';
-import dynamic from 'next/dynamic';
-const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
+import React, { useEffect, useMemo, useState } from 'react';
 
-interface ProductImage {
-  thumbnail: string;
-  medium: string;
-  large: string;
-  mobile: string;
-  original: string;
-}
+// NOTE: This template mirrors the provided static HTML.
+// Everything is static except the countdown timer and query param forwarding.
 
-interface ProductOption {
-  quantity: number;
-  price: number;
-  original?: number;
-  discount: number;
-  badge: string;
-  isCampaign?: boolean;
-  unit?: string;
-  displayText?: string;
-  finalDiscount?: number;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice: number;
-  discount: string;
-  images: ProductImage[];
-  options: ProductOption[];
-  features: string[];
-  rating: number;
-  commentCount: number;
-  comments: any[];
-  pixels?: { platform: string; pixel_id: string }[];
-  template?: string;
-}
-
-interface TwoStepLandingTemplateProps {
-  product: Product;
-}
-
-export default function TwoStepLandingTemplate({ product }: TwoStepLandingTemplateProps) {
+export default function TwoStepLandingTemplate() {
   const [timer, setTimer] = useState({ minutes: '29', seconds: '39' });
-  const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
 
-  // Countdown timer effect
   useEffect(() => {
     const countDownDate = new Date();
     countDownDate.setMinutes(countDownDate.getMinutes() + 29);
@@ -61,13 +16,12 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
     const x = setInterval(() => {
       const now = new Date().getTime();
       const distance = countDownDate.getTime() - now;
-
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
       setTimer({
-        minutes: minutes.toString().padStart(2, '0'),
-        seconds: seconds.toString().padStart(2, '0')
+        minutes: String(Math.max(0, minutes)).padStart(2, '0'),
+        seconds: String(Math.max(0, seconds)).padStart(2, '0')
       });
 
       if (distance < 0) {
@@ -79,15 +33,34 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
     return () => clearInterval(x);
   }, []);
 
+  const orderHref = useMemo(() => {
+    if (typeof window === 'undefined') return 'https://fermin.com.tr/product/fermin/order';
+    return 'https://fermin.com.tr/product/fermin/order' + window.location.search;
+  }, []);
+
   const redirectToOrder = () => {
-    const currentParams = window.location.search;
-    const baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/product/${product.id}/order`;
-    window.location.href = baseUrl + currentParams;
+    window.location.href = orderHref;
   };
 
+  const images: string[] = [
+    'https://fermin.com.tr/storage/437/fermin_engin_15_01.gif',
+    'https://fermin.com.tr/storage/436/fermin_engin_15_02.gif',
+    'https://fermin.com.tr/storage/435/fermin_engin_15_03.gif',
+    'https://fermin.com.tr/storage/434/fermin_engin_15_04.gif',
+    'https://fermin.com.tr/storage/433/fermin_engin_15_05.gif',
+    'https://fermin.com.tr/storage/432/fermin_engin_15_06.gif',
+    'https://fermin.com.tr/storage/430/fermin_engin_15_07.gif',
+    'https://fermin.com.tr/storage/429/fermin_engin_15_08.gif',
+    'https://fermin.com.tr/storage/428/fermin_engin_15_09.gif',
+    'https://fermin.com.tr/storage/427/fermin_engin_15_10.gif',
+    'https://fermin.com.tr/storage/426/fermin_engin_15_11.gif',
+    'https://fermin.com.tr/storage/425/fermin_engin_15_12.gif',
+    'https://fermin.com.tr/storage/424/fermin_engin_15_13.gif',
+    'https://fermin.com.tr/storage/423/fermin_engin_15_14.gif',
+  ];
+
   return (
-    <div className="two-step-landing-template">
-      {/* Fixed Countdown Timer */}
+    <div>
       <div id="count_u" style={{
         borderStyle: 'dashed',
         height: '70px',
@@ -100,58 +73,35 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         fontSize: '14px',
         lineHeight: '16px'
       }}>
-        <div className="d-flex align-items-center" id="demo" style={{height: '100%'}}>
+        <div className="d-flex align-items-center" id="demo" style={{ height: '100%' }}>
           <div className="col ps-1 text-center" id="takip">İndirimin Bitmesine Kalan Süre</div>
           <div className="col d-flex mx-auto d-flex justify-content-center text-center px-1" id="ust_saat">
-            <div className="p-1" style={{backgroundColor: '#2f2f2f'}} id="ustsayac_dakika">
+            <div className="p-1" style={{ backgroundColor: '#2f2f2f' }} id="ustsayac_dakika">
               {timer.minutes}
+              <br />Dakika
             </div>
-            <div className="p-1" style={{backgroundColor: '#2f2f2f'}} id="ustsayac_saniye">
+            <div className="p-1" style={{ backgroundColor: '#2f2f2f' }} id="ustsayac_saniye">
               {timer.seconds}
+              <br />Saniye
             </div>
           </div>
-          <a 
-            className="col pe-1 text-end py-2" 
-            id="UstTarafSiparisVerButton" 
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}/product/${product.id}/order`}
-            style={{textDecoration: 'none', color: 'white'}}
-          >
-            <Image 
-              src="/images/assets/sayac.png" 
-              width={44}
-              height={44}
-              style={{maxHeight: '44px', width: 'auto'}} 
-              alt="Order" 
-            />
+          <a className="col pe-1 text-end py-2" id="UstTarafSiparisVerButton" href={orderHref} style={{ textDecoration: 'none', color: 'white' }}>
+            <img src="https://fermin.com.tr/assets/imgs/theme/sayac.png" style={{ maxHeight: '44px' }} alt="Sipariş Ver" />
           </a>
         </div>
       </div>
 
-      {/* Product Images */}
-      {product.images && product.images.length > 0 && product.images.map((img: ProductImage, idx: number) => (
-        <div key={img.original + idx} style={{width: '100%', paddingTop: '18%'}}>
-          <img 
-            style={{width: '100%', maxWidth: '100%'}} 
-            src={img.original}
+      {images.map((src) => (
+        <div key={src} style={{ width: '100%' }}>
+          <img
+            style={{ width: '100%', maxWidth: '100%' }}
+            src={src}
             onClick={redirectToOrder}
             alt="product image"
             loading="lazy"
           />
         </div>
       ))}
-
-      {/* Sticky Footer */}
-      <StickyFooter 
-        product={product}
-        selectedOption={selectedOption}
-        onOrderClick={redirectToOrder}
-      />
-
-      {/* Footer */}
-      <Footer />
-      {product && product.pixels && (
-        <PixelScripts pixels={product.pixels} product={product} />
-      )}
     </div>
   );
 }
