@@ -29,10 +29,7 @@ interface ProductImage {
 interface ShippingOption {
   code: string;
   company: string;
-  accepts: {
-    cash: boolean;
-    card: boolean;
-  };
+  paymentType?: 'card' | 'cash';
 }
 
 const normalizeCompanyName = (name: string) =>
@@ -91,7 +88,8 @@ export default function OrderModal({
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [variants, setVariants] = useState<any>({});
   const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
-  const [selectedShippingCode, setSelectedShippingCode] = useState<string>(product?.shipping?.[0]?.code || "");
+  const [selectedShippingCode, setSelectedShippingCode] = useState<string>("");
+  const [showShippingError, setShowShippingError] = useState<boolean>(false);
 
   const PROTECTED_SHIPPING_AVAILABLE = false; 
   const PROTECTED_SHIPPING_PRICE = 89.00; 
@@ -201,6 +199,18 @@ export default function OrderModal({
     try {
       const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : (product.settings || {});
       const raw = settings?.card_payment_cost;
+      const num = raw == null || raw === '' ? 0 : Number(raw);
+      if (!isFinite(num) || num <= 0) return 'Ücretsiz';
+      return `${num.toFixed(2)}TL`;
+    } catch {
+      return 'Ücretsiz';
+    }
+  };
+
+  const getCashPaymentCostText = () => {
+    try {
+      const settings = typeof product.settings === 'string' ? JSON.parse(product.settings) : (product.settings || {});
+      const raw = settings?.cash_payment_cost;
       const num = raw == null || raw === '' ? 0 : Number(raw);
       if (!isFinite(num) || num <= 0) return 'Ücretsiz';
       return `${num.toFixed(2)}TL`;
@@ -351,8 +361,16 @@ export default function OrderModal({
     setIsSubmitting(true);
     setSubmitError("");
 
-    const formData = new FormData(e.target as HTMLFormElement);
+    // Require shipping selection when options exist
+    if (Array.isArray(product?.shipping) && product.shipping.length > 0 && !selectedShippingCode) {
+      setIsSubmitting(false);
+      setShowShippingError(true);
+      setSubmitError('Lütfen bir kargo firması seçiniz.');
+      return;
+    }
 
+    const formData = new FormData(e.target as HTMLFormElement);
+    console.log(product.shipping.find((opt) => opt.code === selectedShippingCode)?.paymentType);
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
@@ -361,7 +379,7 @@ export default function OrderModal({
         district_id: formData.get('district_id'),
         neighborhood_id: formData.get('neighborhood_id'),
         address: formData.get('address'),
-        amount_type: formData.get('paymentType'),
+        amount_type: product.shipping.find((opt) => opt.code === selectedShippingCode)?.paymentType == "card" ? "kart" : "nakit",
         quantity: selectedOption?.quantity || 1,
         total_price: totalPrice,
         product_id: product.id,
@@ -553,36 +571,75 @@ export default function OrderModal({
                   {/* Shipping Company Selection */}
                   {Array.isArray(product?.shipping) && product.shipping.length > 0 && (
                     <div className="mb-3">
-                      <div className="mb-2 fw-bold">Kargo Firması Seçin</div>
-                      <div className="list-group">
+                      <div className="mb-2 fw-bold">Kargo Bilgileri</div>
+                      <div className="d-flex flex-column gap-2">
                         {product.shipping.map((opt) => {
-                          const acceptsText = opt.accepts.cash && opt.accepts.card
-                            ? 'Nakit ve Kart kabul edilir'
-                            : opt.accepts.cash
-                              ? 'Sadece Nakit kabul edilir'
-                              : opt.accepts.card
-                                ? 'Sadece Kart kabul edilir'
-                                : 'Ödeme kabul bilgisi yok';
+                          const isSelected = selectedShippingCode === opt.code;
+                          const pType = (opt.paymentType);
+                          const accepts = pType === 'card'
+                            ? { cash: true, card: true }
+                            : { cash: true, card: false };
+                          const badge = accepts.cash && accepts.card
+                            ? { text: 'Kart/Nakit', bg: '#22a05a', color: '#fff' }
+                            : accepts.card
+                              ? { text: 'Sadece Kart', bg: '#d8a11d', color: '#fff' }
+                              : { text: 'Sadece Nakit', bg: '#0d6efd', color: '#fff' };
+                          const priceText = (() => {
+                            const p = (opt.paymentType);
+                            if (p === 'card') return getCardPaymentCostText();
+                            return getCashPaymentCostText();
+                          })();
                           return (
-                            <label key={opt.code} className={`list-group-item d-flex align-items-center justify-content-between ${selectedShippingCode === opt.code ? 'active' : ''}`} style={{ cursor: 'pointer' }}>
-                              <div className="d-flex align-items-center gap-2">
-                                <img src={getShippingLogo(opt.company)} alt={`${opt.company} logo`} style={{ width: 60, height: 'auto' }} />
+                            <div
+                              key={opt.code}
+                              className={`d-flex align-items-center justify-content-between p-3 rounded`}
+                              style={{ background: '#f7f7f9' }}
+                              onClick={() => { setSelectedShippingCode(opt.code); setShowShippingError(false); setSubmitError(''); }}
+                            >
+                              <div className="d-flex align-items-center" style={{ gap: 12 }}>
+                                {/* Custom radio */}
+                                <span
+                                  aria-hidden
+                                  style={{
+                                    width: 18,
+                                    height: 18,
+                                    borderRadius: '50%',
+                                    border: `2px solid ${isSelected ? '#20c997' : '#c9c9ce'}`,
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                  }}
+                                >
+                                  {isSelected && (
+                                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#20c997' }} />
+                                  )}
+                                </span>
+                                <img src={getShippingLogo(opt.company)} alt={`${opt.company} logo`} style={{ width: 58, height: 'auto' }} />
                                 <div>
-                                  <div className="fw-semibold">{opt.company}</div>
-                                  <small className="text-muted">{acceptsText}</small>
+                                  <div className="fw-semibold" style={{ lineHeight: 1.1 }}>{opt.company}</div>
+                                  <div
+                                    style={{
+                                      display: 'inline-block',
+                                      padding: '4px 10px',
+                                      borderRadius: 999,
+                                      background: badge.bg,
+                                      color: badge.color,
+                                      fontSize: 12,
+                                      marginTop: 6
+                                    }}
+                                  >
+                                    {badge.text}
+                                  </div>
                                 </div>
                               </div>
-                              <input
-                                type="radio"
-                                name="shipping_code"
-                                value={opt.code}
-                                checked={selectedShippingCode === opt.code}
-                                onChange={() => setSelectedShippingCode(opt.code)}
-                              />
-                            </label>
+                              <div className="fw-semibold" style={{ color: '#404040' }}>{priceText}</div>
+                            </div>
                           );
                         })}
                       </div>
+                      {showShippingError && (
+                        <div className="text-danger mt-2" role="alert">Lütfen bir kargo firması seçiniz.</div>
+                      )}
                     </div>
                   )}
                   {/* Shipping Section */}
@@ -600,13 +657,7 @@ export default function OrderModal({
                         />
                         <span>Kapıda Nakit Ödeme</span>
                         <span>
-                          {(() => {
-                            const cost = parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost);
-                            if (!cost) {
-                              return "Ücretsiz";
-                            }
-                            return cost.toFixed(2) + "TL";
-                          })()}
+                          {getCashPaymentCostText()}
                         </span>
                       </label>
                     </div>
