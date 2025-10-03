@@ -643,7 +643,7 @@ export default function OrderModal({
                     </div>
                   )}
                   {/* Shipping Section */}
-                  <div className="shipping-section mb-3">
+                  {/* <div className="shipping-section mb-3">
                     <div className={`form-check ${selectedPaymentType === "nakit" ? "active" : ""}`}>
                       <label className="form-check-label">
                         <input
@@ -676,7 +676,7 @@ export default function OrderModal({
                          <span>{getCardPaymentCostText()}</span>
                       </label>
                     </div>
-                  </div>
+                  </div> */}
                   
                   {/* Protected Shipping Section (Korumalı Kargo) */}
                   {PROTECTED_SHIPPING_AVAILABLE && (
