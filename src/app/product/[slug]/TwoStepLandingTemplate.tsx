@@ -1,12 +1,33 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 
 // NOTE: This template mirrors the provided static HTML.
 // Everything is static except the countdown timer and query param forwarding.
 
 export default function TwoStepLandingTemplate() {
   const [timer, setTimer] = useState({ minutes: '29', seconds: '39' });
+  const [apiProduct, setApiProduct] = useState<any>(null);
+
+  // Fetch product data but don't use it yet
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    const slug = parts[1] || '';
+    
+    if (!slug) return;
+
+    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
+      .then(res => {
+        console.log('✅ Product data fetched in TwoStepLanding:', res.data.product?.name);
+        setApiProduct(res.data.product);
+      })
+      .catch(err => {
+        console.error('❌ Failed to fetch product:', err);
+      });
+  }, []);
 
   useEffect(() => {
     const countDownDate = new Date();
@@ -34,8 +55,11 @@ export default function TwoStepLandingTemplate() {
   }, []);
 
   const orderHref = useMemo(() => {
-    if (typeof window === 'undefined') return 'https://fermin.com.tr/product/fermin/order';
-    return 'https://fermin.com.tr/product/fermin/order' + window.location.search;
+    if (typeof window === 'undefined') return '/';
+    const { pathname, search } = window.location;
+    const parts = pathname.split('/').filter(Boolean);
+    const slug = parts[1] || '';
+    return `/product/${slug}/order${search || ''}`;
   }, []);
 
   const redirectToOrder = () => {
