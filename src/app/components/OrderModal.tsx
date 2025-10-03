@@ -104,14 +104,14 @@ export default function OrderModal({
       ? (selectedOption.price - selectedOption.discount)
       : (product?.price || 0);
     
-    const cardPaymentCost = selectedPaymentType === "kart" 
+    const cardPaymentCost = product.shipping.find((opt) => opt.code === selectedShippingCode)?.paymentType === "card" 
       ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
       : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
     
     const protectedShippingCost = isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0;
     
     return basePrice + cardPaymentCost + protectedShippingCost;
-  }, [selectedOption, selectedPaymentType, product.price, product.settings, isProtectedShippingEnabled]);
+  }, [selectedOption, selectedShippingCode, product.price, product.settings, isProtectedShippingEnabled]);
 
   // Memoized values for form inputs to prevent flickering
   const memoizedQuantity = useMemo(() => selectedOption?.quantity || 1, [selectedOption?.quantity]);
@@ -370,7 +370,6 @@ export default function OrderModal({
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
-    console.log(product.shipping.find((opt) => opt.code === selectedShippingCode)?.paymentType);
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
