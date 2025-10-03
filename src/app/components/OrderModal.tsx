@@ -551,7 +551,13 @@ export default function OrderModal({
                     </div>
                     <div className="row justify-content-between">
                       <div className="col-8 label">Kargo</div>
-                      <div className="col-4 value text-end" id="shipping-cost">{parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0")?.toFixed(2)+"TL" || "Ücretsiz"}</div>
+                      <div className="col-4 value text-end" id="shipping-cost">
+                        {(() => {
+                          const p = product.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType;
+                          if (!p) return 'Seçiniz';
+                          return p === 'card' ? getCardPaymentCostText() : getCashPaymentCostText();
+                        })()}
+                      </div>
                     </div>
                     {calculateDiscount() > 0 && (
                       <div className="row justify-content-between" id="discounts">
