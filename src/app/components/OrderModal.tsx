@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -90,6 +90,7 @@ export default function OrderModal({
   const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
   const [selectedShippingCode, setSelectedShippingCode] = useState<string>("");
   const [showShippingError, setShowShippingError] = useState<boolean>(false);
+  const shippingSectionRef = useRef<HTMLDivElement>(null);
 
   const PROTECTED_SHIPPING_AVAILABLE = false; 
   const PROTECTED_SHIPPING_PRICE = 89.00; 
@@ -361,11 +362,26 @@ export default function OrderModal({
     setIsSubmitting(true);
     setSubmitError("");
 
+    // Validate phone before proceeding
+    if (!validatePhone(inputPhone)) {
+      setIsSubmitting(false);
+      setIsPhoneValid(false);
+      setPhoneError('Geçerli bir telefon numarası giriniz (05XXXXXXXXX)');
+      try {
+        const el = document.getElementById('phoneInput') as HTMLInputElement | null;
+        el?.focus();
+      } catch {}
+      return;
+    }
+
     // Require shipping selection when options exist
     if (Array.isArray(product?.shipping) && product.shipping.length > 0 && !selectedShippingCode) {
       setIsSubmitting(false);
       setShowShippingError(true);
       setSubmitError('Lütfen bir kargo firması seçiniz.');
+      try {
+        shippingSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch {}
       return;
     }
 
@@ -575,8 +591,11 @@ export default function OrderModal({
 
                   {/* Shipping Company Selection */}
                   {Array.isArray(product?.shipping) && product.shipping.length > 0 && (
-                    <div className="mb-3">
-                      <div className="mb-2 fw-bold">Kargo Bilgileri</div>
+                    <div className="mb-3" ref={shippingSectionRef}>
+                      <span className="mb-2 fw-bold">Kargo Bilgileri</span> 
+                      {showShippingError && (
+                        <span className="text-danger mt-2 ms-2" style={{fontWeight: 'bold'}} role="alert">Lütfen bir kargo firması seçiniz.</span>
+                      )}
                       <div className="d-flex flex-column gap-2">
                         {product.shipping.map((opt) => {
                           const isSelected = selectedShippingCode === opt.code;
@@ -585,10 +604,10 @@ export default function OrderModal({
                             ? { cash: true, card: true }
                             : { cash: true, card: false };
                           const badge = accepts.cash && accepts.card
-                            ? { text: 'Kart/Nakit', bg: '#22a05a', color: '#fff' }
+                            ? { text: 'Kapıda Kart/Nakit', bg: '#22a05a', color: '#fff' }
                             : accepts.card
                               ? { text: 'Sadece Kart', bg: '#d8a11d', color: '#fff' }
-                              : { text: 'Sadece Nakit', bg: '#0d6efd', color: '#fff' };
+                              : { text: 'Kapıda Nakit', bg: '#0d6efd', color: '#fff' };
                           const priceText = (() => {
                             const p = (opt.paymentType);
                             if (p === 'card') return getCardPaymentCostText();
@@ -642,9 +661,7 @@ export default function OrderModal({
                           );
                         })}
                       </div>
-                      {showShippingError && (
-                        <div className="text-danger mt-2" role="alert">Lütfen bir kargo firması seçiniz.</div>
-                      )}
+
                     </div>
                   )}
                   {/* Shipping Section */}
@@ -762,6 +779,7 @@ export default function OrderModal({
                         type="tel"
                         className={`form-control ${phoneError ? 'is-invalid' : isPhoneValid ? 'is-valid' : ''}`}
                         id="phoneInput"
+                        pattern="^05[0-9]{9}$"
                         placeholder="05XXXXXXXXX"
                         onChange={handlePhoneChange}
                         maxLength={11}
