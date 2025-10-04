@@ -83,6 +83,13 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+    console.log(formData.get('name'));
+    console.log(formData.get('phone'));
+    console.log(formData.get('address'));
+    console.log(selectedPackage);
+    console.log(totalPrice);
+    console.log(apiProduct?.id);
+    console.log(apiProduct?.name);
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
@@ -257,7 +264,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
 
               <div className="form-group mb-3">
                 <label className="mb-1">Ad Soyad</label>
-                <input type="text" className="form-control" required />
+                <input type="text" className="form-control" name="name" required />
               </div>
 
               <div className="form-group mb-3">
@@ -266,6 +273,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
                 <input
                   type="tel"
                   className="form-control"
+                  name="phone"
                   value={phoneValue}
                   onChange={handlePhoneChange}
                   placeholder="0 (5__) ___ __ __"
@@ -275,7 +283,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
 
               <div className="form-group mb-3">
                 <label className="mb-1">Adres</label>
-                <textarea className="form-control" rows={3} required />
+                <textarea className="form-control" name="address" rows={3} required />
               </div>
 
               <button type="submit" className="btn btn-success w-100 py-3" style={{ fontWeight: 600, fontSize: '17px' }}>
