@@ -16,6 +16,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
   const [apiProduct, setApiProduct] = useState<any>(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [refUrlData, setRefUrlData] = useState<any>(null);
 
   // Fetch product data but don't use it yet
   useEffect(() => {
@@ -131,6 +132,21 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
 
   }, [slug]);
 
+  // Load ref URL data from localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const storedData = localStorage.getItem('ref_url_data');
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        setRefUrlData(parsedData);
+      } catch (error) {
+        console.error('Error parsing ref URL data:', error);
+      }
+    }
+  }, []);
+
   // Timer effect
   useEffect(() => {
     const countDownDate = new Date();
@@ -202,8 +218,9 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
         total_price: totalPrice,
         product_id: apiProduct?.id || 5,
         products: apiProduct?.name || 'Magic Milk',
+        ref_url: refUrlData?.fullUrl || '',
+        
       });
-      debugger;
 
       if (response.data.success) {
         setOrderId(response.data.order_id);
