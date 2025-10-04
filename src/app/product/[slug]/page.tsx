@@ -2,6 +2,7 @@ import React from 'react';
 import '../Nova.css';
 import '../product-details.css'
 import LightTemplate from './LightTemplate';
+import RefUrlScript from './RefUrlScript';
 
 // Regular imports for server components (no dynamic with ssr: false)
 import PixelScripts from './PixelScripts';
@@ -196,6 +197,7 @@ export default async function ProductDetailPage({
 }) {
   const { slug } = await params;
   const { product } = await fetchProductData(slug);
+  
 
   if (!product) {
     return (
@@ -226,6 +228,7 @@ export default async function ProductDetailPage({
 
   return (
     <>
+      <RefUrlScript />
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
     </>

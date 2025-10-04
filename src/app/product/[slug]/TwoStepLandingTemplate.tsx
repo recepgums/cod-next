@@ -6,7 +6,11 @@ import axios from 'axios';
 // NOTE: This template mirrors the provided static HTML.
 // Everything is static except the countdown timer and query param forwarding.
 
-export default function TwoStepLandingTemplate() {
+interface TwoStepLandingTemplateProps {
+  product: any; // Tam Product interface'ini buraya ekleyebilirsiniz
+}
+
+export default function TwoStepLandingTemplate({ product }: TwoStepLandingTemplateProps) {
   const [timer, setTimer] = useState({ minutes: '29', seconds: '39' });
   const [apiProduct, setApiProduct] = useState<any>(null);
 

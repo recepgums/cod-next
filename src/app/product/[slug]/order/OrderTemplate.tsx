@@ -67,9 +67,34 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     setPhoneValue(value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission logic here
+    const formData = new FormData(e.target as HTMLFormElement);
+
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
+        name: formData.get('name'),
+        phone: formData.get('phone'),
+        city_id: formData.get('city_id'),
+        district_id: formData.get('district_id'),
+        neighborhood_id: formData.get('neighborhood_id'),
+        address: formData.get('address'),
+        amount_type: apiProduct?.shipping?.find((opt: any) => opt.code === selectedShippingCode)?.paymentType == "card" ? "kart" : "nakit",
+        quantity: selectedPackage,
+        total_price: totalPrice,
+        product_id: apiProduct?.id,
+        products: apiProduct?.name,
+        ref_url: window.location.href,
+        shipping_code: selectedShippingCode || null
+      });
+
+      if (response.data.success) {
+        window.location.href = `/order/${response.data.order_id}/promosyon`;
+      }
+    } catch (error: any) {
+      console.error('Order submission failed:', error);
+      alert(error.response?.data?.message || 'Sipariş gönderilirken bir hata oluştu.');
+    }
   };
 
   return (
