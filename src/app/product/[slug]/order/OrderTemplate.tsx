@@ -14,6 +14,8 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
   const [phoneValue, setPhoneValue] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [apiProduct, setApiProduct] = useState<any>(null);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   // Fetch product data but don't use it yet
   useEffect(() => {
@@ -27,6 +29,106 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       .catch(err => {
         console.error('❌ Failed to fetch product:', err);
       });
+
+
+      setApiProduct({
+        id: 84,
+        slug: "black-mamba",
+        name: "Black Mamba",
+        price: 329,
+        oldPrice: 529,
+        discount: "%38 indirim",
+        rating: 4.5,
+        commentCount: 0,
+        productLink: "/products/black-mamba",
+        sold: 5000,
+        productImg: "https://codpanel.com.tr/storage/380/conversions/Black-Mamba-copy-min-medium.webp",
+        images: [
+          {
+            thumbnail: "https://codpanel.com.tr/storage/380/conversions/Black-Mamba-copy-min-thumbnail.webp",
+            medium: "https://codpanel.com.tr/storage/380/conversions/Black-Mamba-copy-min-medium.webp",
+            large: "https://codpanel.com.tr/storage/380/conversions/Black-Mamba-copy-min-large.webp",
+            mobile: "https://codpanel.com.tr/storage/380/conversions/Black-Mamba-copy-min-mobile.webp",
+            original: "https://codpanel.com.tr/storage/380/Black-Mamba-copy-min.jpg"
+          }
+        ],
+        features: [],
+        options: [
+          {
+            title: "1 Adet",
+            quantity: 1,
+            price: 329,
+            discount: 0
+          },
+          {
+            title: "2 Adet",
+            quantity: 2,
+            price: 658,
+            discount: 29
+          },
+          {
+            title: "4 Adet",
+            quantity: 4,
+            price: 1316,
+            discount: 417
+          }
+        ],
+        settings: {
+          alias: "Black Mamba",
+          quantity_price: { "1": 329, "2": 658, "4": 1316 },
+          quantity_discount: { "1": 0, "2": 29, "4": 417 },
+          cash_payment_cost: null,
+          card_payment_cost: null,
+          supply_cost: null,
+          ad_cost: null,
+          is_campaign: null,
+          variants: [],
+          cloaker_url: null,
+          unit: "Adet",
+          quantity_display_text: { "1": "1 Adet", "2": "2 Adet", "4": "4 Adet" },
+          quantity_images: {
+            "1": {
+              selected_url: "https://codpanel.com.tr/storage/383/resim_2025-10-03_192231186.png",
+              unselected_url: "https://codpanel.com.tr/storage/384/resim_2025-10-03_192215419.png"
+            },
+            "2": {
+              selected_url: "https://codpanel.com.tr/storage/385/resim_2025-10-03_192249040.png",
+              unselected_url: "https://codpanel.com.tr/storage/386/resim_2025-10-03_192241459.png"
+            },
+            "4": {
+              selected_url: "https://codpanel.com.tr/storage/387/resim_2025-10-03_192305865.png",
+              unselected_url: "https://codpanel.com.tr/storage/388/resim_2025-10-03_192313448.png"
+            }
+          },
+          cargo_price: null,
+          upsell_product_id: null,
+          upsell_discount: null,
+          og_title: null,
+          is_whatsapp_homepage: null
+        },
+        content: null,
+        is_whatsapp_homepage: null,
+        merchant_phone: null,
+        cargo_price: null,
+        upsell_product: null,
+        upsell_discount: null,
+        shipping: [
+          {
+            code: "360",
+            company: "ARAS",
+            paymentType: "card"
+          },
+          {
+            code: "210",
+            company: "PTT",
+            paymentType: "cash"
+          }
+        ]
+      });
+
+
+
+
   }, [slug]);
 
   // Timer effect
@@ -98,18 +200,40 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
         address: formData.get('address'),
         quantity: selectedPackage,
         total_price: totalPrice,
-        product_id: apiProduct?.id,
-        products: apiProduct?.name,
+        product_id: apiProduct?.id || 5,
+        products: apiProduct?.name || 'Magic Milk',
       });
+      debugger;
 
       if (response.data.success) {
-        window.location.href = `/order/${response.data.order_id}/promosyon`;
+        setOrderId(response.data.order_id);
+        setOrderSuccess(true);
       }
     } catch (error: any) {
       console.error('Order submission failed:', error);
       alert(error.response?.data?.message || 'Sipariş gönderilirken bir hata oluştu.');
     }
   };
+
+  if (orderSuccess) {
+    return (
+      <div>
+        <div style={{ width: '100%' }} id="">
+          <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder1.jpg" alt="Order Success 1" />
+        </div>
+        <div style={{ width: '100%' }} id="">
+          <a href={`/product/${slug}`}>
+            <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder2.jpg" alt="Order Success 2" />
+          </a>
+        </div>
+        <div style={{ width: '100%' }} id="">
+          <a href="#">
+            <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder3.jpg" alt="Order Success 3" />
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
