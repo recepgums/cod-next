@@ -99,7 +99,7 @@ async function fetchProductData(slug: string) {
           comments: Array.isArray(commentsData) ? commentsData : [],
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
-          template: "2-step",
+          template: templateData,
       logoUrl: data.logoUrl,
     };
 
