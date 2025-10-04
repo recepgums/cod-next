@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 
@@ -58,6 +58,19 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     return () => clearInterval(x);
   }, []);
 
+  const totalPrice = useMemo(() => {
+    switch (selectedPackage) {
+      case '374':
+        return 599;
+      case '375':
+        return 999;
+      case '376':
+        return 1399;
+      default:
+        return 0;
+    }
+  }, [selectedPackage]);
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     if (!value.startsWith('0 (5')) {
@@ -75,17 +88,11 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
         phone: formData.get('phone'),
-        city_id: formData.get('city_id'),
-        district_id: formData.get('district_id'),
-        neighborhood_id: formData.get('neighborhood_id'),
         address: formData.get('address'),
-        amount_type: apiProduct?.shipping?.find((opt: any) => opt.code === selectedShippingCode)?.paymentType == "card" ? "kart" : "nakit",
         quantity: selectedPackage,
         total_price: totalPrice,
         product_id: apiProduct?.id,
         products: apiProduct?.name,
-        ref_url: window.location.href,
-        shipping_code: selectedShippingCode || null
       });
 
       if (response.data.success) {
