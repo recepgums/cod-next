@@ -161,24 +161,81 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
 
       {/* Package Selection */}
       <form onSubmit={handleSubmit} className="d-flex flex-column align-items-center justify-content-center">
-        <div className="part1">
+        <div className="part1" id="two" style={{}}>
           <input
             type="radio"
             style={{ opacity: 0, visibility: 'hidden', position: 'absolute', width: 0, height: 0 }}
+            className="packageBtn"
             name="offer1"
             value="374"
+            id="1302"
             checked={selectedPackage === '374'}
             onChange={(e) => setSelectedPackage(e.target.value)}
+            data-quantity="1"
+            data-price="599"
           />
-          <label>
+          <label htmlFor="1302">
             <img
+              className="image_replce"
+              id="s_374"
               src={`https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '374' ? 'selected' : 'unselected'}/1.png`}
+              data-original="https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/1.png"
+              data-active="https://fermin.com.tr/assets/imgs/products/magicmilk/selected/1.png"
               width="100%"
               alt="Package 1"
             />
           </label>
         </div>
-        {/* Add other package options similarly */}
+        <div className="part1" id="three" style={{}}>
+          <input
+            type="radio"
+            style={{ display: 'none' }}
+            className="packageBtn"
+            name="offer1"
+            value="375"
+            id="1303"
+            checked={selectedPackage === '375'}
+            onChange={(e) => setSelectedPackage(e.target.value)}
+            data-quantity="2"
+            data-price="999"
+          />
+          <label htmlFor="1303">
+            <img
+              className="image_replce"
+              id="s_375"
+              src={`https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '375' ? 'selected' : 'unselected'}/2.png`}
+              data-original="https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/2.png"
+              data-active="https://fermin.com.tr/assets/imgs/products/magicmilk/selected/2.png"
+              width="100%"
+              alt="Package 2"
+            />
+          </label>
+        </div>
+        <div className="part1" id="four" style={{}}>
+          <input
+            type="radio"
+            style={{ display: 'none' }}
+            className="packageBtn"
+            name="offer1"
+            value="376"
+            id="1304"
+            checked={selectedPackage === '376'}
+            onChange={(e) => setSelectedPackage(e.target.value)}
+            data-quantity="3"
+            data-price="1399"
+          />
+          <label htmlFor="1304">
+            <img
+              className="image_replce"
+              id="s_376"
+              src={`https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '376' ? 'selected' : 'unselected'}/3.png`}
+              data-original="https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/3.png"
+              data-active="https://fermin.com.tr/assets/imgs/products/magicmilk/selected/3.png"
+              width="100%"
+              alt="Package 3"
+            />
+          </label>
+        </div>
 
         {/* Form Section */}
         <div className="container" style={{ backgroundColor: '#2c3a47', color: 'white', maxWidth: '960px' }}>
