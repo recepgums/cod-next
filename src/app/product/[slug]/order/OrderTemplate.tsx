@@ -43,6 +43,34 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     }
   }, [apiProduct?.settings]);
 
+  const quantityDiscounts = useMemo(() => {
+    try {
+      const settings = apiProduct?.settings;
+      const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
+      const raw = parsed?.quantity_discount;
+      const discountObj = raw && typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return discountObj || {};
+    } catch {
+      return {} as Record<string, number>;
+    }
+  }, [apiProduct?.settings]);
+
+  const discountedPrices = useMemo(() => {
+    const result: Record<string, number> = {};
+    Object.keys(quantityPrices || {}).forEach((k) => {
+      const base = Number((quantityPrices as any)[k]) || 0;
+      const disc = Number((quantityDiscounts as any)[k]) || 0;
+      const finalVal = Math.max(0, base - disc);
+      result[k] = finalVal;
+    });
+    return result;
+  }, [quantityPrices, quantityDiscounts]);
+
+  const totalPrice = useMemo(() => {
+    const price = discountedPrices?.[selectedQuantity];
+    return typeof price === 'number' ? price : 0;
+  }, [selectedQuantity, discountedPrices]);
+
   // Fetch product data but don't use it yet
   useEffect(() => {
     if (!slug) return;
@@ -100,11 +128,6 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
 
     return () => clearInterval(x);
   }, []);
-
-  const totalPrice = useMemo(() => {
-    const price = quantityPrices?.[selectedQuantity];
-    return typeof price === 'number' ? price : 0;
-  }, [selectedQuantity, quantityPrices]);
 
   const formatTRMobile = (input: string) => {
     let digits = (input || '').replace(/\D/g, '');
@@ -278,18 +301,19 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             type="radio"
             style={{ opacity: 0, visibility: 'hidden', position: 'absolute', width: 0, height: 0 }}
             className="packageBtn"
+            name="offer1"
             value="374"
             id="1302"
             checked={selectedPackage === '374'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('1'); }}
             data-quantity="1"
-            data-price={quantityPrices['1'] ?? ''}
+            data-price={discountedPrices['1'] ?? ''}
           />
           <label htmlFor="1302">
             <img
               className="image_replce"
               id="s_374"
-              src={(selectedQuantity === '1' ? quantityImages['1']?.selected_url : quantityImages['1']?.unselected_url) || `https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '374' ? 'selected' : 'unselected'}/1.png`}
+              src={(selectedQuantity === '1' ? quantityImages['1']?.selected_url : quantityImages['1']?.unselected_url)}
               data-original={quantityImages['1']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/1.png'}
               data-active={quantityImages['1']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/1.png'}
               width="100%"
@@ -302,18 +326,19 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             type="radio"
             style={{ display: 'none' }}
             className="packageBtn"
+            name="offer1"
             value="375"
             id="1303"
             checked={selectedPackage === '375'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('2'); }}
             data-quantity="2"
-            data-price={quantityPrices['2'] ?? ''}
+            data-price={discountedPrices['2'] ?? ''}
           />
           <label htmlFor="1303">
             <img
               className="image_replce"
               id="s_375"
-              src={(selectedQuantity === '2' ? quantityImages['2']?.selected_url : quantityImages['2']?.unselected_url) || `https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '375' ? 'selected' : 'unselected'}/2.png`}
+              src={(selectedQuantity === '2' ? quantityImages['2']?.selected_url : quantityImages['2']?.unselected_url)}
               data-original={quantityImages['2']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/2.png'}
               data-active={quantityImages['2']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/2.png'}
               width="100%"
@@ -326,18 +351,19 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             type="radio"
             style={{ display: 'none' }}
             className="packageBtn"
+            name="offer1"
             value="376"
             id="1304"
             checked={selectedPackage === '376'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('4'); }}
             data-quantity="4"
-            data-price={quantityPrices['4'] ?? ''}
+            data-price={discountedPrices['4'] ?? ''}
           />
           <label htmlFor="1304">
             <img
               className="image_replce"
               id="s_376"
-              src={(selectedQuantity === '4' ? quantityImages['4']?.selected_url : quantityImages['4']?.unselected_url) || `https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '376' ? 'selected' : 'unselected'}/3.png`}
+              src={(selectedQuantity === '4' ? quantityImages['4']?.selected_url : quantityImages['4']?.unselected_url)}
               data-original={quantityImages['4']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/3.png'}
               data-active={quantityImages['4']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/3.png'}
               width="100%"
