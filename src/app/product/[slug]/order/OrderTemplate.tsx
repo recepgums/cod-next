@@ -153,13 +153,29 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     return out;
   };
 
+  const isValidTRMobile = (val: string) => {
+    const digits = (val || '').replace(/\D/g, '');
+    return digits.length === 11 && digits.startsWith('05');
+  };
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatTRMobile(e.target.value);
     setPhoneValue(formatted);
+    if (isValidTRMobile(formatted)) {
+      setPhoneError('');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate phone
+    if (!isValidTRMobile(phoneValue)) {
+      setPhoneError('Geçerli bir telefon numarası giriniz (0 (5__) ___ __ __)');
+      try { document.getElementById('telephone')?.focus(); } catch {}
+      return;
+    }
+
     const formData = new FormData(e.target as HTMLFormElement);
     console.log(formData.get('name'));
     console.log(formData.get('phone'));
@@ -177,7 +193,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
         quantity: selectedQuantity,
         total_price: totalPrice,
         product_id: apiProduct?.id,
-        products: apiProduct?.name ,
+        products: apiProduct?.name,
         ref_url: refUrlData?.fullUrl,
         
       });
@@ -395,6 +411,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
                   type="tel"
                   className="form-control"
                   name="phone"
+                  id="telephone"
                   value={phoneValue}
                   onChange={handlePhoneChange}
                   placeholder="0 (5__) ___ __ __"
