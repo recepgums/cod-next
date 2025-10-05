@@ -30,8 +30,11 @@ async function fetchProducts() {
     console.log('✅ Laravel API success:', directData);
 
     if (directData?.main_product_slug) {
+      console.log('✅ Redirecting to main product:', directData.main_product_slug);
       const targetSlug = String(directData.main_product_slug);
       redirect(`/product/${targetSlug}`);
+    } else {
+      console.log('✅ No main product slug found');
     }
 
     console.log('✅ API Response received:', {
