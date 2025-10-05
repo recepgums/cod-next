@@ -278,7 +278,6 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             type="radio"
             style={{ opacity: 0, visibility: 'hidden', position: 'absolute', width: 0, height: 0 }}
             className="packageBtn"
-            name="offer1"
             value="374"
             id="1302"
             checked={selectedPackage === '374'}
@@ -303,7 +302,6 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             type="radio"
             style={{ display: 'none' }}
             className="packageBtn"
-            name="offer1"
             value="375"
             id="1303"
             checked={selectedPackage === '375'}
@@ -328,12 +326,11 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             type="radio"
             style={{ display: 'none' }}
             className="packageBtn"
-            name="offer1"
             value="376"
             id="1304"
             checked={selectedPackage === '376'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('4'); }}
-            data-quantity="3"
+            data-quantity="4"
             data-price={quantityPrices['4'] ?? ''}
           />
           <label htmlFor="1304">
