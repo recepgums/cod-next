@@ -182,7 +182,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       >
         <img 
           style={{ width: '100%', maxWidth: '100%' }} 
-          src={`https://fermin.com.tr/assets/imgs/products/magicmilk/payment_page.jpg`}
+          src={ JSON.parse(apiProduct?.settings)?.order_image || `https://fermin.com.tr/assets/imgs/products/magicmilk/payment_page.jpg`}
           alt="Product Header"
         />
       </div>
