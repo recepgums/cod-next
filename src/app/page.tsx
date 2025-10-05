@@ -30,8 +30,8 @@ async function fetchProducts() {
     
     const directData = await directRes.json();
     console.log('✅ API Response received:', {
-      productsCount: directData.products?.length || 0,
-      firstProduct: directData.products?.[0] ? Object.keys(directData.products[0]) : 'No products'
+      productsCount: directData?.products?.length || 0,
+      firstProduct: directData?.products?.[0] ? Object.keys(directData?.products[0]) : 'No products'
     });
     
     const productsArray = directData.products || [directData?.product];
