@@ -151,11 +151,11 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
         name: formData.get('name'),
         phone: formData.get('phone'),
         address: formData.get('address'),
-        quantity: selectedPackage,
+        quantity: selectedQuantity,
         total_price: totalPrice,
-        product_id: apiProduct?.id || 5,
-        products: apiProduct?.name || 'Magic Milk',
-        ref_url: refUrlData?.fullUrl || '',
+        product_id: apiProduct?.id,
+        products: apiProduct?.name ,
+        ref_url: refUrlData?.fullUrl,
         
       });
 
