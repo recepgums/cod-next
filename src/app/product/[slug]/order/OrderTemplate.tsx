@@ -30,13 +30,6 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       .catch(err => {
         console.error('❌ Failed to fetch product:', err);
       });
-
-
-     
-
-
-
-
   }, [slug]);
 
   // Load ref URL data from localStorage
@@ -182,10 +175,14 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
   return (
     <div>
       {/* Header Image */}
-      <div style={{ width: '100%' }}>
+      <div style={{ width: '100%' }} 
+      onClick={()=>{
+        console.log(apiProduct);
+      }}
+      >
         <img 
           style={{ width: '100%', maxWidth: '100%' }} 
-          src={JSON.parse(apiProduct?.product.settings)?.order_image}
+          src={`https://fermin.com.tr/assets/imgs/products/magicmilk/payment_page.jpg`}
           alt="Product Header"
         />
       </div>
