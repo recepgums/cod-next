@@ -189,13 +189,33 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     }
   }, [selectedPackage]);
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-    if (!value.startsWith('0 (5')) {
-      value = '0 (5';
+  const formatTRMobile = (input: string) => {
+    let digits = (input || '').replace(/\D/g, '');
+    if (digits.startsWith('0')) digits = digits.slice(1);
+    digits = digits.slice(0, 10);
+
+    let out = '0 ';
+    if (digits.length > 0) {
+      out += '(' + digits.slice(0, Math.min(3, digits.length));
+      if (digits.length >= 3) out += ') ';
     }
-    // Phone formatting logic here
-    setPhoneValue(value);
+    if (digits.length > 3) {
+      out += digits.slice(3, Math.min(6, digits.length));
+      if (digits.length >= 6) out += ' ';
+    }
+    if (digits.length > 6) {
+      out += digits.slice(6, Math.min(8, digits.length));
+      if (digits.length >= 8) out += ' ';
+    }
+    if (digits.length > 8) {
+      out += digits.slice(8, Math.min(10, digits.length));
+    }
+    return out;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatTRMobile(e.target.value);
+    setPhoneValue(formatted);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -418,6 +438,8 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
                   value={phoneValue}
                   onChange={handlePhoneChange}
                   placeholder="0 (5__) ___ __ __"
+                  inputMode="numeric"
+                  maxLength={18}
                   required
                 />
               </div>
