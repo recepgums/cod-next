@@ -34,7 +34,7 @@ async function fetchProducts() {
       firstProduct: directData.products?.[0] ? Object.keys(directData.products[0]) : 'No products'
     });
     
-    const productsArray = directData.products || [...directData?.product];
+    const productsArray = directData.products || [directData?.product];
     
     if (productsArray.length === 0) {
       console.warn('⚠️ No products found in API response');
