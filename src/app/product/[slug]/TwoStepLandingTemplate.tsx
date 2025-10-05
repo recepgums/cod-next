@@ -88,7 +88,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
   //   'https://fermin.com.tr/storage/423/fermin_engin_15_14.gif',
   // ];
 
-  const images: string[] = (apiProduct?.images || []).map((img: any) => img.thumbnail).filter(Boolean);
+  const images: string[] = (apiProduct?.images || []).map((img: any) => img.large).filter(Boolean);
 
   return (
     <div>
