@@ -24,7 +24,9 @@ async function fetchProducts() {
       console.warn('⚠️ Laravel API failed:', directRes.status, directRes.statusText);
       throw new Error(`Laravel API failed: ${directRes.status}`);
     }
-    console.log('✅ Laravel API success:', directRes.body);
+    const dataa= await directRes.json();
+
+    console.log('✅ Laravel API success:', dataa);
     
     const directData = await directRes.json();
     console.log('✅ API Response received:', {
