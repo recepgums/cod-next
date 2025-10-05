@@ -105,7 +105,7 @@ export default function OrderModal({
       ? (selectedOption.price - selectedOption.discount)
       : (product?.price || 0);
     
-    const cardPaymentCost = product.shipping.find((opt) => opt.code === selectedShippingCode)?.paymentType === "card" 
+    const cardPaymentCost = product?.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType === "card" 
       ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
       : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
     
@@ -375,7 +375,7 @@ export default function OrderModal({
     }
 
     // Require shipping selection when options exist
-    if (Array.isArray(product?.shipping) && product.shipping.length > 0 && !selectedShippingCode) {
+    if (Array.isArray(product?.shipping) && product?.shipping?.length > 0 && !selectedShippingCode) {
       setIsSubmitting(false);
       setShowShippingError(true);
       setSubmitError('Lütfen bir kargo firması seçiniz.');
@@ -394,7 +394,7 @@ export default function OrderModal({
         district_id: formData.get('district_id'),
         neighborhood_id: formData.get('neighborhood_id'),
         address: formData.get('address'),
-        amount_type: product.shipping.find((opt) => opt.code === selectedShippingCode)?.paymentType == "card" ? "kart" : "nakit",
+        amount_type: product?.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType == "card" ? "kart" : "nakit",
         quantity: selectedOption?.quantity || 1,
         total_price: totalPrice,
         product_id: product.id,
@@ -569,7 +569,7 @@ export default function OrderModal({
                       <div className="col-8 label">Kargo</div>
                       <div className="col-4 value text-end" id="shipping-cost">
                         {(() => {
-                          const p = product.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType;
+                          const p = product?.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType;
                           if (!p) return 'Seçiniz';
                           return p === 'card' ? getCardPaymentCostText() : getCashPaymentCostText();
                         })()}
@@ -590,14 +590,14 @@ export default function OrderModal({
                   </div>
 
                   {/* Shipping Company Selection */}
-                  {Array.isArray(product?.shipping) && product.shipping.length > 0 && (
+                  {Array.isArray(product?.shipping) && product?.shipping?.length > 0 && (
                     <div className="mb-3" ref={shippingSectionRef}>
                       <span className="mb-2 fw-bold">Kargo Bilgileri</span> 
                       {showShippingError && (
                         <span className="text-danger mt-2 ms-2" style={{fontWeight: 'bold'}} role="alert">Lütfen bir kargo firması seçiniz.</span>
                       )}
                       <div className="d-flex flex-column gap-2">
-                        {product.shipping.map((opt) => {
+                        {product?.shipping?.map((opt) => {
                           const isSelected = selectedShippingCode === opt.code;
                           const pType = (opt.paymentType);
                           const accepts = pType === 'card'
