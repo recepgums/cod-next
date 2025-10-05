@@ -85,7 +85,7 @@ export default function Header() {
                 }}>
                   {categories.map((category) => (
                     <li key={category.id}>
-                      <a 
+                      <Link 
                         className="dropdown-item" 
                         href={`/category/${category.slug}`}
                         style={{ 
@@ -97,7 +97,7 @@ export default function Header() {
                         }}
                       >
                         {category.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
