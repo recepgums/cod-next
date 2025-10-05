@@ -88,11 +88,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
   //   'https://fermin.com.tr/storage/423/fermin_engin_15_14.gif',
   // ];
 
-  const images: string[] = (apiProduct?.images || []).map((img: any) => img.large).filter(Boolean);
-  const fallbackImages: string[] = [
-    'https://fermin.com.tr/storage/437/fermin_engin_15_01.gif',
-    'https://fermin.com.tr/storage/436/fermin_engin_15_02.gif',
-  ];
+  const images: string[] = (apiProduct?.images || []).map((img: any) => img.thumbnail).filter(Boolean);
 
   return (
     <div>
@@ -126,7 +122,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         </div>
       </div>
 
-      {(images.length > 0 ? images : fallbackImages).map((src) => (
+      {images.map((src) => (
         <div key={src} style={{ width: '100%' }}>
           <img
             style={{ width: '100%', maxWidth: '100%' }}
