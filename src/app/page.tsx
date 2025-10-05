@@ -71,9 +71,13 @@ async function fetchProducts() {
     console.log('✅ Products mapped successfully:', mappedProducts.length);
     return mappedProducts;
     
-  } catch (error) {
+  } catch (error: any) {
+    // Allow Next.js redirects to bubble up (do not swallow)
+    if (error && typeof error === 'object' && 'digest' in error && String(error.digest).includes('NEXT_REDIRECT')) {
+      throw error;
+    }
+
     console.warn('⚠️ API fetch failed:', error instanceof Error ? error.message : 'Unknown error');
-    
     // Fallback: Boş array yerine test verisi döndür
     console.log('🔄 Returning fallback test data...');
     return [
