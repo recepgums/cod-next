@@ -3,6 +3,7 @@ import ProductGrid from './components/ProductGrid';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import React from 'react';
+import { redirect } from 'next/navigation';
 
 // Server Component - SSR ile veri çekme
 async function fetchProducts() {
@@ -26,6 +27,13 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
+    console.log('✅ Laravel API success:', directData);
+
+    if (directData?.main_product_slug) {
+      const targetSlug = String(directData.main_product_slug);
+      redirect(`/product/${targetSlug}`);
+    }
+
     console.log('✅ API Response received:', {
       productsCount: directData?.products?.length || 0,
       firstProduct: directData?.products?.[0] ? Object.keys(directData?.products[0]) : 'No products'
