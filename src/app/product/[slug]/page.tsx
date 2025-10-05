@@ -219,7 +219,7 @@ export default async function ProductDetailPage({
         return <LightTemplate product={product} />;
       case 'image':
     return <ImageOnlyTemplate product={product} />;
-      case '2-step':
+      case '2step':
         return <TwoStepLandingTemplate product={product} />;
       default:
     return <NovaTemplate product={product} />;
