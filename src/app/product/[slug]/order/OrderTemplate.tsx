@@ -31,6 +31,18 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     }
   }, [apiProduct?.settings]);
 
+  const quantityPrices = useMemo(() => {
+    try {
+      const settings = apiProduct?.settings;
+      const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
+      const raw = parsed?.quantity_price;
+      const priceObj = raw && typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return priceObj || {};
+    } catch {
+      return {} as Record<string, number>;
+    }
+  }, [apiProduct?.settings]);
+
   // Fetch product data but don't use it yet
   useEffect(() => {
     if (!slug) return;
@@ -90,17 +102,9 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
   }, []);
 
   const totalPrice = useMemo(() => {
-    switch (selectedPackage) {
-      case '374':
-        return 599;
-      case '375':
-        return 999;
-      case '376':
-        return 1399;
-      default:
-        return 0;
-    }
-  }, [selectedPackage]);
+    const price = quantityPrices?.[selectedQuantity];
+    return typeof price === 'number' ? price : 0;
+  }, [selectedQuantity, quantityPrices]);
 
   const formatTRMobile = (input: string) => {
     let digits = (input || '').replace(/\D/g, '');
@@ -280,7 +284,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             checked={selectedPackage === '374'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('1'); }}
             data-quantity="1"
-            data-price="599"
+            data-price={quantityPrices['1'] ?? ''}
           />
           <label htmlFor="1302">
             <img
@@ -305,7 +309,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             checked={selectedPackage === '375'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('2'); }}
             data-quantity="2"
-            data-price="999"
+            data-price={quantityPrices['2'] ?? ''}
           />
           <label htmlFor="1303">
             <img
@@ -330,7 +334,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             checked={selectedPackage === '376'}
             onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('4'); }}
             data-quantity="3"
-            data-price="1399"
+            data-price={quantityPrices['4'] ?? ''}
           />
           <label htmlFor="1304">
             <img
