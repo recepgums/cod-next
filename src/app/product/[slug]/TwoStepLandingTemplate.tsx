@@ -26,6 +26,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
       .then(res => {
         console.log('✅ Product data fetched in TwoStepLanding:', res.data.product?.name);
+        console.log('✅ Product data fetched in TwoStepLanding:', res);
         setApiProduct(res.data.product);
       })
       .catch(err => {
