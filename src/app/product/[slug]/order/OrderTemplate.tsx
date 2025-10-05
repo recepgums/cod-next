@@ -182,7 +182,23 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       >
         <img 
           style={{ width: '100%', maxWidth: '100%' }} 
-          src={ JSON.parse(apiProduct?.settings)?.order_image || `https://fermin.com.tr/assets/imgs/products/magicmilk/payment_page.jpg`}
+          src={
+            (() => {
+              try {
+                if (apiProduct?.settings) {
+                  const parsed = typeof apiProduct.settings === "string"
+                    ? JSON.parse(apiProduct.settings)
+                    : apiProduct.settings;
+                  if (parsed && parsed.order_image) {
+                    return parsed.order_image;
+                  }
+                }
+              } catch (e) {
+                // fail silently, fallback below
+              }
+              return "https://fermin.com.tr/assets/imgs/products/magicmilk/payment_page.jpg";
+            })()
+          }
           alt="Product Header"
         />
       </div>
