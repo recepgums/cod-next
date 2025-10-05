@@ -17,6 +17,19 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [refUrlData, setRefUrlData] = useState<any>(null);
+  const [selectedQuantity, setSelectedQuantity] = useState<string>('1');
+
+  const quantityImages = useMemo(() => {
+    try {
+      const settings = apiProduct?.settings;
+      const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
+      const raw = parsed?.quantity_images;
+      const imagesObj = raw && typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return imagesObj || {};
+    } catch {
+      return {} as Record<string, { selected_url?: string; unselected_url?: string }>;
+    }
+  }, [apiProduct?.settings]);
 
   // Fetch product data but don't use it yet
   useEffect(() => {
@@ -88,40 +101,6 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
         return 0;
     }
   }, [selectedPackage]);
-
-  const ferminBase = 'https://fermin.com.tr/assets/imgs/products/magicmilk';
-
-  const quantityImages = useMemo(() => {
-    try {
-      const settings = apiProduct?.settings;
-      const parsedSettings = typeof settings === 'string' ? JSON.parse(settings) : (settings || {});
-      const raw = parsedSettings?.quantity_images;
-      const parsedQI = typeof raw === 'string' ? JSON.parse(raw) : (raw || {});
-      const keys = Object.keys(parsedQI || {});
-      const replaced: Record<string, { selected_url: string; unselected_url: string }> = {};
-      keys.forEach((key, idx) => {
-        const index = idx + 1; // 1,2,3...
-        replaced[key] = {
-          selected_url: `${ferminBase}/selected/${index}.png`,
-          unselected_url: `${ferminBase}/unselected/${index}.png`
-        };
-      });
-      return replaced;
-    } catch {
-      return {} as Record<string, { selected_url: string; unselected_url: string }>;
-    }
-  }, [apiProduct?.settings]);
-
-  const getPkgImg = (quantity: number, isSelected: boolean) => {
-    const key = String(quantity);
-    const entry = quantityImages[key];
-    if (entry) return isSelected ? entry.selected_url : entry.unselected_url;
-    // Fallback index mapping
-    const idx = quantity === 1 ? 1 : quantity === 2 ? 2 : 3;
-    return isSelected
-      ? `${ferminBase}/selected/${idx}.png`
-      : `${ferminBase}/unselected/${idx}.png`;
-  };
 
   const formatTRMobile = (input: string) => {
     let digits = (input || '').replace(/\D/g, '');
@@ -299,7 +278,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             value="374"
             id="1302"
             checked={selectedPackage === '374'}
-            onChange={(e) => setSelectedPackage(e.target.value)}
+            onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('1'); }}
             data-quantity="1"
             data-price="599"
           />
@@ -307,9 +286,9 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             <img
               className="image_replce"
               id="s_374"
-              src={getPkgImg(1, selectedPackage === '374')}
-              data-original={`${ferminBase}/unselected/1.png`}
-              data-active={`${ferminBase}/selected/1.png`}
+              src={(selectedQuantity === '1' ? quantityImages['1']?.selected_url : quantityImages['1']?.unselected_url) || `https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '374' ? 'selected' : 'unselected'}/1.png`}
+              data-original={quantityImages['1']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/1.png'}
+              data-active={quantityImages['1']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/1.png'}
               width="100%"
               alt="Package 1"
             />
@@ -324,7 +303,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             value="375"
             id="1303"
             checked={selectedPackage === '375'}
-            onChange={(e) => setSelectedPackage(e.target.value)}
+            onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('2'); }}
             data-quantity="2"
             data-price="999"
           />
@@ -332,9 +311,9 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             <img
               className="image_replce"
               id="s_375"
-              src={getPkgImg(2, selectedPackage === '375')}
-              data-original={`${ferminBase}/unselected/2.png`}
-              data-active={`${ferminBase}/selected/2.png`}
+              src={(selectedQuantity === '2' ? quantityImages['2']?.selected_url : quantityImages['2']?.unselected_url) || `https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '375' ? 'selected' : 'unselected'}/2.png`}
+              data-original={quantityImages['2']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/2.png'}
+              data-active={quantityImages['2']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/2.png'}
               width="100%"
               alt="Package 2"
             />
@@ -349,7 +328,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             value="376"
             id="1304"
             checked={selectedPackage === '376'}
-            onChange={(e) => setSelectedPackage(e.target.value)}
+            onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('4'); }}
             data-quantity="3"
             data-price="1399"
           />
@@ -357,9 +336,9 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
             <img
               className="image_replce"
               id="s_376"
-              src={getPkgImg(4, selectedPackage === '376')}
-              data-original={`${ferminBase}/unselected/3.png`}
-              data-active={`${ferminBase}/selected/3.png`}
+              src={(selectedQuantity === '4' ? quantityImages['4']?.selected_url : quantityImages['4']?.unselected_url) || `https://fermin.com.tr/assets/imgs/products/magicmilk/${selectedPackage === '376' ? 'selected' : 'unselected'}/3.png`}
+              data-original={quantityImages['4']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/3.png'}
+              data-active={quantityImages['4']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/3.png'}
               width="100%"
               alt="Package 3"
             />
