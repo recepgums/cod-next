@@ -36,8 +36,8 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
 
   useEffect(() => {
     const countDownDate = new Date();
-    countDownDate.setMinutes(countDownDate.getMinutes() + 29);
-    countDownDate.setSeconds(countDownDate.getSeconds() + 39);
+    countDownDate.setMinutes(countDownDate.getMinutes() + 14);
+    countDownDate.setSeconds(countDownDate.getSeconds() + 37);
 
     const x = setInterval(() => {
       const now = new Date().getTime();
