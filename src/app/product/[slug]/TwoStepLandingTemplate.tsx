@@ -11,7 +11,7 @@ interface TwoStepLandingTemplateProps {
 }
 
 export default function TwoStepLandingTemplate({ product }: TwoStepLandingTemplateProps) {
-  const [timer, setTimer] = useState({ minutes: '29', seconds: '39' });
+  const [timer, setTimer] = useState({ minutes: '14', seconds: '36' });
   const [apiProduct, setApiProduct] = useState<any>(null);
 
   // Fetch product data but don't use it yet
