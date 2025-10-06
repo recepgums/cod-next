@@ -20,6 +20,7 @@ async function fetchProducts() {
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
     });
+    console.log("api url", process.env.NEXT_PUBLIC_API_URL);
     
     if (!directRes.ok) {
       console.warn('⚠️ Laravel API failed:', directRes.status, directRes.statusText);
