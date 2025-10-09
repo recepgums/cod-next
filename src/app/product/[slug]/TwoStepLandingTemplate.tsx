@@ -100,14 +100,18 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         </div>
       </div>
 
-      {images.map((src) => (
+      {images.map((src, idx) => (
         <div key={src} style={{ width: '100%' }}>
           <img
-            style={{ width: '100%', maxWidth: '100%' }}
             src={src}
-            onClick={redirectToOrder}
             alt="product image"
-            loading="lazy"
+            width={1200}
+            height={1200}
+            decoding="async"
+            loading={idx === 0 ? 'eager' : 'lazy'}
+            {...(idx === 0 ? { fetchpriority: 'high' as any } : {})}
+            style={{ width: '100%', maxWidth: '100%', height: 'auto' }}
+            onClick={redirectToOrder}
           />
         </div>
       ))}

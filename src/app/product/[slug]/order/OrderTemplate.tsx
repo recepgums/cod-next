@@ -268,7 +268,11 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       }}
       >
         <img 
-          style={{ width: '100%', maxWidth: '100%' }} 
+          style={{ width: '100%', maxWidth: '100%', height: 'auto' }} 
+          width={1200}
+          height={1200}
+          decoding="async"
+          loading="eager"
           src={
             (() => {
               try {
@@ -370,7 +374,10 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
                   src={isSelected ? (images.selected_url || '') : (images.unselected_url || '')}
                   data-original={images.unselected_url || ''}
                   data-active={images.selected_url || ''}
-                  width="100%"
+                  width={800}
+                  height={800}
+                  decoding="async"
+                  loading={isSelected ? 'eager' : 'lazy'}
                   alt={imgAlt}
                 />
               </label>

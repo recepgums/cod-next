@@ -32,6 +32,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link rel="preconnect" href="https://cdn-uicons.flaticon.com" />
+        <link rel="preconnect" href="https://codpanel.com.tr" />
         
         {/* Critical CSS - Load with simple preload */}
         <link 
