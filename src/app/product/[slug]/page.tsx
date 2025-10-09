@@ -153,7 +153,7 @@ export async function generateMetadata({
   const productUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/product/${slug}`;
 
   return {
-    title: `${product.name} - TrendyGoods`,
+    title: `${product.name}`,
     description: description,
     keywords: [
       product.name,
