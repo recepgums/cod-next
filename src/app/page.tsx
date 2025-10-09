@@ -11,7 +11,7 @@ async function fetchProducts() {
     console.log('🔍 Fetching products from API...');
     // Önce direkt Laravel API'yi dene (proxy sorunlarını bypass et)
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
-      next: { revalidate: 60 },
+      // next: { revalidate: 60 },
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
