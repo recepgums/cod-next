@@ -96,7 +96,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         borderStyle: 'dashed',
         height: '70px',
         width: '100%',
-        position: 'fixed',
         backgroundColor: '#e54d42',
         zIndex: 999,
         color: 'white',
