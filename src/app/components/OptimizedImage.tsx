@@ -13,6 +13,7 @@ interface OptimizedImageProps {
   sizes?: string;
   fill?: boolean;
   onError?: (error: any) => void;
+  fetchPriority?: 'high' | 'low' | 'auto';
 }
 
 // Optimized image URL helper
@@ -46,6 +47,7 @@ export default function OptimizedImage({
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   fill = false,
   onError,
+  fetchPriority,
 }: OptimizedImageProps) {
   const optimizedSrc = getOptimizedImageUrl(src);
 
@@ -68,6 +70,7 @@ export default function OptimizedImage({
     blurDataURL,
     loading: priority ? 'eager' as const : 'lazy' as const,
     onError: handleError,
+    fetchPriority,
   };
 
   if (fill) {
