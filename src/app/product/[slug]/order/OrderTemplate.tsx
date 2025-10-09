@@ -31,6 +31,18 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     }
   }, [apiProduct?.settings]);
 
+  const quantityDisplayTexts = useMemo(() => {
+    try {
+      const settings = apiProduct?.settings;
+      const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
+      const raw = parsed?.quantity_display_text;
+      const displayObj = raw && typeof raw === 'string' ? JSON.parse(raw) : raw;
+      return displayObj || {};
+    } catch {
+      return {} as Record<string, string>;
+    }
+  }, [apiProduct?.settings]);
+
   const quantityPrices = useMemo(() => {
     try {
       const settings = apiProduct?.settings;
@@ -70,6 +82,25 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     const price = discountedPrices?.[selectedQuantity];
     return typeof price === 'number' ? price : 0;
   }, [selectedQuantity, discountedPrices]);
+
+  const quantityKeys = useMemo(() => {
+    try {
+      return Object.keys(discountedPrices || {}).sort((a, b) => Number(a) - Number(b));
+    } catch {
+      return [] as string[];
+    }
+  }, [discountedPrices]);
+
+  useEffect(() => {
+    // Ensure selected quantity is one of the available options
+    if (!selectedQuantity && quantityKeys.length > 0) {
+      setSelectedQuantity(quantityKeys[0]);
+      return;
+    }
+    if (selectedQuantity && !quantityKeys.includes(selectedQuantity) && quantityKeys.length > 0) {
+      setSelectedQuantity(quantityKeys[0]);
+    }
+  }, [quantityKeys, selectedQuantity]);
 
   // Fetch product data but don't use it yet
   useEffect(() => {
@@ -312,81 +343,40 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
 
       {/* Package Selection */}
       <form onSubmit={handleSubmit} className="d-flex flex-column align-items-center justify-content-center">
-        <div className="part1" id="two" style={{}}>
-          <input
-            type="radio"
-            style={{ opacity: 0, visibility: 'hidden', position: 'absolute', width: 0, height: 0 }}
-            className="packageBtn"
-            name="offer1"
-            value="374"
-            id="1302"
-            checked={selectedPackage === '374'}
-            onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('1'); }}
-            data-quantity="1"
-            data-price={discountedPrices['1'] ?? ''}
-          />
-          <label htmlFor="1302">
-            <img
-              className="image_replce"
-              id="s_374"
-              src={(selectedQuantity === '1' ? quantityImages['1']?.selected_url : quantityImages['1']?.unselected_url)}
-              data-original={quantityImages['1']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/1.png'}
-              data-active={quantityImages['1']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/1.png'}
-              width="100%"
-              alt="Package 1"
-            />
-          </label>
-        </div>
-        <div className="part1" id="three" style={{}}>
-          <input
-            type="radio"
-            style={{ display: 'none' }}
-            className="packageBtn"
-            name="offer1"
-            value="375"
-            id="1303"
-            checked={selectedPackage === '375'}
-            onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('2'); }}
-            data-quantity="2"
-            data-price={discountedPrices['2'] ?? ''}
-          />
-          <label htmlFor="1303">
-            <img
-              className="image_replce"
-              id="s_375"
-              src={(selectedQuantity === '2' ? quantityImages['2']?.selected_url : quantityImages['2']?.unselected_url)}
-              data-original={quantityImages['2']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/2.png'}
-              data-active={quantityImages['2']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/2.png'}
-              width="100%"
-              alt="Package 2"
-            />
-          </label>
-        </div>
-        <div className="part1" id="four" style={{}}>
-          <input
-            type="radio"
-            style={{ display: 'none' }}
-            className="packageBtn"
-            name="offer1"
-            value="376"
-            id="1304"
-            checked={selectedPackage === '376'}
-            onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity('4'); }}
-            data-quantity="4"
-            data-price={discountedPrices['4'] ?? ''}
-          />
-          <label htmlFor="1304">
-            <img
-              className="image_replce"
-              id="s_376"
-              src={(selectedQuantity === '4' ? quantityImages['4']?.selected_url : quantityImages['4']?.unselected_url)}
-              data-original={quantityImages['4']?.unselected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/unselected/3.png'}
-              data-active={quantityImages['4']?.selected_url || 'https://fermin.com.tr/assets/imgs/products/magicmilk/selected/3.png'}
-              width="100%"
-              alt="Package 3"
-            />
-          </label>
-        </div>
+        {quantityKeys.map((qKey, idx) => {
+          const id = `opt_${qKey}`;
+          const isSelected = selectedQuantity === qKey;
+          const images = quantityImages[qKey] || {};
+          const labelText = quantityDisplayTexts[qKey] || `${qKey} ${(apiProduct?.unit || 'Adet')}`;
+          const imgAlt = `Package ${qKey}`;
+          return (
+            <div key={qKey} className="part1" style={{}}>
+              <input
+                type="radio"
+                style={{ opacity: 0, visibility: 'hidden', position: 'absolute', width: 0, height: 0 }}
+                className="packageBtn"
+                name="offer1"
+                value={qKey}
+                id={id}
+                checked={isSelected}
+                onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity(qKey); }}
+                data-quantity={qKey}
+                data-price={discountedPrices[qKey] ?? ''}
+                aria-label={labelText}
+              />
+              <label htmlFor={id} title={labelText}>
+                <img
+                  className="image_replce"
+                  src={isSelected ? (images.selected_url || '') : (images.unselected_url || '')}
+                  data-original={images.unselected_url || ''}
+                  data-active={images.selected_url || ''}
+                  width="100%"
+                  alt={imgAlt}
+                />
+              </label>
+            </div>
+          );
+        })}
 
         {/* Form Section */}
         <div className="container" style={{ backgroundColor: '#2c3a47', color: 'white', maxWidth: '960px' }}>
