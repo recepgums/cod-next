@@ -6,14 +6,15 @@ import axios from 'axios';
 
 interface OrderTemplateProps {
   slug: string;
+  product: any;
 }
 
-export default function OrderTemplate({ slug }: OrderTemplateProps) {
+export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [timer, setTimer] = useState({ hours: '00', minutes: '14', seconds: '00' });
   const [selectedPackage, setSelectedPackage] = useState('374');
   const [phoneValue, setPhoneValue] = useState('');
   const [phoneError, setPhoneError] = useState('');
-  const [apiProduct, setApiProduct] = useState<any>(null);
+  const [apiProduct, setApiProduct] = useState<any>(product || null);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [refUrlData, setRefUrlData] = useState<any>(null);
@@ -102,19 +103,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
     }
   }, [quantityKeys, selectedQuantity]);
 
-  // Fetch product data but don't use it yet
-  useEffect(() => {
-    if (!slug) return;
-
-    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
-      .then(res => {
-        console.log('✅ Product data fetched in OrderTemplate:', res.data.product?.name);
-        setApiProduct(res.data.product);
-      })
-      .catch(err => {
-        console.error('❌ Failed to fetch product:', err);
-      });
-  }, [slug]);
+  // Product already provided by server; keep state only if needed for local parsing
 
   // Load ref URL data from localStorage
   useEffect(() => {
