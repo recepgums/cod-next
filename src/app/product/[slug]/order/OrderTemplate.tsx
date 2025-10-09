@@ -221,10 +221,81 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       if (response.data.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
+        sendPurchaseEvent(response.data);
       }
     } catch (error: any) {
       console.error('Order submission failed:', error);
       alert(error.response?.data?.message || 'Sipariş gönderilirken bir hata oluştu.');
+    }
+  };
+
+  
+  const sendPurchaseEvent = (orderData: any) => {
+    try {
+
+      const purchaseEvent = localStorage.getItem('purchase_event');
+      if (purchaseEvent) {
+        const purchaseEventData = JSON.parse(purchaseEvent);
+        if (purchaseEventData.expires && new Date(purchaseEventData.expires) > new Date()) {
+          return;
+        }
+      }
+
+      // Facebook Pixel Purchase Event
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Purchase', {
+          value: totalPrice,
+          currency: 'TRY',
+          content_ids: [apiProduct?.id?.toString() || ''],
+          content_type: 'product',
+          content_name: apiProduct?.name || '',
+          num_items: Number(selectedQuantity) || 1
+        });
+      }
+
+      // TikTok Pixel Purchase Event
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        (window as any).ttq.track('CompletePayment', {
+          value: totalPrice,
+          currency: 'TRY',
+          content_id: apiProduct?.id?.toString() || '',
+          content_type: 'product',
+          content_name: apiProduct?.name || '',
+          quantity: Number(selectedQuantity) || 1
+        });
+
+        (window as any).ttq.track('PlaceAnOrder', {
+          value: totalPrice,
+          currency: 'TRY',
+          content_id: apiProduct?.id?.toString() || '',
+          content_type: 'product',
+          content_name: apiProduct?.name || '',
+          quantity: Number(selectedQuantity) || 1
+        });
+      }
+
+      console.log('Purchase events sent:', {
+        facebook: {
+          event: 'Purchase',
+          value: totalPrice,
+          currency: 'TRY',
+          content_ids: [apiProduct?.id?.toString() || ''],
+          content_name: apiProduct?.name || ''
+        },
+        tiktok: {
+          event: 'CompletePayment',
+          value: totalPrice,
+          currency: 'TRY',
+          content_id: apiProduct?.id?.toString() || '',
+          content_name: apiProduct?.name || ''
+        }
+      });
+      localStorage.setItem('purchase_event', JSON.stringify({
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        event: 'Purchase'
+      }));
+    } catch (error) {
+      console.error('Error sending purchase events:', error);
     }
   };
 
