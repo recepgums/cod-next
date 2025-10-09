@@ -295,7 +295,7 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
       </div>
 
       {/* Timer Section */}
-      <div className="container-fluid" style={{ backgroundColor: '#53475a', display: 'none' }}>
+      <div className="container-fluid order-template" style={{ backgroundColor: '#53475a', display: 'none' }}>
         <div className="bannerCounterDiv text-center py-2 text-white">
           <p>
             <span className="titleSpan" style={{ fontSize: '5vw', fontWeight: 300 }}>
@@ -370,12 +370,10 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
               />
               <label htmlFor={id} title={labelText}>
                 <img
-                  className="image_replce"
+                  className="image_replce w-100"
                   src={isSelected ? (images.selected_url || '') : (images.unselected_url || '')}
                   data-original={images.unselected_url || ''}
                   data-active={images.selected_url || ''}
-                  width={800}
-                  height={800}
                   decoding="async"
                   loading={isSelected ? 'eager' : 'lazy'}
                   alt={imgAlt}
