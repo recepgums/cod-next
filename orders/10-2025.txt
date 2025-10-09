@@ -1,0 +1,2 @@
+time=2025-10-09 16:06:10 | name=bedirhan damar | phone=05555555555 | address=yunus emre mahallesi | quantity=2 | total_price=4906.98 | product_id=1 | products=Rexing Link Kablosuz CarPlay Adaptör | ref_url=http://localhost:3000/product/cosmos-yildiz-yagmuru | order_id=sipariş oluşmadı
+time=2025-10-09 16:06:34 | name=bedirhan damar | phone=05555555555 | address=yunus emre mahallesi | quantity=1 | total_price=2571.99 | product_id=1 | products=Rexing Link Kablosuz CarPlay Adaptör | ref_url=http://127.0.0.1:3000/product/cosmos-yildiz-yagmuru | order_id=19370

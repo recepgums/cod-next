@@ -406,6 +406,20 @@ export default function OrderModal({
       });
 
       if (response.data.success) {
+
+        try {
+          await axios.post('/api/order-log', {
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            address: formData.get('address'),
+            quantity: selectedOption?.quantity || 1,
+            total_price: totalPrice,
+            product_id: product.id,
+            products: product.name,
+            ref_url: window.location.href,
+            order_id: response.data.order_id,
+          });
+        } catch {}
         // Redirect to promotion page
         sendPurchaseEvent(response.data);
         window.location.href = `/order/${response.data.order_id}/promosyon`;
@@ -413,6 +427,21 @@ export default function OrderModal({
         setSubmitError(response.data.message || "Sipariş gönderilirken bir hata oluştu.");
       }
     } catch (error: any) {
+
+      try {
+        await axios.post('/api/order-log', {
+          name: formData.get('name') ?? null,
+          phone: formData.get('phone') ?? null,
+          address: formData.get('address') ?? null,
+          quantity: selectedOption?.quantity ?? null,
+          total_price: typeof totalPrice !== 'undefined' ? totalPrice : null,
+          product_id: product?.id ?? null,
+          products: product?.name ?? null,
+          ref_url: typeof window !== 'undefined' && window.location ? window.location.href : null,
+          order_id: "sipariş oluşmadı",
+        });
+      } catch {}
+
       setSubmitError(error.response?.data?.message || "Sipariş gönderilirken bir hata oluştu.");
     } finally {
       setIsSubmitting(false);
