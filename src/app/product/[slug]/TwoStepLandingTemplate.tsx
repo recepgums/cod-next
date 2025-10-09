@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
 
 // NOTE: This template mirrors the provided static HTML.
 // Everything is static except the countdown timer and query param forwarding.
@@ -12,27 +11,7 @@ interface TwoStepLandingTemplateProps {
 
 export default function TwoStepLandingTemplate({ product }: TwoStepLandingTemplateProps) {
   const [timer, setTimer] = useState({ minutes: '14', seconds: '36' });
-  const [apiProduct, setApiProduct] = useState<any>(null);
-
-  // Fetch product data but don't use it yet
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const parts = window.location.pathname.split('/').filter(Boolean);
-    const slug = parts[1] || '';
-    
-    if (!slug) return;
-
-    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
-      .then(res => {
-        console.log('✅ Product data fetched in TwoStepLanding:', res.data.product?.name);
-        console.log('✅ Product data fetched in TwoStepLanding:', res);
-        setApiProduct(res.data.product);
-      })
-      .catch(err => {
-        console.error('❌ Failed to fetch product:', err);
-      });
-  }, []);
+  // Use server-provided product prop directly to ensure images are in initial HTML
 
   useEffect(() => {
     const countDownDate = new Date();
@@ -88,7 +67,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
   //   'https://fermin.com.tr/storage/423/fermin_engin_15_14.gif',
   // ];
 
-  const images: string[] = (apiProduct?.images || []).map((img: any) => img.original).filter(Boolean);
+  const images: string[] = (product?.images || []).map((img: any) => img.original).filter(Boolean);
 
   return (
     <div>

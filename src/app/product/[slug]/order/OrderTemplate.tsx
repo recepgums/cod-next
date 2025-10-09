@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import OptimizedImage from '@/app/components/OptimizedImage';
 import axios from 'axios';
 
 interface OrderTemplateProps {
@@ -268,29 +267,27 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
         console.log(apiProduct);
       }}
       >
-        {(() => {
-          let headerSrc = '';
-          try {
-            if (apiProduct?.settings) {
-              const parsed = typeof apiProduct.settings === 'string' ? JSON.parse(apiProduct.settings) : apiProduct.settings;
-              if (parsed && parsed.order_image) {
-                headerSrc = parsed.order_image as string;
+        <img 
+          style={{ width: '100%', maxWidth: '100%' }} 
+          src={
+            (() => {
+              try {
+                if (apiProduct?.settings) {
+                  const parsed = typeof apiProduct.settings === "string"
+                    ? JSON.parse(apiProduct.settings)
+                    : apiProduct.settings;
+                  if (parsed && parsed.order_image) {
+                    return parsed.order_image;
+                  }
+                }
+              } catch (e) {
+                // fail silently, fallback below
               }
-            }
-          } catch {}
-          return (
-            <OptimizedImage
-              src={headerSrc}
-              alt="Product Header"
-              width={1200}
-              height={1200}
-              priority
-              fetchPriority="high"
-              sizes="100vw"
-              style={{ width: '100%', height: 'auto', maxWidth: '100%' }}
-            />
-          );
-        })()}
+              return "";
+            })()
+          }
+          alt="Product Header"
+        />
       </div>
 
       {/* Timer Section */}
@@ -368,15 +365,12 @@ export default function OrderTemplate({ slug }: OrderTemplateProps) {
                 aria-label={labelText}
               />
               <label htmlFor={id} title={labelText}>
-                <Image
+                <img
                   className="image_replce"
                   src={isSelected ? (images.selected_url || '') : (images.unselected_url || '')}
                   data-original={images.unselected_url || ''}
                   data-active={images.selected_url || ''}
-                  width={1200}
-                  height={1200}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  loading={idx < 2 ? 'eager' : 'lazy'}
+                  width="100%"
                   alt={imgAlt}
                 />
               </label>
