@@ -73,6 +73,7 @@ async function fetchProducts() {
     return mappedProducts;
     
   } catch (error: any) {
+    console.log(error);
     // Allow Next.js redirects to bubble up (do not swallow)
     if (error && typeof error === 'object' && 'digest' in error && String(error.digest).includes('NEXT_REDIRECT')) {
       throw error;
