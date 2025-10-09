@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import axios from 'axios';
+import Image from 'next/image';
 
 // NOTE: This template mirrors the provided static HTML.
 // Everything is static except the countdown timer and query param forwarding.
@@ -12,27 +12,7 @@ interface TwoStepLandingTemplateProps {
 
 export default function TwoStepLandingTemplate({ product }: TwoStepLandingTemplateProps) {
   const [timer, setTimer] = useState({ minutes: '14', seconds: '36' });
-  const [apiProduct, setApiProduct] = useState<any>(null);
-
-  // Fetch product data but don't use it yet
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const parts = window.location.pathname.split('/').filter(Boolean);
-    const slug = parts[1] || '';
-    
-    if (!slug) return;
-
-    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
-      .then(res => {
-        console.log('✅ Product data fetched in TwoStepLanding:', res.data.product?.name);
-        console.log('✅ Product data fetched in TwoStepLanding:', res);
-        setApiProduct(res.data.product);
-      })
-      .catch(err => {
-        console.error('❌ Failed to fetch product:', err);
-      });
-  }, []);
+  
 
   useEffect(() => {
     const countDownDate = new Date();
@@ -60,12 +40,9 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
   }, []);
 
   const orderHref = useMemo(() => {
-    if (typeof window === 'undefined') return '/';
-    const { pathname, search } = window.location;
-    const parts = pathname.split('/').filter(Boolean);
-    const slug = parts[1] || '';
-    return `/product/${slug}/order${search || ''}`;
-  }, []);
+    const slug = (product as any)?.alias || (product as any)?.slug || '';
+    return `/product/${slug}/order`;
+  }, [product]);
 
   const redirectToOrder = () => {
     window.location.href = orderHref;
@@ -88,7 +65,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
   //   'https://fermin.com.tr/storage/423/fermin_engin_15_14.gif',
   // ];
 
-  const images: string[] = (apiProduct?.images || []).map((img: any) => img.original).filter(Boolean);
+  const images: string[] = (product?.images || []).map((img: any) => img.original).filter(Boolean);
 
   return (
     <div>
@@ -116,20 +93,25 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
             </div>
           </div>
           <a className="col pe-1 text-end py-2" id="UstTarafSiparisVerButton" href={orderHref} style={{ textDecoration: 'none', color: 'white' }}>
-            <img src="https://fermin.com.tr/assets/imgs/theme/sayac.png" style={{ maxHeight: '44px' }} alt="Sipariş Ver" />
+            <Image src="https://fermin.com.tr/assets/imgs/theme/sayac.png" width={176} height={44} style={{ height: 'auto', width: 'auto', maxHeight: '44px' }} alt="Sipariş Ver" />
           </a>
         </div>
       </div>
 
-      {images.map((src) => (
+      {images.map((src, idx) => (
         <div key={src} style={{ width: '100%' }}>
-          <img
-            style={{ width: '100%', maxWidth: '100%' }}
-            src={src}
-            onClick={redirectToOrder}
-            alt="product image"
-            loading="lazy"
-          />
+          <a href={orderHref} style={{ display: 'block' }}>
+            <Image
+              src={src}
+              alt="product image"
+              width={1200}
+              height={1600}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+              priority={idx === 0}
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              style={{ width: '100%', height: 'auto', maxWidth: '100%' }}
+            />
+          </a>
         </div>
       ))}
     </div>
