@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 
@@ -19,7 +19,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [refUrlData, setRefUrlData] = useState<any>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<string>('1');
-
+  const formRef = useRef<HTMLFormElement>(null);
   const quantityImages = useMemo(() => {
     try {
       const settings = apiProduct?.settings;
@@ -254,6 +254,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       <div style={{ width: '100%' }} 
       onClick={()=>{
         console.log(apiProduct);
+        console.log(formRef.current);
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }}
       >
         <img 
@@ -335,7 +337,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       </div>
 
       {/* Package Selection */}
-      <form onSubmit={handleSubmit} className="d-flex flex-column align-items-center justify-content-center">
+      <form ref={formRef} onSubmit={handleSubmit} className="d-flex flex-column align-items-center justify-content-center">
         {quantityKeys.map((qKey, idx) => {
           const id = `opt_${qKey}`;
           const isSelected = selectedQuantity === qKey;
