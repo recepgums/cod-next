@@ -120,48 +120,65 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   }, []);
 
-  // Fire AddToCart when order page is visited (once)
+  // Fire AddToCart when order page is visited (once) with readiness check
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem('add_to_cart_event');
-      if (cached) {
-        const data = JSON.parse(cached);
-        if (data.expires && new Date(data.expires) > new Date()) {
-          return;
+    let tries = 0;
+    const maxTries = 20; // ~10s
+    const interval = setInterval(() => {
+      tries++;
+      try {
+        const cached = localStorage.getItem('add_to_cart_event');
+        if (cached) {
+          const data = JSON.parse(cached);
+          if (data.expires && new Date(data.expires) > new Date()) {
+            clearInterval(interval);
+            return;
+          }
         }
-      }
 
-      const value = typeof totalPrice === 'number' && totalPrice > 0 ? totalPrice : (apiProduct?.price || 0);
-      const qty = Number(selectedQuantity) || 1;
-      const pid = apiProduct?.id?.toString?.() || '';
-      const pname = apiProduct?.name || '';
+        const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
+        const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
+        if (!hasFbq && !hasTtq) {
+          if (tries >= maxTries) clearInterval(interval);
+          return; // wait until ready
+        }
 
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'AddToCart', {
-          value,
-          currency: 'TRY',
-          content_ids: [pid],
-          content_type: 'product',
-          content_name: pname,
-          num_items: qty
-        });
-      }
-      if (typeof window !== 'undefined' && (window as any).ttq) {
-        (window as any).ttq.track('AddToCart', {
-          value,
-          currency: 'TRY',
-          content_id: pid,
-          content_type: 'product',
-          content_name: pname,
-          quantity: qty
-        });
-      }
+        const value = typeof totalPrice === 'number' && totalPrice > 0 ? totalPrice : (apiProduct?.price || 0);
+        const qty = Number(selectedQuantity) || 1;
+        const pid = apiProduct?.id?.toString?.() || '';
+        const pname = apiProduct?.name || '';
 
-      localStorage.setItem('add_to_cart_event', JSON.stringify({
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
-        event: 'AddToCart'
-      }));
-    } catch {}
+        if (hasFbq) {
+          (window as any).fbq('track', 'AddToCart', {
+            value,
+            currency: 'TRY',
+            content_ids: [pid],
+            content_type: 'product',
+            content_name: pname,
+            num_items: qty
+          });
+        }
+        if (hasTtq) {
+          (window as any).ttq.track('AddToCart', {
+            value,
+            currency: 'TRY',
+            content_id: pid,
+            content_type: 'product',
+            content_name: pname,
+            quantity: qty
+          });
+        }
+
+        localStorage.setItem('add_to_cart_event', JSON.stringify({
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
+          event: 'AddToCart'
+        }));
+        clearInterval(interval);
+      } catch {
+        if (tries >= maxTries) clearInterval(interval);
+      }
+    }, 500);
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -318,7 +335,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       if (response.data.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
-        firePurchaseEvent(response.data);
+        // Retry until fbq/ttq ready
+        let tries = 0;
+        const maxTries = 20; // ~10s
+        const interval = setInterval(() => {
+          tries++;
+          const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
+          const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
+          if (hasFbq || hasTtq) {
+            firePurchaseEvent(response.data);
+            clearInterval(interval);
+          } else if (tries >= maxTries) {
+            clearInterval(interval);
+          }
+        }, 500);
       }
     } catch (error: any) {
       console.error('Order submission failed:', error);
