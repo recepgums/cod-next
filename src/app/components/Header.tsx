@@ -31,7 +31,7 @@ export default function Header() {
             'Referer': typeof window !== 'undefined' ? window.location.href : ''
           }
         });
-        
+
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -51,7 +51,7 @@ export default function Header() {
               alt="TrendyGoods"
               width={185}
               height={50}
-              style={{height: '50px'}}
+              style={{ height: '50px' }}
               priority
             />
           </Link>
@@ -63,46 +63,16 @@ export default function Header() {
               <li className="nav-item">
                 <a className="nav-link" href="/">Anasayfa</a>
               </li>
-              
-              <li className="nav-item dropdown" onMouseEnter={() => setIsDropdownOpen(true)} onMouseLeave={() => setIsDropdownOpen(false)}>
-                <a 
-                  className="nav-link dropdown-toggle" 
-                  href="#" 
-                  role="button" 
-                  data-bs-toggle="dropdown" 
-                  aria-expanded="false"
-                >
-                  Kategoriler
-                </a>
-                <ul className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`} style={{ 
-                  position: 'absolute', 
-                  top: '100%', 
-                  left: 0, 
-                  zIndex: 1000,
-                  minWidth: '200px',
-                  maxHeight: '300px',
-                  overflowY: 'auto'
-                }}>
-                  {categories.map((category) => (
-                    <li key={category.id}>
-                      <Link 
-                        className="dropdown-item" 
-                        href={`/category/${category.slug}`}
-                        style={{ 
-                          padding: '8px 16px',
-                          fontSize: '14px',
-                          textDecoration: 'none',
-                          color: '#333',
-                          display: 'block'
-                        }}
-                      >
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-              
+                {categories.map((category) => (
+                  <li className="nav-item" key={category.id}>
+                    <Link
+                      className="nav-link"
+                      href={`/category/${category.slug}`}>
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+
               <li className="nav-item">
                 <a className="nav-link" href={`/kargo-takip`}>Kargo Takip</a>
               </li>
