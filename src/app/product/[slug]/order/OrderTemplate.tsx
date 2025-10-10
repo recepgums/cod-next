@@ -120,6 +120,51 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   }, []);
 
+  // Fire AddToCart when order page is visited (once)
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem('add_to_cart_event');
+      if (cached) {
+        const data = JSON.parse(cached);
+        if (data.expires && new Date(data.expires) > new Date()) {
+          return;
+        }
+      }
+
+      const value = typeof totalPrice === 'number' && totalPrice > 0 ? totalPrice : (apiProduct?.price || 0);
+      const qty = Number(selectedQuantity) || 1;
+      const pid = apiProduct?.id?.toString?.() || '';
+      const pname = apiProduct?.name || '';
+
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'AddToCart', {
+          value,
+          currency: 'TRY',
+          content_ids: [pid],
+          content_type: 'product',
+          content_name: pname,
+          num_items: qty
+        });
+      }
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        (window as any).ttq.track('AddToCart', {
+          value,
+          currency: 'TRY',
+          content_id: pid,
+          content_type: 'product',
+          content_name: pname,
+          quantity: qty
+        });
+      }
+
+      localStorage.setItem('add_to_cart_event', JSON.stringify({
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
+        event: 'AddToCart'
+      }));
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Timer effect
   useEffect(() => {
     const countDownDate = new Date();
