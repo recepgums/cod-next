@@ -57,6 +57,66 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
     window.location.href = orderHref;
   };
 
+  const sendAddToCartEvent = () => {
+    try {
+      // Daha önce gönderilmiş mi kontrol et (1 gün içinde)
+      const cached = localStorage.getItem('twostep_add_to_cart_event');
+      if (cached) {
+        const data = JSON.parse(cached);
+        const lastSent = new Date(data.timestamp);
+        const now = new Date();
+        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        
+        if (lastSent > oneDayAgo && data.product_id === product?.id?.toString()) {
+          console.log('TwoStep AddToCart event already sent within 24 hours, skipping...');
+          return; // 1 gün içinde aynı ürün için gönderilmiş
+        }
+      }
+
+      const value = product?.price || 0;
+      const pid = product?.id?.toString?.() || '';
+      const pname = product?.name || '';
+
+      // Facebook Pixel AddToCart Event
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'AddToCart', {
+          value,
+          currency: 'TRY',
+          content_ids: [pid],
+          content_type: 'product',
+          content_name: pname,
+          num_items: 1
+        });
+      }
+
+      // TikTok Pixel AddToCart Event
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        (window as any).ttq.track('AddToCart', {
+          value,
+          currency: 'TRY',
+          content_id: pid,
+          content_type: 'product',
+          content_name: pname,
+          quantity: 1
+        });
+      }
+
+      // Cache'e kaydet (timestamp ile)
+      localStorage.setItem('twostep_add_to_cart_event', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        event: 'AddToCart',
+        product_id: pid
+      }));
+
+      console.log('TwoStep AddToCart events sent:', {
+        facebook: { event: 'AddToCart', value, content_ids: [pid], content_name: pname },
+        tiktok: { event: 'AddToCart', value, content_id: pid, content_name: pname }
+      });
+    } catch (error) {
+      console.error('Error sending TwoStep AddToCart events:', error);
+    }
+  };
+
   const images: string[] = (product?.images || []).map((img: any) => img.original).filter(Boolean);
 
   return (
@@ -85,7 +145,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
             </div>
           </div>
           <a className="col pe-1 text-end py-2" id="UstTarafSiparisVerButton" href={orderHref} style={{ textDecoration: 'none', color: 'white' }}>
-            <img src="https://fermin.com.tr/assets/imgs/theme/sayac.png" style={{ maxHeight: '44px' }} alt="Sipariş Ver" />
+            <img src="/TwoStepImages/sayac.png" style={{ maxHeight: '44px' }} alt="Sipariş Ver" />
           </a>
         </div>
       </div>
