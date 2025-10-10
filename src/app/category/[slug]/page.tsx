@@ -60,11 +60,12 @@ async function fetchCategoryProducts(slug: string) {
   }
 }
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  console.log('📂 Category page rendering...', params.slug);
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  console.log('📂 Category page rendering...', resolvedParams.slug);
   
   // Server-side'da veri çek
-  const { categoryName, products } = await fetchCategoryProducts(params.slug);
+  const { categoryName, products } = await fetchCategoryProducts(resolvedParams.slug);
   
   console.log('📊 Final products for render:', products.length);
 
