@@ -2,15 +2,29 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const imageUrl = searchParams.get('url');
+  const urlParam = searchParams.get('url');
 
-  if (!imageUrl) {
+  if (!urlParam) {
     return NextResponse.json({ error: 'URL parameter is required' }, { status: 400 });
   }
 
   try {
-    // Laravel API'dan resmi çek
-    const response = await fetch(imageUrl, {
+    // Build absolute URL if a relative path is provided
+    let targetUrl: string;
+    try {
+      // If urlParam is absolute, this will work; if relative, base with origin
+      targetUrl = new URL(urlParam, request.nextUrl.origin).toString();
+    } catch {
+      return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+    }
+
+    // Only allow http/https
+    if (!/^https?:\/\//i.test(targetUrl)) {
+      return NextResponse.json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
+    }
+
+    // Fetch the image
+    const response = await fetch(targetUrl, {
       headers: {
         'User-Agent': 'NextJS-Image-Proxy/1.0',
       },
