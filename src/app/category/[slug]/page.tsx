@@ -74,7 +74,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       <Header />
       <main className="flex-fill mt-3 pb-4">
         <div className="container py-4">
-          <h1 className="text-center mb-4">{categoryName}</h1>
+          <h1 className="text-center mb-4 text-capitalize">{categoryName}</h1>
           {products.length > 0 ? (
             <ProductGrid products={products} />
           ) : (
