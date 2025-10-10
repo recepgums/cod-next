@@ -270,8 +270,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const handlePhoneBlur = () => {
     const rawNumber = phoneValue.replace(/\D/g, "");
     if (rawNumber.length < 11) {
-      if (phoneValue !== "") {
-        setPhoneError("Telefon numarası eksik!");
+      if (phoneValue !== "" && phoneValue !== prefix) {
+        setPhoneError("Geçerli bir telefon numarası giriniz");
       }
     } else {
       setPhoneError("");
@@ -288,7 +288,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
     // Validate phone
     if (!isValidTRMobile(phoneValue)) {
-      setPhoneError('Geçerli bir telefon numarası giriniz (0 (5__) ___ __ __)');
+      setPhoneError('Geçerli bir telefon numarası giriniz');
       try { document.getElementById('telephone')?.focus(); } catch {}
       return;
     }
