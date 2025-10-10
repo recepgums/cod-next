@@ -1,9 +1,6 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import axios from 'axios';
 
 interface Category {
   id: number;
@@ -16,30 +13,28 @@ interface Category {
   products: any[];
 }
 
-export default function Header() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Origin': typeof window !== 'undefined' ? window.location.origin : '',
-            'Referer': typeof window !== 'undefined' ? window.location.href : ''
-          }
-        });
-
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+export default async function Header() {
+  // Fetch categories on the server so they render with initial HTML
+  let categories: Category[] = [];
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
+      },
+      ...(process.env.NEXT_IS_LOCAL === 'local'
+        ? { cache: 'no-store' as const }
+        : { next: { revalidate: 300 as const } }),
+    });
+    if (res.ok) {
+      categories = await res.json();
+    }
+  } catch (err) {
+    // fail silently; render without categories
+  }
 
   return (
     <header className="header">
