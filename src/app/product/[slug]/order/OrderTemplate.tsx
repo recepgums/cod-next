@@ -194,41 +194,93 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     return () => clearInterval(x);
   }, []);
 
-  const formatTRMobile = (input: string) => {
-    let digits = (input || '').replace(/\D/g, '');
-    if (digits.startsWith('0')) digits = digits.slice(1);
-    digits = digits.slice(0, 10);
+  const prefix = "0 (5";
 
-    let out = '0 ';
-    if (digits.length > 0) {
-      out += '(' + digits.slice(0, Math.min(3, digits.length));
-      if (digits.length >= 3) out += ') ';
+  const formatPhoneNumber = (value: string) => {
+    let formatted = "";
+    if (value.length > 0) formatted += value.substring(0, 3) + " ";
+    if (value.length >= 4) formatted += value.substring(3, 5) + " ";
+    if (value.length >= 6) formatted += value.substring(5, 7);
+    return formatted.trim();
+  };
+
+  const setCaretPosition = (el: HTMLInputElement, position: number) => {
+    if (el.setSelectionRange) {
+      el.focus();
+      el.setSelectionRange(position, position);
     }
-    if (digits.length > 3) {
-      out += digits.slice(3, Math.min(6, digits.length));
-      if (digits.length >= 6) out += ' ';
+  };
+
+  const handlePhoneFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (phoneValue === "" || phoneValue === prefix) {
+      setPhoneValue(prefix);
+      setTimeout(() => {
+        setCaretPosition(e.target, e.target.value.length);
+      }, 0);
     }
-    if (digits.length > 6) {
-      out += digits.slice(6, Math.min(8, digits.length));
-      if (digits.length >= 8) out += ' ';
+  };
+
+  const handlePhoneClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    if (target.selectionStart! < prefix.length) {
+      setTimeout(() => {
+        setCaretPosition(target, target.value.length);
+      }, 0);
     }
-    if (digits.length > 8) {
-      out += digits.slice(8, Math.min(10, digits.length));
+  };
+
+  const handlePhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = e.target.value;
+    
+    if (!inputValue.startsWith(prefix)) {
+      inputValue = prefix;
     }
-    return out;
+
+    let val = inputValue.slice(prefix.length).replace(/\D/g, "");
+    let areaCode = val.slice(0, 2);
+    let remaining = val.slice(2);
+
+    const newValue = prefix + areaCode + (areaCode.length === 2 ? ") " : "") + formatPhoneNumber(remaining);
+    setPhoneValue(newValue);
+    
+    setTimeout(() => {
+      setCaretPosition(e.target, newValue.length);
+    }, 0);
+  };
+
+  const handlePhoneKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      const target = e.target as HTMLInputElement;
+      let position = target.selectionStart || 0;
+      
+      if (position <= prefix.length) {
+        e.preventDefault();
+        return;
+      }
+      
+      if (phoneValue[position - 1] === " " ||
+          phoneValue[position - 1] === "(" ||
+          phoneValue[position - 1] === ")") {
+        e.preventDefault();
+        target.setSelectionRange(position - 1, position - 1);
+      }
+    }
+  };
+
+  const handlePhoneBlur = () => {
+    const rawNumber = phoneValue.replace(/\D/g, "");
+    if (rawNumber.length < 11) {
+      if (phoneValue !== "") {
+        setPhoneError("Telefon numarası eksik!");
+      }
+    } else {
+      setPhoneError("");
+    }
   };
 
   const isValidTRMobile = (val: string) => {
     const digits = (val || '').replace(/\D/g, '');
     return digits.length === 11 && digits.startsWith('05');
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatTRMobile(e.target.value);
-    setPhoneValue(formatted);
-    if (isValidTRMobile(formatted)) {
-      setPhoneError('');
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -515,10 +567,15 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
                   name="phone"
                   id="telephone"
                   value={phoneValue}
-                  onChange={handlePhoneChange}
+                  onChange={handlePhoneInput}
+                  onFocus={handlePhoneFocus}
+                  onClick={handlePhoneClick}
+                  onKeyDown={handlePhoneKeyDown}
+                  onBlur={handlePhoneBlur}
                   placeholder="0 (5__) ___ __ __"
+                  autoComplete="off"
+                  minLength={13}
                   inputMode="numeric"
-                  maxLength={18}
                   required
                 />
               </div>
