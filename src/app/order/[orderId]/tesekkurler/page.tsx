@@ -45,6 +45,80 @@ export default function ThankYouPage() {
     loadOrderData();
   }, [orderId]);
 
+  // Purchase eventi gönder (tek seferlik - 1 gün içinde)
+  useEffect(() => {
+    if (!order) return;
+
+    try {
+      // Daha önce gönderilmiş mi kontrol et (1 gün içinde)
+      const cached = localStorage.getItem('purchase_event');
+      if (cached) {
+        const data = JSON.parse(cached);
+        const lastSent = new Date(data.timestamp);
+        const now = new Date();
+        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        
+        if (lastSent > oneDayAgo && data.order_id === order.id) {
+          console.log('Purchase event already sent within 24 hours for this order, skipping...');
+          return; // 1 gün içinde aynı sipariş için gönderilmiş
+        }
+      }
+
+      const value = parseFloat(order.total_price.toString()) || 0;
+      const pid = order.product_id?.toString?.() || '';
+      const pname = order.products || '';
+      const qty = parseInt(order.quantity?.toString() || '1') || 1;
+
+      // Facebook Pixel Purchase Event
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Purchase', {
+          value,
+          currency: 'TRY',
+          content_ids: [pid],
+          content_type: 'product',
+          content_name: pname,
+          num_items: qty
+        });
+      }
+
+      // TikTok Pixel Purchase Event
+      if (typeof window !== 'undefined' && (window as any).ttq) {
+        (window as any).ttq.track('CompletePayment', {
+          value,
+          currency: 'TRY',
+          content_id: pid,
+          content_type: 'product',
+          content_name: pname,
+          quantity: qty
+        });
+
+        (window as any).ttq.track('PlaceAnOrder', {
+          value,
+          currency: 'TRY',
+          content_id: pid,
+          content_type: 'product',
+          content_name: pname,
+          quantity: qty
+        });
+      }
+
+      // Cache'e kaydet (timestamp ile)
+      localStorage.setItem('purchase_event', JSON.stringify({
+        timestamp: new Date().toISOString(),
+        event: 'Purchase',
+        order_id: order.id
+      }));
+
+      console.log('Purchase events sent:', {
+        facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
+        tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
+        order_id: order.id
+      });
+    } catch (error) {
+      console.error('Error sending Purchase events:', error);
+    }
+  }, [order]);
+
   const loadOrderData = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/thanks`);
