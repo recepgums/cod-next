@@ -5,6 +5,9 @@ import { useParams } from 'next/navigation';
 import Footer from '../../../components/Footer';
 import { FaCheckCircle, FaHome, FaShoppingBag } from 'react-icons/fa';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const PixelScripts = dynamic(() => import('../../product/[slug]/PixelScripts'), { ssr: false });
 
 interface Order {
   id: number;
@@ -25,6 +28,7 @@ interface Order {
   product_id?: number;
   products?: string;
   quantity?: number;
+  pixels?: { platform: string; pixel_id: string }[];
 }
 
 interface ApiResponse {
@@ -33,6 +37,7 @@ interface ApiResponse {
     key: string;
     title: string;
   }>;
+  pixels?: { platform: string; pixel_id: string }[];
 }
 
 export default function ThankYouPage() {
@@ -50,76 +55,92 @@ export default function ThankYouPage() {
 
   // Purchase eventi gönder (tek seferlik - 1 gün içinde)
   useEffect(() => {
-    if (!order) return;
+    if (!order || !order.pixels) return;
 
-    try {
-      // Daha önce gönderilmiş mi kontrol et (1 gün içinde)
-      const cached = localStorage.getItem('purchase_event');
-      if (cached) {
-        const data = JSON.parse(cached);
-        const lastSent = new Date(data.timestamp);
-        const now = new Date();
-        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        
-        if (lastSent > oneDayAgo && data.order_id === order.id) {
-          console.log('Purchase event already sent within 24 hours for this order, skipping...');
-          return; // 1 gün içinde aynı sipariş için gönderilmiş
+    // Pixel scriptlerinin yüklenmesini bekle
+    const sendPurchaseEvent = () => {
+      try {
+        // Daha önce gönderilmiş mi kontrol et (1 gün içinde)
+        const cached = localStorage.getItem('purchase_event');
+        if (cached) {
+          const data = JSON.parse(cached);
+          const lastSent = new Date(data.timestamp);
+          const now = new Date();
+          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          
+          if (lastSent > oneDayAgo && data.order_id === order.id) {
+            console.log('Purchase event already sent within 24 hours for this order, skipping...');
+            return; // 1 gün içinde aynı sipariş için gönderilmiş
+          }
         }
-      }
 
-      const value = parseFloat(order.total_price.toString()) || 0;
-      const pid = order.product_id?.toString?.() || '';
-      const pname = order.products || '';
-      const qty = parseInt(order.quantity?.toString() || '1') || 1;
+        const value = parseFloat(order.total_price.toString()) || 0;
+        const pid = order.product_id?.toString?.() || '';
+        const pname = order.products || '';
+        const qty = parseInt(order.quantity?.toString() || '1') || 1;
 
-      // Facebook Pixel Purchase Event
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'Purchase', {
-          value,
-          currency: 'TRY',
-          content_ids: [pid],
-          content_type: 'product',
-          content_name: pname,
-          num_items: qty
+        // Facebook Pixel Purchase Event
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'Purchase', {
+            value,
+            currency: 'TRY',
+            content_ids: [pid],
+            content_type: 'product',
+            content_name: pname,
+            num_items: qty
+          });
+        }
+
+        // TikTok Pixel Purchase Event
+        if (typeof window !== 'undefined' && (window as any).ttq) {
+          (window as any).ttq.track('CompletePayment', {
+            value,
+            currency: 'TRY',
+            content_id: pid,
+            content_type: 'product',
+            content_name: pname,
+            quantity: qty
+          });
+
+          (window as any).ttq.track('PlaceAnOrder', {
+            value,
+            currency: 'TRY',
+            content_id: pid,
+            content_type: 'product',
+            content_name: pname,
+            quantity: qty
+          });
+        }
+
+        // Cache'e kaydet (timestamp ile)
+        localStorage.setItem('purchase_event', JSON.stringify({
+          timestamp: new Date().toISOString(),
+          event: 'Purchase',
+          order_id: order.id
+        }));
+
+        console.log('Purchase events sent:', {
+          facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
+          tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
+          order_id: order.id
         });
+      } catch (error) {
+        console.error('Error sending Purchase events:', error);
       }
+    };
 
-      // TikTok Pixel Purchase Event
-      if (typeof window !== 'undefined' && (window as any).ttq) {
-        (window as any).ttq.track('CompletePayment', {
-          value,
-          currency: 'TRY',
-          content_id: pid,
-          content_type: 'product',
-          content_name: pname,
-          quantity: qty
-        });
-
-        (window as any).ttq.track('PlaceAnOrder', {
-          value,
-          currency: 'TRY',
-          content_id: pid,
-          content_type: 'product',
-          content_name: pname,
-          quantity: qty
-        });
+    // Pixel scriptlerinin yüklenmesini bekle
+    const checkPixelsLoaded = () => {
+      if ((window as any).fbq || (window as any).ttq) {
+        sendPurchaseEvent();
+      } else {
+        // 2 saniye sonra tekrar kontrol et
+        setTimeout(checkPixelsLoaded, 2000);
       }
+    };
 
-      // Cache'e kaydet (timestamp ile)
-      localStorage.setItem('purchase_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'Purchase',
-        order_id: order.id
-      }));
-
-      console.log('Purchase events sent:', {
-        facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
-        tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
-        order_id: order.id
-      });
-    } catch (error) {
-      console.error('Error sending Purchase events:', error);
-    }
+    // 1 saniye bekle, sonra kontrol et
+    setTimeout(checkPixelsLoaded, 1000);
   }, [order]);
 
   const loadOrderData = async () => {
@@ -127,7 +148,12 @@ export default function ThankYouPage() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}/thanks`);
       if (response.ok) {
         const data: ApiResponse = await response.json();
-        setOrder(data.order);
+        // Pixel bilgilerini order'a ekle
+        const orderWithPixels = {
+          ...data.order,
+          pixels: data.pixels || []
+        };
+        setOrder(orderWithPixels);
         setLegalLinks(data.legal_links);
       } else {
         setError("Sipariş bilgileri yüklenemedi.");
@@ -236,6 +262,18 @@ export default function ThankYouPage() {
           <Footer />
         </div>
       </main>
+
+      {/* Pixel Scripts */}
+      {order && order.pixels && (
+        <PixelScripts 
+          pixels={order.pixels} 
+          product={{
+            id: order.product_id || 0,
+            name: order.products || '',
+            price: parseFloat(order.total_price.toString()) || 0
+          }} 
+        />
+      )}
     </div>
   );
 } 
