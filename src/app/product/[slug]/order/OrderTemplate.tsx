@@ -430,16 +430,16 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     return (
       <div>
         <div style={{ width: '100%' }} id="">
-          <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder1.jpg" alt="Order Success 1" />
+          <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder1.jpg" alt="Order Success 1" />
         </div>
         <div style={{ width: '100%' }} id="">
           <a href={`/product/${slug}`}>
-            <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder2.jpg" alt="Order Success 2" />
+            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder2.jpg" alt="Order Success 2" />
           </a>
         </div>
         <div style={{ width: '100%' }} id="">
           <a href="#">
-            <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder3.jpg" alt="Order Success 3" />
+            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder3.jpg" alt="Order Success 3" />
           </a>
         </div>
       </div>
@@ -577,7 +577,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           <div className="row">
             <div className="col-md-6 p-3">
               <img 
-                src="https://greenbubble-trofficial.com/images/indirim.gif" 
+                src="/TwoStepImages/indirim.gif" 
                 className="mb-3" 
                 style={{ maxWidth: '100%', border: '5px solid #ffe27e' }}
                 alt="Discount"
