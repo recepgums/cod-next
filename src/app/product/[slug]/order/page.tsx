@@ -1,4 +1,5 @@
 import OrderTemplate from './OrderTemplate';
+import PixelScripts from '../PixelScripts';
 
 async function fetchProductData(slug: string) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`,
@@ -23,5 +24,10 @@ async function fetchProductData(slug: string) {
 export default async function OrderPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const product = await fetchProductData(slug);
-  return <OrderTemplate slug={slug} product={product} />;
+  return (
+    <>
+      <OrderTemplate slug={slug} product={product} />
+      <PixelScripts pixels={product?.pixels || []} product={product} />
+    </>
+  );
 }

@@ -120,54 +120,65 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   }, []);
 
-  // Fire AddToCart when order page is visited (once per day)
+  // Fire AddToCart when order page is visited (once) with readiness check
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem('add_to_cart_event');
-      if (cached) {
-        const data = JSON.parse(cached);
-        const lastSent = new Date(data.timestamp);
-        const now = new Date();
-        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        
-        if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
-          console.log('AddToCart event already sent within 24 hours, skipping...');
-          return;
+    let tries = 0;
+    const maxTries = 20; // ~10s
+    const interval = setInterval(() => {
+      tries++;
+      try {
+        const cached = localStorage.getItem('add_to_cart_event');
+        if (cached) {
+          const data = JSON.parse(cached);
+          if (data.expires && new Date(data.expires) > new Date()) {
+            clearInterval(interval);
+            return;
+          }
         }
-      }
 
-      const value = typeof totalPrice === 'number' && totalPrice > 0 ? totalPrice : (apiProduct?.price || 0);
-      const qty = Number(selectedQuantity) || 1;
-      const pid = apiProduct?.id?.toString?.() || '';
-      const pname = apiProduct?.name || '';
+        const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
+        const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
+        if (!hasFbq && !hasTtq) {
+          if (tries >= maxTries) clearInterval(interval);
+          return; // wait until ready
+        }
 
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'AddToCart', {
-          value,
-          currency: 'TRY',
-          content_ids: [pid],
-          content_type: 'product',
-          content_name: pname,
-          num_items: qty
-        });
-      }
-      if (typeof window !== 'undefined' && (window as any).ttq) {
-        (window as any).ttq.track('AddToCart', {
-          value,
-          currency: 'TRY',
-          content_id: pid,
-          content_type: 'product',
-          content_name: pname,
-          quantity: qty
-        });
-      }
+        const value = typeof totalPrice === 'number' && totalPrice > 0 ? totalPrice : (apiProduct?.price || 0);
+        const qty = Number(selectedQuantity) || 1;
+        const pid = apiProduct?.id?.toString?.() || '';
+        const pname = apiProduct?.name || '';
 
-      localStorage.setItem('add_to_cart_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'AddToCart',
-        product_id: pid
-      }));
-    } catch {}
+        if (hasFbq) {
+          (window as any).fbq('track', 'AddToCart', {
+            value,
+            currency: 'TRY',
+            content_ids: [pid],
+            content_type: 'product',
+            content_name: pname,
+            num_items: qty
+          });
+        }
+        if (hasTtq) {
+          (window as any).ttq.track('AddToCart', {
+            value,
+            currency: 'TRY',
+            content_id: pid,
+            content_type: 'product',
+            content_name: pname,
+            quantity: qty
+          });
+        }
+
+        localStorage.setItem('add_to_cart_event', JSON.stringify({
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
+          event: 'AddToCart'
+        }));
+        clearInterval(interval);
+      } catch {
+        if (tries >= maxTries) clearInterval(interval);
+      }
+    }, 500);
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -324,7 +335,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       if (response.data.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
-        firePurchaseEvent(response.data);
+        // Retry until fbq/ttq ready
+        let tries = 0;
+        const maxTries = 20; // ~10s
+        const interval = setInterval(() => {
+          tries++;
+          const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
+          const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
+          if (hasFbq || hasTtq) {
+            firePurchaseEvent(response.data);
+            clearInterval(interval);
+          } else if (tries >= maxTries) {
+            clearInterval(interval);
+          }
+        }, 500);
       }
     } catch (error: any) {
       console.error('Order submission failed:', error);
@@ -406,16 +430,16 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     return (
       <div>
         <div style={{ width: '100%' }} id="">
-          <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder1.jpg" alt="Order Success 1" />
+          <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder1.jpg" alt="Order Success 1" />
         </div>
         <div style={{ width: '100%' }} id="">
           <a href={`/product/${slug}`}>
-            <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder2.jpg" alt="Order Success 2" />
+            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder2.jpg" alt="Order Success 2" />
           </a>
         </div>
         <div style={{ width: '100%' }} id="">
           <a href="#">
-            <img style={{ width: '100%', maxWidth: '100%' }} src="https://greenbubble-trofficial.com/setmobile/images/torder3.jpg" alt="Order Success 3" />
+            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder3.jpg" alt="Order Success 3" />
           </a>
         </div>
       </div>
@@ -553,7 +577,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           <div className="row">
             <div className="col-md-6 p-3">
               <img 
-                src="https://greenbubble-trofficial.com/images/indirim.gif" 
+                src="/TwoStepImages/indirim.gif" 
                 className="mb-3" 
                 style={{ maxWidth: '100%', border: '5px solid #ffe27e' }}
                 alt="Discount"
