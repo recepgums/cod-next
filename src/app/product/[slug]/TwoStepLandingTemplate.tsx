@@ -50,23 +50,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
     window.location.href = orderHref;
   };
 
-  // const images: string[] = [
-  //   'https://fermin.com.tr/storage/437/fermin_engin_15_01.gif',
-  //   'https://fermin.com.tr/storage/436/fermin_engin_15_02.gif',
-  //   'https://fermin.com.tr/storage/435/fermin_engin_15_03.gif',
-  //   'https://fermin.com.tr/storage/434/fermin_engin_15_04.gif',
-  //   'https://fermin.com.tr/storage/433/fermin_engin_15_05.gif',
-  //   'https://fermin.com.tr/storage/432/fermin_engin_15_06.gif',
-  //   'https://fermin.com.tr/storage/430/fermin_engin_15_07.gif',
-  //   'https://fermin.com.tr/storage/429/fermin_engin_15_08.gif',
-  //   'https://fermin.com.tr/storage/428/fermin_engin_15_09.gif',
-  //   'https://fermin.com.tr/storage/427/fermin_engin_15_10.gif',
-  //   'https://fermin.com.tr/storage/426/fermin_engin_15_11.gif',
-  //   'https://fermin.com.tr/storage/425/fermin_engin_15_12.gif',
-  //   'https://fermin.com.tr/storage/424/fermin_engin_15_13.gif',
-  //   'https://fermin.com.tr/storage/423/fermin_engin_15_14.gif',
-  // ];
-
   const images: string[] = (product?.images || []).map((img: any) => img.original).filter(Boolean);
 
   return (
@@ -95,7 +78,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
             </div>
           </div>
           <a className="col pe-1 text-end py-2" id="UstTarafSiparisVerButton" href={orderHref} style={{ textDecoration: 'none', color: 'white' }}>
-            <img src="https://fermin.com.tr/assets/imgs/theme/sayac.png" style={{ maxHeight: '44px' }} alt="Sipariş Ver" />
+            <img src="/TwoStepImages/sayac.png" style={{ maxHeight: '44px' }} alt="Sipariş Ver" />
           </a>
         </div>
       </div>
