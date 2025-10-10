@@ -266,7 +266,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       if (response.data.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
-        sendPurchaseEvent(response.data);
+        firePurchaseEvent(response.data);
       }
     } catch (error: any) {
       console.error('Order submission failed:', error);
@@ -275,7 +275,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   };
 
   
-  const sendPurchaseEvent = (orderData: any) => {
+  const firePurchaseEvent = (orderData: any) => {
     try {
 
       const purchaseEvent = localStorage.getItem('purchase_event');
