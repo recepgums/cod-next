@@ -120,13 +120,18 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   }, []);
 
-  // Fire AddToCart when order page is visited (once)
+  // Fire AddToCart when order page is visited (once per day)
   useEffect(() => {
     try {
       const cached = localStorage.getItem('add_to_cart_event');
       if (cached) {
         const data = JSON.parse(cached);
-        if (data.expires && new Date(data.expires) > new Date()) {
+        const lastSent = new Date(data.timestamp);
+        const now = new Date();
+        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        
+        if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
+          console.log('AddToCart event already sent within 24 hours, skipping...');
           return;
         }
       }
@@ -158,8 +163,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       }
 
       localStorage.setItem('add_to_cart_event', JSON.stringify({
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
-        event: 'AddToCart'
+        timestamp: new Date().toISOString(),
+        event: 'AddToCart',
+        product_id: pid
       }));
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
