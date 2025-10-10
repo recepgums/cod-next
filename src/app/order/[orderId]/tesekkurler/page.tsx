@@ -7,7 +7,7 @@ import { FaCheckCircle, FaHome, FaShoppingBag } from 'react-icons/fa';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const PixelScripts = dynamic(() => import('../../product/[slug]/PixelScripts'), { ssr: false });
+const PixelScripts = dynamic(() => import('../../../product/[slug]/PixelScripts'), { ssr: false });
 
 interface Order {
   id: number;

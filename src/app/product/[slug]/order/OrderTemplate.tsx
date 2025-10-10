@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
+
+const PixelScripts = dynamic(() => import('../PixelScripts'), { ssr: false });
 
 interface OrderTemplateProps {
   slug: string;
@@ -642,6 +645,11 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           </div>
         </div>
       </form>
+
+      {/* Pixel Scripts */}
+      {apiProduct && apiProduct.pixels && (
+        <PixelScripts pixels={apiProduct.pixels} product={apiProduct} />
+      )}
     </div>
   );
 }
