@@ -8,8 +8,6 @@ import { redirect } from 'next/navigation';
 // Server Component - SSR ile veri çekme
 async function fetchProducts() {
   try {
-    console.log('🔍 Fetching products from API...');
-    // Önce direkt Laravel API'yi dene (proxy sorunlarını bypass et)
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
       // next: { revalidate: 60 },
       headers: {

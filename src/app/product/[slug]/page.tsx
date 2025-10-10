@@ -85,7 +85,6 @@ async function fetchProductData(slug: string) {
     }
 
     const data = await response.json();
-    console.log(data);
     const productData = data.product;
     const commentsData = data.comments;
     const pixelsData = data.pixels;
@@ -104,7 +103,6 @@ async function fetchProductData(slug: string) {
       logoUrl: data.logoUrl,
     };
 
-    console.log('✅ Product data fetched successfully:', product.name);
     return { product };
     
   } catch (error) {

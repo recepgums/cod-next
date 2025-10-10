@@ -122,31 +122,26 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
   // Fire AddToCart when order page is visited (once) with readiness check
   useEffect(() => {
-    let tries = 0;
-    const maxTries = 20; // ~10s
-    const interval = setInterval(() => {
-      tries++;
+    const sendAddToCartEvent = () => {
       try {
+        // Check if already sent (within 6 hours)
         const cached = localStorage.getItem('add_to_cart_event');
         if (cached) {
           const data = JSON.parse(cached);
           if (data.expires && new Date(data.expires) > new Date()) {
-            clearInterval(interval);
+            console.log('AddToCart event already sent within 6 hours, skipping...');
             return;
           }
         }
 
-        const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
-        const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
-        if (!hasFbq && !hasTtq) {
-          if (tries >= maxTries) clearInterval(interval);
-          return; // wait until ready
-        }
-
-        const value = typeof totalPrice === 'number' && totalPrice > 0 ? totalPrice : (apiProduct?.price || 0);
-        const qty = Number(selectedQuantity) || 1;
+        const value = apiProduct?.price || 0;
+        const qty = 1;
         const pid = apiProduct?.id?.toString?.() || '';
         const pname = apiProduct?.name || '';
+
+        // Send immediately if pixels are ready
+        const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
+        const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
 
         if (hasFbq) {
           (window as any).fbq('track', 'AddToCart', {
@@ -157,7 +152,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             num_items: qty
           });
+          console.log('Facebook AddToCart event sent');
         }
+
         if (hasTtq) {
           (window as any).ttq.track('AddToCart', {
             value,
@@ -167,18 +164,32 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             quantity: qty
           });
+          console.log('TikTok AddToCart event sent');
         }
 
-        localStorage.setItem('add_to_cart_event', JSON.stringify({
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
-          event: 'AddToCart'
-        }));
-        clearInterval(interval);
-      } catch {
-        if (tries >= maxTries) clearInterval(interval);
+        if (hasFbq || hasTtq) {
+          // Cache the event
+          localStorage.setItem('add_to_cart_event', JSON.stringify({
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
+            event: 'AddToCart'
+          }));
+        } else {
+          console.log('Pixels not ready yet, will retry...');
+        }
+      } catch (error) {
+        console.error('Error sending AddToCart event:', error);
       }
-    }, 500);
-    return () => clearInterval(interval);
+    };
+
+    // Try immediately
+    sendAddToCartEvent();
+
+    // Also try after a short delay to catch late-loading pixels
+    const timeout = setTimeout(() => {
+      sendAddToCartEvent();
+    }, 2000);
+
+    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -335,20 +346,10 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       if (response.data.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
-        // Retry until fbq/ttq ready
-        let tries = 0;
-        const maxTries = 20; // ~10s
-        const interval = setInterval(() => {
-          tries++;
-          const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
-          const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
-          if (hasFbq || hasTtq) {
-            firePurchaseEvent(response.data);
-            clearInterval(interval);
-          } else if (tries >= maxTries) {
-            clearInterval(interval);
-          }
-        }, 500);
+        
+        // Try to send purchase event immediately, then retry after a delay
+        firePurchaseEvent(response.data);
+        setTimeout(() => firePurchaseEvent(response.data), 1000);
       }
     } catch (error: any) {
       console.error('Order submission failed:', error);
