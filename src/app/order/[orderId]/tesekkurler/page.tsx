@@ -22,6 +22,9 @@ interface Order {
   tracking_number: string | null;
   status_code: string | null;
   created_at: string;
+  product_id?: number;
+  products?: string;
+  quantity?: number;
 }
 
 interface ApiResponse {
