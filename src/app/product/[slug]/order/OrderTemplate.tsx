@@ -3,9 +3,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
-import dynamic from 'next/dynamic';
-
-const PixelScripts = dynamic(() => import('../PixelScripts'), { ssr: false });
 
 interface OrderTemplateProps {
   slug: string;
@@ -123,16 +120,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   }, []);
 
-  // Fire AddToCart when order page is visited (once) with readiness check
+  // Fire AddToCart when order page is visited (once per day)
   useEffect(() => {
     const sendAddToCartEvent = () => {
       try {
-        // Check if already sent (within 6 hours)
+        // Check if already sent within 24 hours
         const cached = localStorage.getItem('add_to_cart_event');
         if (cached) {
           const data = JSON.parse(cached);
-          if (data.expires && new Date(data.expires) > new Date()) {
-            console.log('AddToCart event already sent within 6 hours, skipping...');
+          const lastSent = new Date(data.timestamp);
+          const now = new Date();
+          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          
+          if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
+            console.log('OrderTemplate: AddToCart event already sent within 24 hours, skipping...');
             return;
           }
         }
@@ -155,7 +156,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             num_items: qty
           });
-          console.log('Facebook AddToCart event sent');
+          console.log('✅ Facebook AddToCart event sent');
         }
 
         if (hasTtq) {
@@ -167,20 +168,22 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             quantity: qty
           });
-          console.log('TikTok AddToCart event sent');
+          console.log('✅ TikTok AddToCart event sent');
         }
 
         if (hasFbq || hasTtq) {
-          // Cache the event
+          // Cache the event with timestamp
           localStorage.setItem('add_to_cart_event', JSON.stringify({
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 6),
-            event: 'AddToCart'
+            timestamp: new Date().toISOString(),
+            event: 'AddToCart',
+            product_id: pid
           }));
+          console.log('📦 AddToCart event cached for 24 hours');
         } else {
-          console.log('Pixels not ready yet, will retry...');
+          console.log('⏳ Pixels not ready yet, will retry...');
         }
       } catch (error) {
-        console.error('Error sending AddToCart event:', error);
+        console.error('❌ Error sending AddToCart event:', error);
       }
     };
 
@@ -363,70 +366,69 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   
   const firePurchaseEvent = (orderData: any) => {
     try {
-
+      // Check if already sent within 24 hours
       const purchaseEvent = localStorage.getItem('purchase_event');
       if (purchaseEvent) {
         const purchaseEventData = JSON.parse(purchaseEvent);
-        if (purchaseEventData.expires && new Date(purchaseEventData.expires) > new Date()) {
+        const lastSent = new Date(purchaseEventData.timestamp);
+        const now = new Date();
+        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        
+        if (lastSent > oneDayAgo) {
+          console.log('🔒 Purchase event already sent within 24 hours, skipping...');
           return;
         }
       }
 
+      const value = totalPrice;
+      const pid = apiProduct?.id?.toString() || '';
+      const pname = apiProduct?.name || '';
+      const qty = Number(selectedQuantity) || 1;
+
       // Facebook Pixel Purchase Event
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'Purchase', {
-          value: totalPrice,
+          value,
           currency: 'TRY',
-          content_ids: [apiProduct?.id?.toString() || ''],
+          content_ids: [pid],
           content_type: 'product',
-          content_name: apiProduct?.name || '',
-          num_items: Number(selectedQuantity) || 1
+          content_name: pname,
+          num_items: qty
         });
+        console.log('💰 Facebook Purchase event sent!');
       }
 
       // TikTok Pixel Purchase Event
       if (typeof window !== 'undefined' && (window as any).ttq) {
         (window as any).ttq.track('CompletePayment', {
-          value: totalPrice,
+          value,
           currency: 'TRY',
-          content_id: apiProduct?.id?.toString() || '',
+          content_id: pid,
           content_type: 'product',
-          content_name: apiProduct?.name || '',
-          quantity: Number(selectedQuantity) || 1
+          content_name: pname,
+          quantity: qty
         });
+        console.log('💰 TikTok CompletePayment event sent!');
 
         (window as any).ttq.track('PlaceAnOrder', {
-          value: totalPrice,
+          value,
           currency: 'TRY',
-          content_id: apiProduct?.id?.toString() || '',
+          content_id: pid,
           content_type: 'product',
-          content_name: apiProduct?.name || '',
-          quantity: Number(selectedQuantity) || 1
+          content_name: pname,
+          quantity: qty
         });
+        console.log('💰 TikTok PlaceAnOrder event sent!');
       }
 
-      console.log('Purchase events sent:', {
-        facebook: {
-          event: 'Purchase',
-          value: totalPrice,
-          currency: 'TRY',
-          content_ids: [apiProduct?.id?.toString() || ''],
-          content_name: apiProduct?.name || ''
-        },
-        tiktok: {
-          event: 'CompletePayment',
-          value: totalPrice,
-          currency: 'TRY',
-          content_id: apiProduct?.id?.toString() || '',
-          content_name: apiProduct?.name || ''
-        }
-      });
+      // Cache with timestamp
       localStorage.setItem('purchase_event', JSON.stringify({
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        timestamp: new Date().toISOString(),
         event: 'Purchase'
       }));
+      console.log('📦 Purchase event cached for 24 hours');
     } catch (error) {
-      console.error('Error sending purchase events:', error);
+      console.error('❌ Error sending purchase events:', error);
     }
   };
 
@@ -645,11 +647,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           </div>
         </div>
       </form>
-
-      {/* Pixel Scripts */}
-      {apiProduct && apiProduct.pixels && (
-        <PixelScripts pixels={apiProduct.pixels} product={apiProduct} />
-      )}
     </div>
   );
 }

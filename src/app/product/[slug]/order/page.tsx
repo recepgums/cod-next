@@ -18,7 +18,11 @@ async function fetchProductData(slug: string) {
   );
   if (!response.ok) throw new Error('Failed to fetch product');
   const data = await response.json();
-  return data.product;
+  // Pixel bilgilerini product'a ekle
+  return {
+    ...data.product,
+    pixels: data.pixels || []
+  };
 }
 
 export default async function OrderPage({ params }: { params: Promise<{ slug: string }> }) {
