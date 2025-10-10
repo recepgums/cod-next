@@ -66,7 +66,7 @@ export default function Header() {
                 {categories.map((category) => (
                   <li className="nav-item" key={category.id}>
                     <Link
-                      className="nav-link"
+                      className="nav-link text-capitalize"
                       href={`/category/${category.slug}`}>
                       {category.name}
                     </Link>
