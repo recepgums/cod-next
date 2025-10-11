@@ -75,9 +75,9 @@ async function fetchProductData(slug: string) {
         'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-       ...(process.env.NEXT_IS_LOCAL === 'local'
-         ? { cache: 'no-store' as const }
-         : { next: { revalidate: 300 as const } }),
+      //  ...(process.env.NEXT_IS_LOCAL === 'local'
+      //    ? { cache: 'no-store' as const }
+      //    : { next: { revalidate: 300 as const } }),
     });
 
     if (!response.ok) {
@@ -99,7 +99,7 @@ async function fetchProductData(slug: string) {
           cities: Array.isArray(citiesData) ? citiesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           template: templateData,
-          // template: "2step",
+          // template: "nova",
       logoUrl: data.logoUrl,
     };
 
