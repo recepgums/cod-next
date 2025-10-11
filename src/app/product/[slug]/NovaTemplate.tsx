@@ -23,7 +23,44 @@ interface ProductOption {
     finalDiscount?: number;
 }
 
-export default function NovaTemplate({ product }: { product: any }) {
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    oldPrice: number;
+    discount: string;
+    images: ProductImage[];
+    options: ProductOption[];
+    features: string[];
+    rating: number;
+    commentCount: number;
+    comments: ProductComment[];
+    cities: any[];
+    pixels?: { platform: string; pixel_id: string }[];
+    template?: string;
+    logoUrl?: string;
+    content?: string;
+    settings?: string;
+}
+
+interface ProductImage {
+    thumbnail: string;
+    medium: string;
+    large: string;
+    mobile: string;
+    original: string;
+}
+
+interface ProductComment {
+    id: number;
+    author: string;
+    content: string;
+    rating: number;
+    photo?: string;
+    order?: number | null;
+}
+
+export default function NovaTemplate({ product }: { product: Product }) {
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
