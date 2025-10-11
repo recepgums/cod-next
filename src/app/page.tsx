@@ -26,7 +26,6 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
-    console.log('✅ Laravel API success:', directData);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);
@@ -35,11 +34,6 @@ async function fetchProducts() {
     } else {
       console.log('✅ No main product slug found');
     }
-
-    console.log('✅ API Response received:', {
-      productsCount: directData?.products?.length || 0,
-      firstProduct: directData?.products?.[0] ? Object.keys(directData?.products[0]) : 'No products'
-    });
     
     const productsArray = directData.products || [directData?.product];
     
@@ -49,12 +43,6 @@ async function fetchProducts() {
     }
     
     const mappedProducts = productsArray.map((item: any, index: number) => {
-      console.log(`📦 Processing product ${index + 1}:`, {
-        name: item.name,
-        slug: item.slug,
-        hasImage: !!item.productImg,
-        imageUrl: item.productImg
-      });
       
       return {
         name: item.name || `Ürün ${index + 1}`,
