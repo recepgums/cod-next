@@ -31,6 +31,7 @@ export default async function Header() {
     });
     if (res.ok) {
       categories = await res.json();
+      console.log(categories);
     }
   } catch (err) {
     // fail silently; render without categories
