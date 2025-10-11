@@ -67,6 +67,8 @@ export default function NovaTemplate({ product }: { product: Product }) {
     const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [selectedCount, setSelectedCount] = useState<number>(1);
+    const [variants, setVariants] = useState<any>({});
+    const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
@@ -149,6 +151,68 @@ export default function NovaTemplate({ product }: { product: Product }) {
         return Math.round(((oldPrice - newPrice) / oldPrice) * 100);
     }
 
+    // Variants'ları parse et
+    useEffect(() => {
+        if (!parsedSettings?.variants) return;
+        try {
+            let rawVariants = parsedSettings.variants;
+
+            // If variants is a JSON string, parse it
+            if (typeof rawVariants === 'string') {
+                try {
+                    rawVariants = JSON.parse(rawVariants);
+                } catch {
+                    rawVariants = undefined;
+                }
+            }
+
+            // If variants is an array like [{ name, type, stock, alias }, ...],
+            // group by type to build select options per type.
+            if (Array.isArray(rawVariants)) {
+                const grouped: Record<string, { title: string; options: string[] }> = {};
+                rawVariants.forEach((v: any) => {
+                    const typeKey = (v?.type || 'Seçenek').toString();
+                    const optionName = (v?.name || '').toString();
+                    if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+                    if (optionName && !grouped[typeKey].options.includes(optionName)) {
+                        grouped[typeKey].options.push(optionName);
+                    }
+                });
+                setVariants(grouped);
+                console.log('🎨 Variants grouped:', grouped);
+                return;
+            }
+
+            // If variants is already an object map { type: { title, options[] }, ... }
+            if (rawVariants && typeof rawVariants === 'object') {
+                setVariants(rawVariants);
+            }
+        } catch (error) {
+            console.error('❌ Error parsing variants:', error);
+        }
+    }, [parsedSettings?.variants]);
+
+    // Update variant fields when quantity changes
+    useEffect(() => {
+        if (selectedOption && Object.keys(variants).length > 0) {
+            const quantity = selectedOption.quantity;
+            const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
+            setSelectedVariants(newSelectedVariants);
+            console.log('🛍️ Updated selected variants for quantity:', quantity, newSelectedVariants);
+        }
+    }, [selectedOption, variants]);
+
+    const handleVariantChange = (index: number, type: string, value: string) => {
+        const newSelectedVariants = [...selectedVariants];
+        newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
+        setSelectedVariants(newSelectedVariants);
+        console.log('🔄 NovaTemplate variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
+    };
+
+    const handleOrderModalVariantChange = (newVariants: any[]) => {
+        setSelectedVariants(newVariants);
+        console.log('🔄 OrderModal variant change received:', newVariants);
+    };
 
     useEffect(() => {
         if (product.options && product.options.length > 0) {
@@ -256,9 +320,9 @@ export default function NovaTemplate({ product }: { product: Product }) {
                                                 <span className='count-in-box'>{item.title}</span>
                                             </div>
                                             <div className='d-flex flex-column'>
-                                                <p className='price-in-box text-center'>{item.price - item.discount}TL</p>
+                                                <p className='price-in-box text-center'>{formatNumber(item.price - item.discount)}TL</p>
                                                 {(item.discount > 0) && (
-                                                    <p className='oldPrice-in-box text-center'>{item.price}TL</p>
+                                                    <p className='oldPrice-in-box text-center'>{formatNumber(item.price)}TL</p>
                                                 )}
 
                                             </div>
@@ -268,6 +332,70 @@ export default function NovaTemplate({ product }: { product: Product }) {
                             </div>
                         ))}
                     </div>
+
+                    {/* Variant Selection */}
+                    {Object.keys(variants || {}).length > 0 && (
+                        <div className="variant-selection-container" style={{ 
+                            marginTop: "20px", 
+                            marginBottom: "20px",
+                            padding: "15px",
+                            backgroundColor: "#f8f9fa",
+                            borderRadius: "8px",
+                            border: "1px solid #e9ecef"
+                        }}>
+                            <h5 style={{ 
+                                fontSize: "16px", 
+                                fontWeight: "600", 
+                                marginBottom: "15px", 
+                                color: "#333",
+                                textAlign: "center"
+                            }}>
+                                Seçenekler
+                            </h5>
+                            {(selectedVariants ?? []).map((selectedVariant, index) => (
+                                <div key={index} className="variant-item mb-3" style={{
+                                    padding: "12px",
+                                    backgroundColor: "#fff",
+                                    borderRadius: "6px",
+                                    border: "1px solid #dee2e6"
+                                }}>
+                                    <div className="variant-item-title mb-2" style={{
+                                        fontSize: "14px",
+                                        fontWeight: "600",
+                                        color: "#495057"
+                                    }}>
+                                        {index + 1}. Ürün
+                                    </div>
+                                    <div className="variant-options">
+                                        {(Object.entries(variants ?? {}) as [string, any][])?.map(([type, variantData]) => (
+                                            <select
+                                                key={type}
+                                                name={`variants[${index}][${type}]`}
+                                                className="form-control mb-2"
+                                                required
+                                                value={(selectedVariant?.[type] ?? '')}
+                                                onChange={(e) => handleVariantChange(index, type, e.target.value)}
+                                                style={{
+                                                    fontSize: "14px",
+                                                    padding: "8px 12px",
+                                                    border: "1px solid #ced4da",
+                                                    borderRadius: "4px"
+                                                }}
+                                            >
+                                                <option value="">{variantData?.title || type} Seçin</option>
+                                                {(variantData?.options ?? []).map((option: string) => (
+                                                    <option key={option} value={option}>
+                                                        {option}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="button-container">
                         <button type='button' className='add-to-cart w-100' onClick={openModal}>
                             <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" data-id="508817629909549416">
@@ -421,6 +549,8 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     product={product}
                     selectedOption={selectedOption}
                     onOptionSelect={selectOption}
+                    selectedVariants={selectedVariants}
+                    onVariantChange={handleOrderModalVariantChange}
                 />
 
             </div>
