@@ -40,15 +40,22 @@ async function fetchCategoryProducts(slug: string) {
 
     console.log('Kategori ürünleri:', JSON.stringify(rawProducts, null, 2));
 
-    const mappedProducts = rawProducts.map((item: any, index: number) => ({
-      name: item.name || `Ürün ${index + 1}`,
-      imgSrc: item.productImg || '/images/placeholder.svg',
-      productLink: `/product/${item.slug}`,
-      slug: item.slug || `product-${index + 1}`,
-      rating: item.rating ? parseFloat(item.rating) : null,
-      priceCurrent: item.price || item.priceCurrent || 'Fiyat Belirtilmemiş',
-      priceOriginal: item.originalPrice || item.priceOriginal || null,
-    }));
+    const mappedProducts = rawProducts.map((item: any, index: number) => {
+      // Media array'inden ilk resmi al
+      const firstImage = item.media && item.media.length > 0 
+        ? item.media[0].original_url 
+        : '/images/placeholder.svg';
+      
+      return {
+        name: item.name || `Ürün ${index + 1}`,
+        imgSrc: firstImage,
+        productLink: `/product/${item.slug}`,
+        slug: item.slug || `product-${index + 1}`,
+        rating: item.rating ? parseFloat(item.rating) : null,
+        priceCurrent: item.price || item.priceCurrent || 'Fiyat Belirtilmemiş',
+        priceOriginal: item.old_price || item.priceOriginal || null,
+      };
+    });
 
     return { categoryName, products: mappedProducts };
   } catch (error: any) {
