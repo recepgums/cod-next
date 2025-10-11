@@ -9,9 +9,6 @@ export type Product = {
   priceCurrent: string;
   priceOriginal?: string | null;
   slug: string;
-  images: {
-    medium: string;
-  }[];
 };
 
 type ProductGridProps = {
@@ -27,7 +24,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
             {products.map((product, idx) => (
               <div key={product.slug || idx} className="col-lg-3 col-md-4 col-sm-6 col-6 px-1">
                 <ProductCard
-                  image={product.images[0]?.medium || ''}
+                  image={product.imgSrc}
                   title={product.name}
                   rating={product.rating} // parseFloat artık gerekli değil
                   price={product.priceCurrent}
