@@ -240,7 +240,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
             <div className="nova-template">
                 <div className="nova-slider-wrapper">
                     <NovaSlider
-                        images={dummyOrder.images}
+                        images={product.images}
                         productName={product.name}
                     />
                 </div>
