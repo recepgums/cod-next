@@ -4,11 +4,61 @@ import React, { useState } from 'react';
 import NovaSlider from './component/NovaSlider';
 import './lightTemplate.css';
 
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    oldPrice: number;
+    discount: string;
+    images: ProductImage[];
+    options: ProductOption[];
+    features: string[];
+    rating: number;
+    commentCount: number;
+    comments: ProductComment[];
+    cities: any[];
+    pixels?: { platform: string; pixel_id: string }[];
+    template?: string;
+    logoUrl?: string;
+    content?: string;
+    settings?: string;
+}
+
+interface ProductImage {
+    thumbnail: string;
+    medium: string;
+    large: string;
+    mobile: string;
+    original: string;
+}
+
+interface ProductOption {
+    quantity: number;
+    price: number;
+    original?: number;
+    discount: number;
+    badge: string;
+    isCampaign?: boolean;
+    unit?: string;
+    displayText?: string;
+    finalDiscount?: number;
+}
+
+interface ProductComment {
+    id: number;
+    author: string;
+    content: string;
+    rating: number;
+    photo?: string;
+    order?: number | null;
+}
+
 interface LightTemplateProps {
-    product: any;
+    product: Product;
 }
 
 const LightTemplate: React.FC<LightTemplateProps> = ({ product }) => {
+    console.log('💡 LightTemplate rendering with product:', JSON.stringify(product, null, 2));
     const [selectedOption, setSelectedOption] = useState(0);
 
     // Static data matching the image
