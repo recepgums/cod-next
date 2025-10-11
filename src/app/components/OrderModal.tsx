@@ -64,6 +64,8 @@ interface OrderModalProps {
   };
   selectedOption?: ProductOption | null;
   onOptionSelect: (option: ProductOption) => void;
+  selectedVariants?: any[];
+  onVariantChange?: (variants: any[]) => void;
 }
 
 export default function OrderModal({
@@ -71,7 +73,9 @@ export default function OrderModal({
   onClose,
   product,
   selectedOption,
-  onOptionSelect
+  onOptionSelect,
+  selectedVariants = [],
+  onVariantChange
 }: OrderModalProps) {
 
   const [districts, setDistricts] = useState<any[]>([]);
@@ -87,7 +91,7 @@ export default function OrderModal({
   const [submitError, setSubmitError] = useState<string>("");
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [variants, setVariants] = useState<any>({});
-  const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
+  // selectedVariants artık prop olarak geliyor
   const [selectedShippingCode, setSelectedShippingCode] = useState<string>("");
   const [showShippingError, setShowShippingError] = useState<boolean>(false);
   const shippingSectionRef = useRef<HTMLDivElement>(null);
@@ -331,19 +335,6 @@ export default function OrderModal({
     }
   }, [product]);
 
-  // Update variant fields when quantity changes
-  useEffect(() => {
-    if (selectedOption && Object.keys(variants).length > 0) {
-      const quantity = selectedOption.quantity;
-      const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
-      setSelectedVariants(newSelectedVariants);
-    }
-  }, [selectedOption, variants]);
-
-  // Debug variant rendering
-  useEffect(() => {
-  }, [variants, selectedVariants]);
-
   // Auto-select first product option when modal opens
   useEffect(() => {
     if (showModal && product && product.options && product.options.length > 0 && !selectedOption) {
@@ -352,9 +343,12 @@ export default function OrderModal({
   }, [showModal, product, selectedOption, onOptionSelect]);
 
   const handleVariantChange = (index: number, type: string, value: string) => {
+    if (!onVariantChange) return;
+    
     const newSelectedVariants = [...selectedVariants];
     newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
-    setSelectedVariants(newSelectedVariants);
+    onVariantChange(newSelectedVariants);
+    console.log('🔄 OrderModal variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
