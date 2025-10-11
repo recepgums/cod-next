@@ -26,7 +26,7 @@ async function fetchCategoryProducts(slug: string) {
     }
 
     const payload = await response.json();
-    console.log('✅ Category API success:', payload);
+    console.log('✅ Category API success:', JSON.stringify(payload, null, 2));
 
     // Response robust mapping
     const categoryName = payload?.name || payload?.category?.name || slug;
@@ -38,7 +38,7 @@ async function fetchCategoryProducts(slug: string) {
         ? payload.data
         : [];
 
-    console.log('Kategori ürünleri:', rawProducts);
+    console.log('Kategori ürünleri:', JSON.stringify(rawProducts, null, 2));
 
     const mappedProducts = rawProducts.map((item: any, index: number) => ({
       name: item.name || `Ürün ${index + 1}`,
