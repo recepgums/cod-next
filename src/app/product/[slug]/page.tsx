@@ -1,4 +1,5 @@
 import React from 'react';
+import { headers } from 'next/headers';
 import '../Nova.css';
 import '../product-details.css'
 import LightTemplate from './LightTemplate';
@@ -66,13 +67,19 @@ import type { Metadata } from "next";
 async function fetchProductData(slug: string) {
   try {
     console.log(`🔍 Fetching product data for slug: ${slug}`);
+    const h = await headers();
+    const forwardedHost = h.get('x-forwarded-host');
+    const host = forwardedHost || h.get('host') || 'localhost';
+    const proto = h.get('x-forwarded-proto') || 'https';
+    const origin = `${proto}://${host}`;
+    const referer = `${origin}/product/${slug}`;
     
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
-        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+        'Origin': origin,
+        'Referer': referer,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
       //  ...(process.env.NEXT_IS_LOCAL === 'local'
