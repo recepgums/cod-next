@@ -92,6 +92,11 @@ export default function NovaTemplate({ product }: { product: Product }) {
         }
     }, [product?.settings]);
 
+    // Ürün içeriğini (HTML) memoize et
+    const memoizedProductContent = useMemo(() => {
+        return product.content ? { __html: product.content } : null;
+    }, [product.content]);
+
 
     const dummyOrder = {
         id: 1,
@@ -395,6 +400,11 @@ export default function NovaTemplate({ product }: { product: Product }) {
                                 </div>
                             ))}
                         </div>
+                    )}
+
+                    {/* Product Content (HTML) */}
+                    {memoizedProductContent && (
+                        <div className="product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
                     )}
 
                     <div className="button-container">
