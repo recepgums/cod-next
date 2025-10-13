@@ -6,6 +6,7 @@ import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
+import CommentsSection from './components/CommentsSection';
 import NovaSlider from './component/NovaSlider';
 import NovaHeader from './component/NovaHeader';
 
@@ -541,6 +542,8 @@ export default function NovaTemplate({ product }: { product: Product }) {
                             </div>
                         </div>
                     </div>
+
+                    <CommentsSection comments={product.comments || []} count={product.commentCount || 0} />
                 </div>
 
                 <OrderModal
