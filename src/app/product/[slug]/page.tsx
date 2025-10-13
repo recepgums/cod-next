@@ -125,6 +125,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }> 
 }): Promise<Metadata> {
   const { slug } = await params;
+  const h = await headers();
+  const forwardedHost = h.get('x-forwarded-host');
+  const host = forwardedHost || h.get('host') || 'localhost';
+  const proto = h.get('x-forwarded-proto') || 'https';
+  const origin = `${proto}://${host}`;
   const { product } = await fetchProductData(slug);
 
   if (!product) {
@@ -134,7 +139,7 @@ export async function generateMetadata({
       openGraph: {
         title: 'Ürün Bulunamadı - TrendyGoods',
         description: 'Aradığınız ürün bulunamadı.',
-        url: `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/product/${slug}`,
+        url: `${origin}/product/${slug}`,
         siteName: 'TrendyGoods',
         locale: 'tr_TR',
         type: 'website',
@@ -152,10 +157,10 @@ export async function generateMetadata({
   // Ürün resmi URL'si
   const imageUrl = product.images && product.images.length > 0 
     ? product.images[0].large 
-    : `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/images/placeholder.svg`;
+    : `${origin}/images/placeholder.svg`;
 
   // Ürün URL'si
-  const productUrl = `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/product/${slug}`;
+  const productUrl = `${origin}/product/${slug}`;
 
   return {
     title: `${product.name}`,
