@@ -1,5 +1,4 @@
 import React from 'react';
-import { headers } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -18,19 +17,10 @@ export default async function Header() {
   // Fetch categories on the server so they render with initial HTML
   let categories: Category[] = [];
   try {
-    const h = await headers();
-    const forwardedHost = h.get('x-forwarded-host');
-    const host = forwardedHost || h.get('host') || 'localhost';
-    const proto = h.get('x-forwarded-proto') || 'https';
-    const origin = `${proto}://${host}`;
-    const referer = `${origin}/`;
-
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Origin': origin,
-        'Referer': referer,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
       ...(process.env.NEXT_IS_LOCAL === 'local'
