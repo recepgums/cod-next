@@ -390,10 +390,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     )}
 
-                    {/* Product Content (HTML) */}
-                    {memoizedProductContent && (
-                        <div className="product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
-                    )}
 
                     <div className="button-container">
                         <button type='button' className='add-to-cart w-100' onClick={openModal}>
@@ -402,6 +398,10 @@ export default function NovaTemplate({ product }: { product: Product }) {
                             <span>Kapıda Ödeme İle Sipariş Ver</span>
                         </button>
                     </div>
+                    {/* Product Content (HTML) */}
+                    {memoizedProductContent && (
+                        <div className="product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
+                    )}
 
                     <div className="campaign-container">
                         {(parsedSettings?.cash_payment_cost == null || parsedSettings?.cash_payment_cost == 0) && (
