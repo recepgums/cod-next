@@ -8,7 +8,7 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import NovaSlider from './component/NovaSlider';
-import NovaHeader from './component/NovaHeader';
+import Header from '../../components/Header';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -226,23 +226,11 @@ export default function NovaTemplate({ product }: { product: Product }) {
         }
     }, []);
 
-    const categories = [
-        { id: "ana-sayfa", name: "Ana Sayfa", href: "/" },
-        { id: "arac-ici-kameralar", name: "Araç İçi Kameralar", href: "/kategori/arac-ici-kameralar" },
-        { id: "kask-interkoma", name: "Kask İnterkomları", href: "/kategori/kask-interkoma" },
-        { id: "aksesuarlar", name: "Aksesuarlar", href: "/kategori/aksesuarlar" },
-        { id: "hakkimizda", name: "Hakkımızda", href: "/hakkimizda" },
-    ];
+    const categories = [] as any[];
 
     return (
         <>
-            <NovaHeader
-                logoSrc={product.logoUrl || "https://rexingtr.com/cdn/shop/files/blue_rexinglogo_hd.png?v=1743567206&width=500"}
-                logoAlt="Logo"
-                categories={categories}
-                backgroundColor="#ffffff"
-                textColor="#333333"
-            />
+            <Header />
             <div className="nova-template">
                 <div className="nova-slider-wrapper">
                     <NovaSlider

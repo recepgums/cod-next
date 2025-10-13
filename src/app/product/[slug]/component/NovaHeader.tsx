@@ -1,7 +1,7 @@
 'use client';
 
 import '../../Nova.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Category {
   id: string;
@@ -25,10 +25,45 @@ export default function NovaHeader({
   textColor = "#000000"
 }: NovaHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navCategories, setNavCategories] = useState<Category[]>(categories || []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  // Fetch categories from API if not provided via props
+  useEffect(() => {
+    // If categories already provided, keep them
+    if (Array.isArray(categories) && categories.length > 0) {
+      setNavCategories(categories);
+      return;
+    }
+    let aborted = false;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) return;
+    (async () => {
+      try {
+        const res = await fetch(`${apiUrl}/categories`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (aborted) return;
+        const mapped: Category[] = (Array.isArray(data) ? data : []).map((c: any) => ({
+          id: String(c?.id ?? c?.slug ?? Math.random()),
+          name: String(c?.name ?? ''),
+          href: `/category/${c?.slug ?? ''}`
+        })).filter((c: Category) => c.name && c.href);
+        setNavCategories(mapped);
+      } catch {
+        // fail silently
+      }
+    })();
+    return () => { aborted = true; };
+  }, [categories]);
 
   return (
     <>
@@ -52,7 +87,7 @@ export default function NovaHeader({
               <div className="align-items-center col-sm-9 d-flex">
                 <nav className="nova-header-nav">
                   <ul>
-                    {categories.map((category) => (
+                    {navCategories.map((category) => (
                       <li key={category.id}>
                         <a href={category.href}>{category.name}</a>
                       </li>
@@ -176,7 +211,7 @@ export default function NovaHeader({
         </div>
 
         <div className="mobile-menu-categories" style={{ padding: '16px 0' }}>
-          {categories.map((category) => (
+          {navCategories.map((category) => (
             <a
               key={category.id}
               href={category.href}
