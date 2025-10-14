@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cache } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -13,28 +13,33 @@ interface Category {
   products: any[];
 }
 
+const getCategories = cache(async (): Promise<Category[]> => {
+  try {
+    const headersObj: Record<string, string> = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
+    };
+    if (process.env.NEXT_PUBLIC_WEBSITE_URL) {
+      headersObj['Origin'] = process.env.NEXT_PUBLIC_WEBSITE_URL as string;
+      headersObj['Referer'] = `${process.env.NEXT_PUBLIC_WEBSITE_URL}/`;
+    }
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+      headers: headersObj,
+      cache: 'force-cache',
+      next: { revalidate: 300 }
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+});
+
 export default async function Header() {
   // Fetch categories on the server so they render with initial HTML
-  let categories: Category[] = [];
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL,
-        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL}/`,
-        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
-      },
-      ...(process.env.NEXT_IS_LOCAL === 'local'
-        ? { cache: 'no-store' as const }
-        : { next: { revalidate: 300 as const } }),
-    });
-    if (res.ok) {
-      categories = await res.json();
-    }
-  } catch (err) {
-    // fail silently; render without categories
-  }
+  const categories: Category[] = await getCategories();
 
   return (
     <header className="header">
