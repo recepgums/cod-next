@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
+// Header/Footer are now rendered by route-specific layout.tsx
 import './promotion.css';
 
 interface ProductVariant {
@@ -223,42 +222,32 @@ export default function PromosyonPage() {
 
   if (loading) {
     return (
-      <div className="min-vh-100 bg-white d-flex flex-column">
-        <Header />
-        <main className="flex-fill d-flex align-items-center justify-content-center">
-          <div className="text-center">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Yükleniyor...</span>
-            </div>
-            <p className="mt-3">Sipariş bilgileri yükleniyor...</p>
+      <main className="flex-fill d-flex align-items-center justify-content-center">
+        <div className="text-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Yükleniyor...</span>
           </div>
-        </main>
-        <Footer />
-      </div>
+          <p className="mt-3">Sipariş bilgileri yükleniyor...</p>
+        </div>
+      </main>
     );
   }
 
   if (error) {
     return (
-      <div className="min-vh-100 bg-white d-flex flex-column">
-        <Header />
-        <main className="flex-fill d-flex align-items-center justify-content-center">
-          <div className="text-center">
-            <div className="alert alert-danger" role="alert">
-              {error}
-            </div>
+      <main className="flex-fill d-flex align-items-center justify-content-center">
+        <div className="text-center">
+          <div className="alert alert-danger" role="alert">
+            {error}
           </div>
-        </main>
-        <Footer />
-      </div>
+        </div>
+      </main>
     );
   }
 
   const promotionDiscount = parseInt(process.env.NEXT_PUBLIC_PROMOTION_DISCOUNT_AMOUNT || '0');
 
   return (
-    <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
       <main className="flex-fill mt-3 pb-4">
         <div className="container">
           <div className="row">
@@ -406,7 +395,5 @@ export default function PromosyonPage() {
           </form>
         </div>
       </main>
-      <Footer />
-    </div>
   );
 } 
