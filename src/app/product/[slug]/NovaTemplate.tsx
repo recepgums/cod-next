@@ -8,7 +8,6 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import NovaSlider from './component/NovaSlider';
-import Header from '../../components/Header';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -228,10 +227,8 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
     const categories = [] as any[];
 
-    return (
-        <>
-            <Header />
-            <div className="nova-template">
+  return (
+    <div className="nova-template">
                 <div className="nova-slider-wrapper">
                     <NovaSlider
                         images={product.images}
@@ -550,8 +547,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
                 />
 
             </div>
-
-        </>
     );
 }
 

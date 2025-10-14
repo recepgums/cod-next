@@ -13,26 +13,24 @@ interface Category {
   products: any[];
 }
 
-export default async function Header({ categories: initialCategories }: { categories?: Category[] } = {}) {
-  // Use pre-fetched categories first; fallback to fetching
-  let categories: Category[] = Array.isArray(initialCategories) ? initialCategories : [];
+export default async function Header() {
+  // Fetch categories on the server so they render with initial HTML
+  let categories: Category[] = [];
   try {
-    if (!categories.length) {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || "trendygoods.com.tr",
-          'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || "trendygoods.com.tr"}/`,
-          'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
-        },
-        ...(process.env.NEXT_IS_LOCAL === 'local'
-          ? { cache: 'no-store' as const }
-          : { next: { revalidate: 300 as const } }),
-      });
-      if (res.ok) {
-        categories = await res.json();
-      }
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || "trendygoods.com.tr",
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || "trendygoods.com.tr"}/`,
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
+      },
+      ...(process.env.NEXT_IS_LOCAL === 'local'
+        ? { cache: 'no-store' as const }
+        : { next: { revalidate: 300 as const } }),
+    });
+    if (res.ok) {
+      categories = await res.json();
     }
   } catch (err) {
     // fail silently; render without categories

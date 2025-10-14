@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import ServerHeader from '../../../components/ServerHeader';
 import Footer from '../../../components/Footer';
 import './promotion.css';
 
@@ -224,7 +223,7 @@ export default function PromosyonPage() {
   if (loading) {
     return (
       <div className="min-vh-100 bg-white d-flex flex-column">
-        <ServerHeader />
+        <Header />
         <main className="flex-fill d-flex align-items-center justify-content-center">
           <div className="text-center">
             <div className="spinner-border text-primary" role="status">
@@ -241,7 +240,7 @@ export default function PromosyonPage() {
   if (error) {
     return (
       <div className="min-vh-100 bg-white d-flex flex-column">
-        <ServerHeader />
+        <Header />
         <main className="flex-fill d-flex align-items-center justify-content-center">
           <div className="text-center">
             <div className="alert alert-danger" role="alert">
@@ -258,7 +257,6 @@ export default function PromosyonPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <ServerHeader />
       <main className="flex-fill mt-3 pb-4">
         <div className="container">
           <div className="row">
