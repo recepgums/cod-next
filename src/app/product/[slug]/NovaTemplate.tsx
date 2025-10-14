@@ -8,6 +8,7 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import NovaSlider from './component/NovaSlider';
+import Header from '@/app/components/Header';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -77,6 +78,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
     const selectOption = (option: ProductOption) => {
         setSelectedOption(option);
     };
+
 
     // Settings'i parse et
     const parsedSettings = useMemo(() => {
@@ -229,6 +231,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
   return (
     <div className="nova-template">
+        <Header />
                 <div className="nova-slider-wrapper">
                     <NovaSlider
                         images={product.images}
