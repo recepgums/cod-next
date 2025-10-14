@@ -102,7 +102,6 @@ export default async function Home() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
       <main className="flex-fill mt-3 pb-4">
         {products.length > 0 ? (
           <ProductGrid products={products} />
