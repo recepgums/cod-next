@@ -54,6 +54,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
 
   const redirectToOrder = () => {
     // Order sayfasında AddToCart eventi gönderilecek, burada sadece yönlendir
+    sendAddToCartEvent();
     window.location.href = orderHref;
   };
 

@@ -21,6 +21,8 @@ export default async function Header() {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL,
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL}/`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
       ...(process.env.NEXT_IS_LOCAL === 'local'
