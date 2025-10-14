@@ -73,7 +73,9 @@ async function fetchProductData(slug: string) {
     const proto = h.get('x-forwarded-proto') || 'https';
     const origin = `${proto}://${host}`;
     const referer = `${origin}/product/${slug}`;
-    
+
+    console.log("origin", origin);
+    console.log("referer", referer);
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
       headers: {
         'Accept': 'application/json',
