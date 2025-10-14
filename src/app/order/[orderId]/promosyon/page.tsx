@@ -224,7 +224,6 @@ export default function PromosyonPage() {
   if (loading) {
     return (
       <div className="min-vh-100 bg-white d-flex flex-column">
-        <Header />
         <main className="flex-fill d-flex align-items-center justify-content-center">
           <div className="text-center">
             <div className="spinner-border text-primary" role="status">
