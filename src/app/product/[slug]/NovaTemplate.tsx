@@ -231,7 +231,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
   return (
     <div className="nova-template">
-        <Header />
+        {/* <Header /> */}
                 <div className="nova-slider-wrapper">
                     <NovaSlider
                         images={product.images}
