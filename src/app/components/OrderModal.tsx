@@ -16,7 +16,7 @@ interface ProductOption {
   displayText?: string;
   finalDiscount?: number;
   title?: string;
-  }
+}
 
 interface ProductImage {
   thumbnail: string;
@@ -96,8 +96,8 @@ export default function OrderModal({
   const [showShippingError, setShowShippingError] = useState<boolean>(false);
   const shippingSectionRef = useRef<HTMLDivElement>(null);
 
-  const PROTECTED_SHIPPING_AVAILABLE = false; 
-  const PROTECTED_SHIPPING_PRICE = 89.00; 
+  const PROTECTED_SHIPPING_AVAILABLE = false;
+  const PROTECTED_SHIPPING_PRICE = 89.00;
   const [isProtectedShippingEnabled, setIsProtectedShippingEnabled] = useState<boolean>(false);
 
   // Use cities from product prop
@@ -105,16 +105,16 @@ export default function OrderModal({
 
   // Calculate total price including payment method cost - memoized to prevent flickering
   const totalPrice = useMemo(() => {
-    const basePrice = selectedOption 
+    const basePrice = selectedOption
       ? (selectedOption.price - selectedOption.discount)
       : (product?.price || 0);
-    
-    const cardPaymentCost = product?.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType === "card" 
+
+    const cardPaymentCost = product?.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType === "card"
       ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
       : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
-    
+
     const protectedShippingCost = isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0;
-    
+
     return basePrice + cardPaymentCost + protectedShippingCost;
   }, [selectedOption, selectedShippingCode, product.price, product.settings, isProtectedShippingEnabled]);
 
@@ -194,7 +194,7 @@ export default function OrderModal({
     const isValid = validatePhone(phone);
     setIsPhoneValid(isValid);
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
-    if ((phone?.[0] == "0" && phone.length <2) ||  phone?.[1] == "5"){
+    if ((phone?.[0] == "0" && phone.length < 2) || phone?.[1] == "5") {
       setInputPhone(phone);
     }
   };
@@ -344,7 +344,7 @@ export default function OrderModal({
 
   const handleVariantChange = (index: number, type: string, value: string) => {
     if (!onVariantChange) return;
-    
+
     const newSelectedVariants = [...selectedVariants];
     newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
     onVariantChange(newSelectedVariants);
@@ -364,7 +364,7 @@ export default function OrderModal({
       try {
         const el = document.getElementById('phoneInput') as HTMLInputElement | null;
         el?.focus();
-      } catch {}
+      } catch { }
       return;
     }
 
@@ -375,7 +375,7 @@ export default function OrderModal({
       setSubmitError('Lütfen bir kargo firması seçiniz.');
       try {
         shippingSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } catch {}
+      } catch { }
       return;
     }
 
@@ -413,7 +413,7 @@ export default function OrderModal({
             ref_url: window.location.href,
             order_id: response.data.order_id,
           });
-        } catch {}
+        } catch { }
         // Redirect to promotion page
         sendPurchaseEvent(response.data);
         window.location.href = `/order/${response.data.order_id}/promosyon`;
@@ -434,7 +434,7 @@ export default function OrderModal({
           ref_url: typeof window !== 'undefined' && window.location ? window.location.href : null,
           order_id: "sipariş oluşmadı",
         });
-      } catch {}
+      } catch { }
 
       setSubmitError(error.response?.data?.message || "Sipariş gönderilirken bir hata oluştu.");
     } finally {
@@ -512,7 +512,7 @@ export default function OrderModal({
                         <div className="info">
                           <span className="title">
                             <span>
-                            {opt.title || `${opt.quantity} Adet`}
+                              {opt.title || `${opt.quantity} Adet`}
                             </span>
 
                             {opt.isCampaign && (
@@ -615,9 +615,9 @@ export default function OrderModal({
                   {/* Shipping Company Selection */}
                   {Array.isArray(product?.shipping) && product?.shipping?.length > 0 && (
                     <div className="mb-3" ref={shippingSectionRef}>
-                      <span className="mb-2 fw-bold">Kargo Bilgileri</span> 
+                      <span className="mb-2 fw-bold">Kargo Bilgileri</span>
                       {showShippingError && (
-                        <span className="text-danger mt-2 ms-2" style={{fontWeight: 'bold'}} role="alert">Lütfen bir kargo firması seçiniz.</span>
+                        <span className="text-danger mt-2 ms-2" style={{ fontWeight: 'bold' }} role="alert">Lütfen bir kargo firması seçiniz.</span>
                       )}
                       <div className="d-flex flex-column gap-2">
                         {product?.shipping?.map((opt) => {
@@ -722,7 +722,7 @@ export default function OrderModal({
                       </label>
                     </div>
                   </div> */}
-                  
+
                   {/* Protected Shipping Section (Korumalı Kargo) */}
                   {PROTECTED_SHIPPING_AVAILABLE && (
                     <div className="protected-shipping-section mb-3">
@@ -783,7 +783,7 @@ export default function OrderModal({
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Form Fields */}
                   <div className="mb-3">
                     <div className="input-group">
@@ -872,6 +872,18 @@ export default function OrderModal({
                       <textarea name="address" rows={2} required className="form-control" placeholder="Sokak, Kapı Numarası ve Daire" />
                     </div>
                   </div>
+
+
+                  {submitError && (
+                    <div className="alert alert-danger mt-3" role="alert">
+                      {submitError}
+                    </div>
+                  )}
+
+                  <div className="pb-5 text-center">
+                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
+                  </div>
+
                   <div className="product-extra-link2 fixed-bottom-button">
                     <button
                       type="submit"
@@ -889,15 +901,6 @@ export default function OrderModal({
                     </button>
                   </div>
 
-                  {submitError && (
-                    <div className="alert alert-danger mt-3" role="alert">
-                      {submitError}
-                    </div>
-                  )}
-
-                  <div className="mt-3 text-center">
-                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
-                  </div>
                 </div>
               </form>
             </div>
