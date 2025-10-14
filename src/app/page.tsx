@@ -4,23 +4,17 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
+ 
 
 // Server Component - SSR ile veri çekme
 async function fetchProducts() {
   try {
-    const h = await headers();
-    const forwardedHost = h.get('x-forwarded-host');
-    const host = forwardedHost || h.get('host') || 'localhost';
-    const proto = h.get('x-forwarded-proto') || 'https';
-    const origin = `${proto}://${host}`;
-    const referer = `${origin}/`;
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
       // next: { revalidate: 60 },
       headers: {
         'Accept': 'application/json',
-        'Origin': origin,
-        'Referer': referer,
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
