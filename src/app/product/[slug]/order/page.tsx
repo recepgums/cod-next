@@ -1,6 +1,5 @@
 import OrderTemplate from './OrderTemplate';
 import PixelScripts from '../PixelScripts';
-import Header from '../../components/Header';
 import { headers } from 'next/headers';
 
 async function fetchProductData(slug: string) {
@@ -39,7 +38,6 @@ export default async function OrderPage({ params }: { params: Promise<{ slug: st
   const product = await fetchProductData(slug);
   return (
     <>
-      <Header />
       <OrderTemplate slug={slug} product={product} />
       <PixelScripts pixels={product?.pixels || []} product={product} />
     </>
