@@ -558,7 +558,14 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
                 value={qKey}
                 id={id}
                 checked={isSelected}
-                onChange={(e) => { setSelectedPackage(e.target.value); setSelectedQuantity(qKey); }}
+                onChange={(e) => { 
+                  setSelectedPackage(e.target.value); 
+                  setSelectedQuantity(qKey);
+                  // Scroll to form when quantity changes
+                  setTimeout(() => {
+                    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 100);
+                }}
                 data-quantity={qKey}
                 data-price={discountedPrices[qKey] ?? ''}
                 aria-label={labelText}
