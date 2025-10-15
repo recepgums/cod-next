@@ -12,7 +12,7 @@ async function fetchCategoryProducts(slug: string) {
     const forwardedHost = h.get('x-forwarded-host');
     const host = forwardedHost || h.get('host') || 'localhost';
     const proto = h.get('x-forwarded-proto') || 'https';
-    const origin = `${proto}://${host}`;
+    const origin = "magicmilk.com.tr" ;
     const referer = `${origin}/category/${slug}`;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category/${slug}`, {

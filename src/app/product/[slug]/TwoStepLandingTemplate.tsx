@@ -60,20 +60,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
 
   const sendAddToCartEvent = () => {
     try {
-      // Daha önce gönderilmiş mi kontrol et (1 gün içinde)
-      const cached = localStorage.getItem('twostep_add_to_cart_event');
-      if (cached) {
-        const data = JSON.parse(cached);
-        const lastSent = new Date(data.timestamp);
-        const now = new Date();
-        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        
-        if (lastSent > oneDayAgo && data.product_id === product?.id?.toString()) {
-          console.log('TwoStep AddToCart event already sent within 24 hours, skipping...');
-          return; // 1 gün içinde aynı ürün için gönderilmiş
-        }
-      }
-
       const value = product?.price || 0;
       const pid = product?.id?.toString?.() || '';
       const pname = product?.name || '';
@@ -102,19 +88,12 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         });
       }
 
-      // Cache'e kaydet (timestamp ile)
-      localStorage.setItem('twostep_add_to_cart_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'AddToCart',
-        product_id: pid
-      }));
-
-      console.log('TwoStep AddToCart events sent:', {
+      console.log('✅ TwoStep AddToCart events sent:', {
         facebook: { event: 'AddToCart', value, content_ids: [pid], content_name: pname },
         tiktok: { event: 'AddToCart', value, content_id: pid, content_name: pname }
       });
     } catch (error) {
-      console.error('Error sending TwoStep AddToCart events:', error);
+      console.error('❌ Error sending TwoStep AddToCart events:', error);
     }
   };
 

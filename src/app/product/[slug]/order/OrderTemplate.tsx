@@ -120,24 +120,10 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   }, []);
 
-  // Fire AddToCart when order page is visited (once per day)
+  // Fire AddToCart when order page is visited (every time)
   useEffect(() => {
     const sendAddToCartEvent = () => {
       try {
-        // Check if already sent within 24 hours
-        const cached = localStorage.getItem('add_to_cart_event');
-        if (cached) {
-          const data = JSON.parse(cached);
-          const lastSent = new Date(data.timestamp);
-          const now = new Date();
-          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-          
-          if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
-            console.log('OrderTemplate: AddToCart event already sent within 24 hours, skipping...');
-            return;
-          }
-        }
-
         const value = apiProduct?.price || 0;
         const qty = 1;
         const pid = apiProduct?.id?.toString?.() || '';
@@ -171,15 +157,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           console.log('✅ TikTok AddToCart event sent');
         }
 
-        if (hasFbq || hasTtq) {
-          // Cache the event with timestamp
-          localStorage.setItem('add_to_cart_event', JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'AddToCart',
-            product_id: pid
-          }));
-          console.log('📦 AddToCart event cached for 24 hours');
-        } else {
+        if (!hasFbq && !hasTtq) {
           console.log('⏳ Pixels not ready yet, will retry...');
         }
       } catch (error) {
@@ -366,20 +344,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   
   const firePurchaseEvent = (orderData: any) => {
     try {
-      // Check if already sent within 24 hours
-      const purchaseEvent = localStorage.getItem('purchase_event');
-      if (purchaseEvent) {
-        const purchaseEventData = JSON.parse(purchaseEvent);
-        const lastSent = new Date(purchaseEventData.timestamp);
-        const now = new Date();
-        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        
-        if (lastSent > oneDayAgo) {
-          console.log('🔒 Purchase event already sent within 24 hours, skipping...');
-          return;
-        }
-      }
-
       const value = totalPrice;
       const pid = apiProduct?.id?.toString() || '';
       const pname = apiProduct?.name || '';
@@ -421,12 +385,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         console.log('💰 TikTok PlaceAnOrder event sent!');
       }
 
-      // Cache with timestamp
-      localStorage.setItem('purchase_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'Purchase'
-      }));
-      console.log('📦 Purchase event cached for 24 hours');
+      console.log('✅ All Purchase events sent successfully!');
     } catch (error) {
       console.error('❌ Error sending purchase events:', error);
     }
@@ -457,8 +416,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       {/* Header Image */}
       <div style={{ width: '100%' }} 
       onClick={()=>{
-        console.log(apiProduct);
-        console.log(formRef.current);
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }}
       >

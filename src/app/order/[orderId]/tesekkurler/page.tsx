@@ -54,27 +54,13 @@ export default function ThankYouPage() {
     loadOrderData();
   }, [orderId]);
 
-  // Purchase eventi gönder (tek seferlik - 1 gün içinde)
+  // Purchase eventi gönder (her zaman)
   useEffect(() => {
     if (!order || !order.pixels) return;
 
     // Pixel scriptlerinin yüklenmesini bekle
     const sendPurchaseEvent = () => {
       try {
-        // Daha önce gönderilmiş mi kontrol et (1 gün içinde)
-        const cached = localStorage.getItem('purchase_event');
-        if (cached) {
-          const data = JSON.parse(cached);
-          const lastSent = new Date(data.timestamp);
-          const now = new Date();
-          const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-          
-          if (lastSent > oneDayAgo && data.order_id === order.id) {
-            console.log('Purchase event already sent within 24 hours for this order, skipping...');
-            return; // 1 gün içinde aynı sipariş için gönderilmiş
-          }
-        }
-
         const value = parseFloat(order.total_price.toString()) || 0;
         const pid = order.product_id?.toString?.() || '';
         const pname = order.products || '';
@@ -113,20 +99,13 @@ export default function ThankYouPage() {
           });
         }
 
-        // Cache'e kaydet (timestamp ile)
-        localStorage.setItem('purchase_event', JSON.stringify({
-          timestamp: new Date().toISOString(),
-          event: 'Purchase',
-          order_id: order.id
-        }));
-
-        console.log('Purchase events sent:', {
+        console.log('✅ Purchase events sent:', {
           facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
           tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
           order_id: order.id
         });
       } catch (error) {
-        console.error('Error sending Purchase events:', error);
+        console.error('❌ Error sending Purchase events:', error);
       }
     };
 
