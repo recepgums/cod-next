@@ -8,19 +8,12 @@ import ScrollToTop from '../../components/ScrollToTop';
 // Server Component - SSR ile veri çekme
 async function fetchCategoryProducts(slug: string) {
   try {
-    const h = await headers();
-    const forwardedHost = h.get('x-forwarded-host');
-    const host = forwardedHost || h.get('host') || 'localhost';
-    const proto = h.get('x-forwarded-proto') || 'https';
-    const origin = `${proto}://${host}`;
-    const referer = `${origin}/category/${slug}`;
-
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category/${slug}`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Origin': origin,
-        'Referer': referer,
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/category/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
       ...(process.env.NEXT_IS_LOCAL === 'local'
