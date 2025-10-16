@@ -170,7 +170,6 @@ export default function ThankYouPage() {
   if (loading) {
     return (
       <div className="min-vh-100 bg-white d-flex flex-column">
-        <Header />
         <main className="flex-fill d-flex align-items-center justify-content-center">
           <div className="text-center">
             <div className="spinner-border text-primary" role="status">
@@ -187,7 +186,6 @@ export default function ThankYouPage() {
   if (error) {
     return (
       <div className="min-vh-100 bg-white d-flex flex-column">
-        <Header />
         <main className="flex-fill d-flex align-items-center justify-content-center">
           <div className="text-center">
             <div className="alert alert-danger" role="alert">
@@ -202,7 +200,6 @@ export default function ThankYouPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
       <main className="flex-fill mt-3 pb-4">
         <div className="container mx-auto px-3 py-5" style={{maxWidth: '600px'}}>
           {/* Success Icon */}
