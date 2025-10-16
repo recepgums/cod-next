@@ -47,8 +47,8 @@ function getStatusText(isDone: number) {
   }
 }
 
-export default async function CargoTrackingByPhone({ params }: { params: { phone: string } }) {
-  const { phone } = params;
+export default async function CargoTrackingByPhone({ params }: { params: Promise<{ phone: string }> }) {
+  const { phone } = await params;
   const { order, error } = await fetchOrderByPhone(phone);
 
   if (error) {
