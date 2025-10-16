@@ -30,6 +30,7 @@ interface UpsellProduct {
   settings?: any;
   emoji_benefits?: string;
   content?: string;
+  slug: string;
 }
 
 interface Order {
@@ -280,7 +281,7 @@ export default function PromosyonPage() {
             <div className="col-lg-12">
               <div className="row product-grid-3">
                 {products.map((product) => (
-                  <div key={product.id} className="col-lg-3 col-md-4 col-sm-6 px-1">
+                  <a href={`/product/${product.slug}`} key={product.id} className="col-lg-3 col-md-4 col-sm-6 px-1">
                     <div className="product-cart-wrap mb-30">
                       <div className="product-img-action-wrap">
                         <div className="product-img product-img-zoom">
@@ -377,7 +378,7 @@ export default function PromosyonPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
