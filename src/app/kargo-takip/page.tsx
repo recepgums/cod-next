@@ -68,7 +68,6 @@ export default function CargoTrackingPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
       <main className="flex-fill mt-4 pb-4">
         <div className="container">
           <div className="row justify-content-center">

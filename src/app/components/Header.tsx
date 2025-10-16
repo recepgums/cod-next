@@ -20,6 +20,7 @@ interface HeaderProps {
 export default async function Header({ logoSrc }: HeaderProps) {
   // Fetch categories on the server so they render with initial HTML
   let categories: Category[] = [];
+  let resolvedLogoSrc: string | undefined = logoSrc;
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
       headers: {
@@ -35,7 +36,25 @@ export default async function Header({ logoSrc }: HeaderProps) {
     });
     if (res.ok) {
       categories = await res.json();
-      console.log(categories);
+    }
+
+    // If logo not provided, try to read from homepage payload once (server-side)
+    if (!resolvedLogoSrc) {
+      const homepageRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+          'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+          'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
+        },
+        cache: 'force-cache',
+        next: { revalidate: 300 },
+      });
+      if (homepageRes.ok) {
+        const hp = await homepageRes.json();
+        resolvedLogoSrc = hp?.logoUrl || undefined;
+      }
     }
   } catch (err) {
     // fail silently; render without categories
@@ -48,7 +67,7 @@ export default async function Header({ logoSrc }: HeaderProps) {
         <nav className="navbar navbar-expand-lg navbar-light">
           <Link href="/" className="navbar-brand">
             <Image
-              src={logoSrc || "/images/logo.png"}
+              src={resolvedLogoSrc || "/images/logo.png"}
               alt="TrendyGoods"
               width={185}
               height={50}
