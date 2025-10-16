@@ -13,7 +13,11 @@ interface Category {
   products: any[];
 }
 
-export default async function Header() {
+interface HeaderProps {
+  logoSrc?: string;
+}
+
+export default async function Header({ logoSrc }: HeaderProps) {
   // Fetch categories on the server so they render with initial HTML
   let categories: Category[] = [];
   try {
@@ -43,7 +47,7 @@ export default async function Header() {
         <nav className="navbar navbar-expand-lg navbar-light">
           <Link href="/" className="navbar-brand">
             <Image
-              src="/images/logo.png"
+              src={logoSrc || "/images/logo.png"}
               alt="TrendyGoods"
               width={185}
               height={50}

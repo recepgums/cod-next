@@ -27,6 +27,7 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
+    console.log(directData);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);
@@ -40,7 +41,7 @@ async function fetchProducts() {
     
     if (productsArray.length === 0) {
       console.warn('⚠️ No products found in API response');
-      return [];
+      return { products: [], logoSrc: directData?.logoUrl || null };
     }
     
     const mappedProducts = productsArray.map((item: any, index: number) => {
@@ -57,7 +58,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return mappedProducts;
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null };
     
   } catch (error: any) {
     console.log(error);
@@ -69,7 +70,7 @@ async function fetchProducts() {
     console.warn('⚠️ API fetch failed:', error instanceof Error ? error.message : 'Unknown error');
     // Fallback: Boş array yerine test verisi döndür
     console.log('🔄 Returning fallback test data...');
-    return [
+    return { products: [
        {
          name: 'Test Ürün 1',
          imgSrc: '/images/placeholder.svg',
@@ -88,7 +89,7 @@ async function fetchProducts() {
          priceCurrent: '149.99 TL',
          priceOriginal: '199.99 TL',
        }
-     ];
+     ], logoSrc: null };
   }
 }
 
@@ -96,13 +97,13 @@ export default async function Home() {
   console.log('🏠 Home page rendering...');
   
   // Server-side'da veri çek
-  const products = await fetchProducts();
+  const {products, logoSrc} = await fetchProducts();
   
   console.log('📊 Final products for render:', products.length);
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
+      <Header logoSrc={logoSrc || undefined} />
       <main className="flex-fill mt-3 pb-4">
         {products.length > 0 ? (
           <ProductGrid products={products} />
