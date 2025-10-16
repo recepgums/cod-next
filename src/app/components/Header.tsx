@@ -25,13 +25,13 @@ export default async function Header({ logoSrc }: HeaderProps) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || "trendygoods.com.tr",
-        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || "trendygoods.com.tr"}/`,
+        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
+        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
-      ...(process.env.NEXT_IS_LOCAL === 'local'
-        ? { cache: 'no-store' as const }
-        : { next: { revalidate: 300 as const } }),
+      // Force server-side caching; do not make client-side fetches
+      cache: 'force-cache',
+      next: { revalidate: 300 },
     });
     if (res.ok) {
       categories = await res.json();
