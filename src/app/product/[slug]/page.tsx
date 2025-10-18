@@ -66,7 +66,6 @@ import type { Metadata } from "next";
 // Server-side data fetching
 async function fetchProductData(slug: string) {
   try {
-    console.log(`🔍 Fetching product data for slug: ${slug}`);
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
       headers: {
@@ -90,6 +89,7 @@ async function fetchProductData(slug: string) {
     const commentsData = data.comments;
     const pixelsData = data.pixels;
     const templateData = data.template;
+    console.log(`🔍 Fetching product data for slug:`,data);
 
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
     

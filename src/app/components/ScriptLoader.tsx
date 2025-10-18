@@ -41,7 +41,6 @@ const loadPixelScripts = (pixels: any[], product: any) => {
   if (tiktokPixels.length > 0) {
     const tiktokScript = document.createElement('script');
     tiktokScript.innerHTML = `
-      console.log('🚀 Loading ${tiktokPixels.length} TikTok Pixels...');
       
       !function (w, d, t) {
         w.TiktokAnalyticsObject = t;
@@ -58,12 +57,10 @@ const loadPixelScripts = (pixels: any[], product: any) => {
         
         // Tüm TikTok pixel'lerini yükle
         ${tiktokPixels.map((pixel, idx) => `
-          console.log('📱 Loading TikTok Pixel ${idx + 1}: ${pixel.pixel_id}');
           var s${idx} = d.createElement('script');
           s${idx}.src = 'https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=${pixel.pixel_id}';
           s${idx}.async = true;
           s${idx}.onload = function() {
-            console.log('✅ TikTok Pixel ${idx + 1} loaded: ${pixel.pixel_id}');
             ttq.page();
             ttq.track('ViewContent', {
               content_id: '${product.id}',
