@@ -151,8 +151,8 @@ export async function generateMetadata({
   // Ürün açıklaması için content veya features kullan
   const description = product.content 
     ? product.content.substring(0, 160) 
-    : product.features && product.features.length > 0 
-      ? product.features.slice(0, 3).join(', ') 
+    : Array.isArray(product.features) && product.features.length > 0
+      ? product.features.slice(0, 3).map(f => f).join(', ')
       : `${product.name} ürününü TrendyGoods'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
 
   // Ürün resmi URL'si
