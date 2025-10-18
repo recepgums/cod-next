@@ -91,7 +91,7 @@ interface LazyImageProps {
   index: number;
 }
 
-function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onClick, index }: LazyImageProps) {
+function LazyImage({ src, alt, priority = false, quality = 90, blurDataURL, onClick, index }: LazyImageProps) {
   const [isInView, setIsInView] = useState(priority);
   const imgRef = useRef<HTMLDivElement>(null);
 
@@ -137,8 +137,8 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
         <Image 
           src={src}
           alt={alt}
-          width={800}
-          height={600}
+          width={1200}
+          height={900}
           style={{
             width: '100%',
             height: 'auto',
@@ -151,7 +151,7 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
           placeholder="blur"
           blurDataURL={blurDataURL}
           quality={quality}
-          sizes="(max-width: 600px) 100vw, 600px"
+          sizes="(max-width: 600px) 100vw, 800px"
           {...(index === 0 && { fetchPriority: 'high' as const })}
         />
       ) : (
@@ -186,9 +186,9 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'image';
-      link.href = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90`;
-      link.imageSrcset = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90 640w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=750&q=90 750w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=90 828w`;
-      link.imageSizes = '(max-width: 600px) 100vw, 600px';
+      link.href = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=95`;
+      link.imageSrcset = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=95 640w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=750&q=95 750w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=95 828w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=1080&q=95 1080w`;
+      link.imageSizes = '(max-width: 600px) 100vw, 800px';
       document.head.appendChild(link);
       
       return () => {
@@ -306,7 +306,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               src={img.large}
               alt={`${product.name} - Görsel ${idx + 1}`}
               priority={isPriority}
-              quality={isPriority ? 90 : 75}
+              quality={95}
               blurDataURL={blurDataURL}
               onClick={openModal}
               index={idx}
