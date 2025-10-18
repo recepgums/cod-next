@@ -4,17 +4,24 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import React from 'react';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
  
 
 // Server Component - SSR ile veri çekme
 async function fetchProducts() {
   try {
+    // Get the current domain from headers
+    const h = await headers();
+    const host = h.get('host') || 'trendygoods.com.tr';
+    const protocol = h.get('x-forwarded-proto') || 'https';
+    const baseUrl = `${protocol}://${host}`;
+
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
       // next: { revalidate: 60 },
       headers: {
         'Accept': 'application/json',
-        'Origin': 'https://trendygoods.com.tr', // Default fallback
-        'Referer': 'https://trendygoods.com.tr/',
+        'Origin': baseUrl,
+        'Referer': `${baseUrl}/`,
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
