@@ -14,7 +14,7 @@ async function fetchProducts() {
     const h = await headers();
     const host = h.get('host') || 'trendygoods.com.tr';
     const protocol = h.get('x-forwarded-proto') || 'https';
-    const baseUrl = `${protocol}://${host}`;
+    const baseUrl =  process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
       // next: { revalidate: 60 },
