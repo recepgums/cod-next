@@ -126,10 +126,11 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
     <div 
       ref={imgRef}
       style={{ 
-        width: '100%', 
-        minHeight: '450px',
+        width: '100%',
+        aspectRatio: '4/3',
         position: 'relative',
-        backgroundColor: '#f6f7f8'
+        backgroundColor: '#f6f7f8',
+        overflow: 'hidden'
       }}
     >
       {isInView ? (
@@ -138,7 +139,12 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
           alt={alt}
           width={800}
           height={600}
-          style={{width: '100%', maxWidth: '100%', height: 'auto', cursor: 'pointer'}}
+          style={{
+            width: '100%',
+            height: 'auto',
+            cursor: 'pointer',
+            display: 'block'
+          }}
           onClick={onClick}
           loading={priority ? "eager" : "lazy"}
           priority={priority}
@@ -152,7 +158,8 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
         <div 
           style={{
             width: '100%',
-            height: '450px',
+            height: '100%',
+            aspectRatio: '4/3',
             background: `url("${blurDataURL}") no-repeat center`,
             backgroundSize: 'cover'
           }}
@@ -172,6 +179,25 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
 
   // Memoize blur data URL to avoid recreating on every render
   const blurDataURL = useMemo(() => `data:image/svg+xml;base64,${toBase64(shimmer(800, 600))}`, []);
+
+  // Preload first image for better LCP (client-side only)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && product.images && product.images.length > 0) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90`;
+      link.imageSrcset = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90 640w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=750&q=90 750w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=90 828w`;
+      link.imageSizes = '(max-width: 600px) 100vw, 600px';
+      document.head.appendChild(link);
+      
+      return () => {
+        if (document.head.contains(link)) {
+          document.head.removeChild(link);
+        }
+      };
+    }
+  }, [product.images]);
 
   // Add to Cart eventi gönderme fonksiyonu
   const sendAddToCartEvent = () => {
@@ -255,16 +281,23 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               alt="Logo" 
               width={200}
               height={50}
-              style={{height: 50}}
+              style={{
+                width: 'auto',
+                height: '50px',
+                maxWidth: '200px',
+                display: 'block',
+                margin: '0 auto'
+              }}
               priority
               quality={90}
+              sizes="200px"
             />
           </a>
         </div>
 
         {/* Full-width images stacked vertically with true lazy loading */}
         {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => {
-          // Sadece ilk resim hemen yüklensin
+          // Sadece ilk resim hemen yüklensin, yüksek kalitede
           const isPriority = idx === 0;
           
           return (
@@ -273,7 +306,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               src={img.large}
               alt={`${product.name} - Görsel ${idx + 1}`}
               priority={isPriority}
-              quality={isPriority ? 85 : 75}
+              quality={isPriority ? 90 : 75}
               blurDataURL={blurDataURL}
               onClick={openModal}
               index={idx}
