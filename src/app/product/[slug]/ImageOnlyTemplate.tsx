@@ -1,12 +1,18 @@
 'use client';
 
 import '../Nova.css';
-import React, { useState } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import Footer from '../../components/Footer';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
+
+// Lazy load components that are not immediately visible
+const Footer = dynamic(() => import('../../components/Footer'), { 
+  ssr: true,
+  loading: () => <div style={{ height: '200px' }} />
+});
+
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
 interface ProductImage {
@@ -53,6 +59,109 @@ const announcementTexts = [
   '⭐ +10.000 Mutlu Müşteri ⭐',
 ];
 
+// Shimmer effect for image loading
+const shimmer = (w: number, h: number) => `
+<svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="g">
+      <stop stop-color="#f6f7f8" offset="0%" />
+      <stop stop-color="#edeef1" offset="20%" />
+      <stop stop-color="#f6f7f8" offset="40%" />
+      <stop stop-color="#f6f7f8" offset="100%" />
+    </linearGradient>
+  </defs>
+  <rect width="${w}" height="${h}" fill="#f6f7f8" />
+  <rect id="r" width="${w}" height="${h}" fill="url(#g)" />
+  <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
+</svg>`;
+
+const toBase64 = (str: string) =>
+  typeof window === 'undefined'
+    ? Buffer.from(str).toString('base64')
+    : window.btoa(str);
+
+// Lazy Image Component with Intersection Observer
+interface LazyImageProps {
+  src: string;
+  alt: string;
+  priority?: boolean;
+  quality?: number;
+  blurDataURL: string;
+  onClick?: () => void;
+  index: number;
+}
+
+function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onClick, index }: LazyImageProps) {
+  const [isInView, setIsInView] = useState(priority);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (priority || !imgRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '200px', // 200px önden yüklemeye başla
+        threshold: 0.01
+      }
+    );
+
+    observer.observe(imgRef.current);
+
+    return () => {
+      if (imgRef.current) {
+        observer.unobserve(imgRef.current);
+      }
+    };
+  }, [priority]);
+
+  return (
+    <div 
+      ref={imgRef}
+      style={{ 
+        width: '100%', 
+        minHeight: '450px',
+        position: 'relative',
+        backgroundColor: '#f6f7f8'
+      }}
+    >
+      {isInView ? (
+        <Image 
+          src={src}
+          alt={alt}
+          width={800}
+          height={600}
+          style={{width: '100%', maxWidth: '100%', height: 'auto', cursor: 'pointer'}}
+          onClick={onClick}
+          loading={priority ? "eager" : "lazy"}
+          priority={priority}
+          placeholder="blur"
+          blurDataURL={blurDataURL}
+          quality={quality}
+          sizes="(max-width: 600px) 100vw, 600px"
+          {...(index === 0 && { fetchPriority: 'high' as const })}
+        />
+      ) : (
+        <div 
+          style={{
+            width: '100%',
+            height: '450px',
+            background: `url("${blurDataURL}") no-repeat center`,
+            backgroundSize: 'cover'
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
 interface ImageOnlyTemplateProps {
   product: Product;
 }
@@ -61,6 +170,8 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
 
+  // Memoize blur data URL to avoid recreating on every render
+  const blurDataURL = useMemo(() => `data:image/svg+xml;base64,${toBase64(shimmer(800, 600))}`, []);
 
   // Add to Cart eventi gönderme fonksiyonu
   const sendAddToCartEvent = () => {
@@ -145,29 +256,30 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               width={200}
               height={50}
               style={{height: 50}}
-              loading="lazy"
-              priority={false}
+              priority
+              quality={90}
             />
           </a>
         </div>
 
-        {/* Full-width images stacked vertically */}
-        {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => (
-          <Image 
-            key={img.large + idx}
-            src={img.large}
-            alt="product image"
-            width={800}
-            height={600}
-            style={{width: '100%', maxWidth: '100%', height: 'auto', cursor: 'pointer'}}
-            onClick={openModal}
-            loading={idx === 0 ? "eager" : "lazy"}
-            priority={idx === 0}
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        ))}
+        {/* Full-width images stacked vertically with true lazy loading */}
+        {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => {
+          // Sadece ilk resim hemen yüklensin
+          const isPriority = idx === 0;
+          
+          return (
+            <LazyImage
+              key={img.large + idx}
+              src={img.large}
+              alt={`${product.name} - Görsel ${idx + 1}`}
+              priority={isPriority}
+              quality={isPriority ? 85 : 75}
+              blurDataURL={blurDataURL}
+              onClick={openModal}
+              index={idx}
+            />
+          );
+        })}
 
         {/* Direct Order Button */}
         <div className="product-extra-link2 my-3" style={{width: '100%'}}>
