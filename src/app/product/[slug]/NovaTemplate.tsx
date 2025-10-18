@@ -1,14 +1,10 @@
 'use client';
 
-import '../Nova.css';
 import React, { useState, useEffect, useMemo } from 'react';
-import Footer from '../../components/Footer';
-import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import NovaSlider from './component/NovaSlider';
-import Header from '@/app/components/Header';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -98,59 +94,11 @@ export default function NovaTemplate({ product }: { product: Product }) {
         return product.content ? { __html: product.content } : null;
     }, [product.content]);
 
-
-    const dummyOrder = {
-        id: 1,
-        name: "Rexing Link Kablosuz CarPlay Adaptör",
-        price: 2599.99,
-        images: [
-            {
-                thumbnail: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-                medium: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-                large: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-                mobile: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296",
-                original: "https://rexingtr.com/cdn/shop/files/RexingLink_2_768x768.png?v=1753984296"
-            },
-            {
-                thumbnail: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-                medium: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-                large: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-                mobile: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296",
-                original: "https://rexingtr.com/cdn/shop/files/5_b4ec0b7f-55d5-46b6-8404-93d4c4769167.png?v=1753984296"
-            }
-        ],
-        options: [
-            {
-                quantity: 1,
-                price: 2599.99,
-                original: 3600.00,
-                discount: 28,
-                badge: "1 Adet",
-                displayText: "1 Adet"
-            },
-            {
-                quantity: 2,
-                price: 4939.98,
-                original: 7200.00,
-                discount: 33,
-                badge: "2 Adet - EKSTRA %5 İNDİRİM!",
-                displayText: "2 Adet"
-            },
-            {
-                quantity: 3,
-                price: 7019.97,
-                original: 10800.00,
-                discount: 35,
-                badge: "3 Adet - EKSTRA %10 İNDİRİM!",
-                displayText: "3 Adet"
-            }
-        ],
-        cities: product.cities,
-        settings: ""
-    }
-
     const formatNumber = (number: number) => {
-        return number.toLocaleString('tr-TR');
+        return number.toLocaleString('tr-TR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     }
 
     // old price ve new price arasındaki farkın yüzdesini hesaplayan fonksiyon yazılacak
@@ -230,7 +178,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
     const categories = [] as any[];
 
   return (
-    <div className="nova-template">
+    <div className="nova-template" style={{ paddingBottom: '100px' }}>
         {/* <Header /> */}
                 <div className="nova-slider-wrapper">
                     <NovaSlider
@@ -239,7 +187,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     />
                 </div>
 
-                <div style={{ padding: "2px 20px 0" }}>
+                <div style={{ padding: "2px 5px 0" }}>
                     <div>
                         <div className="d-flex" style={{ lineHeight: "1.0" }}>
                             <div>
@@ -282,24 +230,24 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     </div>
 
-                    <div className="price-container d-flex align-items-center" style={{ gap: "4px" }}>
-                        <div className="">
+                    <div className="price-container d-flex justify-content-between align-items-center" style={{ gap: "8px" }}>
+                        <div className="text-center" style={{ flex: 1 }}>
                             <span className="price">{formatNumber(product.price)}TL</span>
                         </div>
-                        <div className="">
+                        <div className="text-center" style={{ flex: 1 }}>
                             <span className="oldPrice">{formatNumber(product.oldPrice)}TL</span>
                         </div>
-                        <div className=" text-white discount-container">
+                        <div className=" text-white discount-container"  style={{ flex: 1 }}>
                             <span className='discount d-md-none'> {calculateDiscount(product.oldPrice, product.price)}% İNDİRİM</span>
                         </div>
                     </div>
 
-                    <div className='campaign-text'>
+                    <div className='campaign-text pt-3' style={{ color: "#3c59ff", fontSize: "10px" }}>
                         <p className='text-center' style={{ fontSize: "16px" }}>DAHA FAZLA AL, DAHA AZ ÖDE!</p>
                     </div>
 
                     <div className="count-containers">
-                        {product.options.map((item, index) => (
+                        {false && product.options.map((item, index) => (
                             <div className={`count-item-wrapper ${selectedCount === index ? "active" : ""}`}
                                 onClick={() => {
                                     setSelectedCount(index);
@@ -328,7 +276,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     </div>
 
                     {/* Variant Selection */}
-                    {Object.keys(variants || {}).length > 0 && (
+                    {false && Object.keys(variants || {}).length > 0 && (
                         <div className="variant-selection-container" style={{ 
                             marginTop: "20px", 
                             marginBottom: "20px",
@@ -391,11 +339,26 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     )}
 
 
-                    <div className="button-container mb-3">
+                    <div 
+                        className="button-container mb-3" 
+                        style={{
+                            position: 'fixed',
+                            bottom: '0',
+                            left: '0',
+                            right: '0',
+                            zIndex: 1000,
+                            backgroundColor: '#fff',
+                            padding: '15px',
+                            boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
+                            borderTop: '1px solid #e0e0e0',
+                            maxWidth: '600px',
+                            margin: '0 auto'
+                        }}
+                    >
                         <button type='button' className='add-to-cart w-100' onClick={openModal}>
                             <svg height="40" width="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" data-id="508817629909549416">
                                 <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M58,76a58,58,0,0,1,116,0,6,6,0,0,1-12,0,46,46,0,0,0-92,0,6,6,0,0,1-12,0Zm138,46a25.87,25.87,0,0,0-14.59,4.49A26,26,0,0,0,142,110.1V76a26,26,0,0,0-52,0v87l-7.53-12.1a26,26,0,0,0-45,26.13l29.32,50A6,6,0,0,0,77.16,221L47.87,171a14,14,0,0,1,24.25-14,1,1,0,0,0,.1.17l18.68,30A6,6,0,0,0,102,184V76a14,14,0,0,1,28,0v68a6,6,0,0,0,12,0V132a14,14,0,0,1,28,0v20a6,6,0,0,0,12,0v-4a14,14,0,0,1,28,0v36c0,22.13-7.3,37.18-7.37,37.32a6,6,0,0,0,2.69,8A5.83,5.83,0,0,0,208,230a6,6,0,0,0,5.38-3.32c.35-.7,8.63-17.55,8.63-42.68V148A26,26,0,0,0,196,122Z"></path></svg>
-                            <span>Kapıda Ödeme İle Sipariş Ver</span>
+                            <span>Sepete ekle</span>
                         </button>
                     </div>
 
