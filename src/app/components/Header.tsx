@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 
 interface Category {
   id: number;
@@ -21,13 +22,20 @@ export default async function Header({ logoSrc }: HeaderProps) {
   // Fetch categories on the server so they render with initial HTML
   let categories: Category[] = [];
   let resolvedLogoSrc: string | undefined = logoSrc;
+  
+  // Get the current domain from headers
+  const h = await headers();
+  const host = h.get('host') || 'trendygoods.com.tr';
+  const protocol = h.get('x-forwarded-proto') || 'https';
+  const baseUrl = `${protocol}://${host}`;
+  
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
-        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+        'Origin': baseUrl,
+        'Referer': `${baseUrl}/`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
       // Force server-side caching; do not make client-side fetches
@@ -44,8 +52,8 @@ export default async function Header({ logoSrc }: HeaderProps) {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
-          'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+          'Origin': baseUrl,
+          'Referer': `${baseUrl}/`,
           'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
         },
         cache: 'force-cache',

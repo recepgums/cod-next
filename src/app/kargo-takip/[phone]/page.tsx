@@ -1,15 +1,22 @@
 import Footer from "../../components/Footer";
 import React from "react";
+import { headers } from 'next/headers';
 
 async function fetchOrderByPhone(phone: string) {
   try {
+    // Get the current domain from headers
+    const h = await headers();
+    const host = h.get('host') || 'trendygoods.com.tr';
+    const protocol = h.get('x-forwarded-proto') || 'https';
+    const baseUrl = `${protocol}://${host}`;
+    
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-track?phone=${encodeURIComponent(phone)}`,
       {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
-          'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+          'Origin': baseUrl,
+          'Referer': `${baseUrl}/`,
           'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
         },
         cache: 'no-store',

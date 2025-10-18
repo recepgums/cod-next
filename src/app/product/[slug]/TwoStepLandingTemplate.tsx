@@ -131,9 +131,8 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         color: 'white',
         fontWeight: 600,
         fontSize: '14px',
-        lineHeight: '16px',
-        borderBottom:'0'
-      }}>
+        lineHeight: '16px'
+        }}>
         <div className="d-flex align-items-center" id="demo" style={{ height: '100%' }}>
           <div className="col ps-1 text-center" id="takip">İndirimin Bitmesine Kalan Süre</div>
           <div className="col d-flex mx-auto d-flex justify-content-center text-center px-1" id="ust_saat">

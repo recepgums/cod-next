@@ -12,8 +12,8 @@ async function fetchCategoryProducts(slug: string) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
-        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/category/${slug}`,
+        'Origin': 'https://trendygoods.com.tr', // Default fallback
+        'Referer': `https://trendygoods.com.tr/category/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
       ...(process.env.NEXT_IS_LOCAL === 'local'

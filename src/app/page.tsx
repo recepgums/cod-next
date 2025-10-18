@@ -13,8 +13,8 @@ async function fetchProducts() {
       // next: { revalidate: 60 },
       headers: {
         'Accept': 'application/json',
-        'Origin': process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr',
-        'Referer': `${process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://trendygoods.com.tr'}/`,
+        'Origin': 'https://trendygoods.com.tr', // Default fallback
+        'Referer': 'https://trendygoods.com.tr/',
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
