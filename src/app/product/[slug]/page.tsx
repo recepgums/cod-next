@@ -4,6 +4,7 @@ import '../Nova.css';
 import '../product-details.css'
 import LightTemplate from './LightTemplate';
 import RefUrlScript from './RefUrlScript';
+import Header from '../../components/Header';
 
 // Regular imports for server components (no dynamic with ssr: false)
 import PixelScripts from './PixelScripts';
@@ -239,6 +240,7 @@ export default async function ProductDetailPage({
 
   return (
     <>
+      <Header />
       <RefUrlScript />
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
