@@ -279,8 +279,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         </div>
       </div>
       {/* Gallery */}
-      <div className="gallery-container mt-1">
-        <div className="header text-center mx-auto">
+      <div className="gallery-container">
+        <div className="header text-center mx-auto d-none">
           <a href="/"><img style={{ height: 50 }} src={product.logoUrl || "/images/logo.png"} alt="Logo" /></a>
         </div>
         <div className="main-image-container">

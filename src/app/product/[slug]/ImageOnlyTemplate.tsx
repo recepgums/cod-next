@@ -273,8 +273,8 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       </div>
 
       {/* Gallery Container */}
-      <div className="gallery-container mt-1">
-        <div className="header text-center mx-auto">
+      <div className="gallery-container">
+        <div className="header text-center mx-auto d-none">
           <a href="/">
             <Image 
               src={product.logoUrl || "/images/logo.png"} 
