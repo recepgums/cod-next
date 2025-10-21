@@ -128,7 +128,6 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
       ref={imgRef}
       style={{ 
         width: '100%',
-        minHeight: '450px',
         position: 'relative',
         backgroundColor: '#f6f7f8',
       }}
