@@ -91,7 +91,8 @@ interface LazyImageProps {
   index: number;
 }
 
-function LazyImage({ src, alt, priority = false, quality = 90, blurDataURL, onClick, index }: LazyImageProps) {
+function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onClick, index }: LazyImageProps) {
+
   const [isInView, setIsInView] = useState(priority);
   const imgRef = useRef<HTMLDivElement>(null);
 
@@ -127,18 +128,17 @@ function LazyImage({ src, alt, priority = false, quality = 90, blurDataURL, onCl
       ref={imgRef}
       style={{ 
         width: '100%',
-        aspectRatio: '4/3',
+        minHeight: '450px',
         position: 'relative',
         backgroundColor: '#f6f7f8',
-        overflow: 'hidden'
       }}
     >
       {isInView ? (
         <Image 
           src={src}
           alt={alt}
-          width={1200}
-          height={900}
+          width={800}
+          height={600}
           style={{
             width: '100%',
             height: 'auto',
@@ -151,7 +151,7 @@ function LazyImage({ src, alt, priority = false, quality = 90, blurDataURL, onCl
           placeholder="blur"
           blurDataURL={blurDataURL}
           quality={quality}
-          sizes="(max-width: 600px) 100vw, 800px"
+          sizes="(max-width: 600px) 100vw, 600px"
           {...(index === 0 && { fetchPriority: 'high' as const })}
         />
       ) : (
@@ -186,9 +186,13 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'image';
-      link.href = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=95`;
-      link.imageSrcset = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=95 640w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=750&q=95 750w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=95 828w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=1080&q=95 1080w`;
-      link.imageSizes = '(max-width: 600px) 100vw, 800px';
+
+
+      link.href = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90`;
+      link.imageSrcset = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90 640w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=750&q=90 750w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=90 828w`;
+      link.imageSizes = '(max-width: 600px) 100vw, 600px';
+      
+      
       document.head.appendChild(link);
       
       return () => {
@@ -281,13 +285,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               alt="Logo" 
               width={200}
               height={50}
-              style={{
-                width: 'auto',
-                height: '50px',
-                maxWidth: '200px',
-                display: 'block',
-                margin: '0 auto'
-              }}
+              style={{height: 50, width: 'auto'}}
               priority
               quality={90}
               sizes="200px"
@@ -306,7 +304,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               src={img.large}
               alt={`${product.name} - Görsel ${idx + 1}`}
               priority={isPriority}
-              quality={95}
+              quality={isPriority ? 90 : 75}
               blurDataURL={blurDataURL}
               onClick={openModal}
               index={idx}
