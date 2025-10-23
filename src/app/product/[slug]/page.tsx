@@ -243,7 +243,7 @@ export default async function ProductDetailPage({
     <>
     {product?.main_product_slug == null && (
       <>
-      <Header />
+      {/* <Header /> */}
       </>
     )}
       <RefUrlScript />
