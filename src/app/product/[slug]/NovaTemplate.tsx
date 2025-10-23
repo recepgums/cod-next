@@ -178,7 +178,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
     const categories = [] as any[];
 
-  return (
+    return (
     <div className="nova-template" style={{ paddingBottom: '100px' }}>
         {/* <Header /> */}
                 <div className="nova-slider-wrapper">
@@ -226,7 +226,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                             {product.features.map((item, index) => (
                                 <div key={index} className="attributes-item w-50 d-flex gap-2" style={{ marginTop: "10px", marginBottom: "5px" }}>
                                     <span style={{ fontSize: "15px" }}>{item}</span>
-                                </div>
+                            </div>
                             ))}
                         </div>
                     </div>
@@ -250,19 +250,19 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     <div className="count-containers">
                         {false && product.options.map((item, index) => (
                             <div className={`count-item-wrapper ${selectedCount === index ? "active" : ""}`}
-                                onClick={() => {
+                            onClick={() => {
                                     setSelectedCount(index);
                                     setSelectedOption(product.options[index]);
-                                }}
-                            >
-                                <div className="count-item">
-                                    <div className="d-flex align-items-center" style={{ gap: "18px" }}>
-                                        <div className="bar"></div>
-                                        <div className="count-and-price d-flex justify-content-between w-100">
-                                            <div className='d-flex align-items-center'>
+                            }}
+                        >
+                            <div className="count-item">
+                                <div className="d-flex align-items-center" style={{ gap: "18px" }}>
+                                    <div className="bar"></div>
+                                    <div className="count-and-price d-flex justify-content-between w-100">
+                                        <div className='d-flex align-items-center'>
                                                 <span className='count-in-box'>{item.title}</span>
-                                            </div>
-                                            <div className='d-flex flex-column'>
+                                        </div>
+                                        <div className='d-flex flex-column'>
                                                 <p className='price-in-box text-center'>{formatNumber(item.price - item.discount)}TL</p>
                                                 {(item.discount > 0) && (
                                                     <p className='oldPrice-in-box text-center'>{formatNumber(item.price)}TL</p>
@@ -274,7 +274,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                        </div>
 
                     {/* Variant Selection */}
                     {false && Object.keys(variants || {}).length > 0 && (
@@ -370,16 +370,16 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
                     <div className="campaign-container">
                         {(parsedSettings?.cash_payment_cost == null || parsedSettings?.cash_payment_cost == 0) && (
-                            <div className="campaign-item">
-                                <span className="campaign-icon">
-                                    <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" data-id="508817602426306920">
-                                        <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M255.14,115.54l-14-35A19.89,19.89,0,0,0,222.58,68H196V64a12,12,0,0,0-12-12H32A20,20,0,0,0,12,72V184a20,20,0,0,0,20,20H46.06a36,36,0,0,0,67.88,0h44.12a36,36,0,0,0,67.88,0H236a20,20,0,0,0,20-20V120A21.7,21.7,0,0,0,255.14,115.54ZM196,92h23.88l6.4,16H196ZM80,204a12,12,0,1,1,12-12A12,12,0,0,1,80,204Zm92-41.92A36.32,36.32,0,0,0,158.06,180H113.94a36,36,0,0,0-67.88,0H36V140H172ZM172,116H36V76H172Zm20,88a12,12,0,1,1,12-12A12,12,0,0,1,192,204Zm40-24h-6.06A36.09,36.09,0,0,0,196,156.23V132h36Z"></path></svg>
-                                </span>
-                                <span className="campaign-text">
-                                    Ücretsiz Kargo
-                                </span>
+                        <div className="campaign-item">
+                            <span className="campaign-icon">
+                                <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" data-id="508817602426306920">
+                                    <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M255.14,115.54l-14-35A19.89,19.89,0,0,0,222.58,68H196V64a12,12,0,0,0-12-12H32A20,20,0,0,0,12,72V184a20,20,0,0,0,20,20H46.06a36,36,0,0,0,67.88,0h44.12a36,36,0,0,0,67.88,0H236a20,20,0,0,0,20-20V120A21.7,21.7,0,0,0,255.14,115.54ZM196,92h23.88l6.4,16H196ZM80,204a12,12,0,1,1,12-12A12,12,0,0,1,80,204Zm92-41.92A36.32,36.32,0,0,0,158.06,180H113.94a36,36,0,0,0-67.88,0H36V140H172ZM172,116H36V76H172Zm20,88a12,12,0,1,1,12-12A12,12,0,0,1,192,204Zm40-24h-6.06A36.09,36.09,0,0,0,196,156.23V132h36Z"></path></svg>
+                            </span>
+                            <span className="campaign-text">
+                                Ücretsiz Kargo
+                            </span>
 
-                            </div>
+                        </div>
                         )}
 
 
@@ -495,10 +495,10 @@ export default function NovaTemplate({ product }: { product: Product }) {
                                     <p>
                                         Evet! Netflix, YouTube ve diğer video platformlarında içerik izleyebilirsiniz. Yüksek çözünürlüklü video desteği ile araç içinde premium video deneyimi yaşayın.
                                     </p>
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
                     <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
                 <OrderModal
