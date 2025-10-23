@@ -501,8 +501,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     </div>
 
                     <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
-                </div>
-
                 <OrderModal
                     showModal={showModal}
                     onClose={closeModal}
@@ -512,6 +510,8 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     selectedVariants={selectedVariants}
                     onVariantChange={handleOrderModalVariantChange}
                 />
+                </div>
+
 
             </div>
     );

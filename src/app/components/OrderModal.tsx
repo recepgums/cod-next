@@ -61,6 +61,7 @@ interface OrderModalProps {
     cities?: any[];
     settings?: string; // Added settings to product prop
     shipping?: ShippingOption[];
+    is_modal?: boolean;
   };
   selectedOption?: ProductOption | null;
   onOptionSelect: (option: ProductOption) => void;
@@ -456,7 +457,7 @@ export default function OrderModal({
 
   // Prevent body scroll when modal is open
   useEffect(() => {
-    if (showModal) {
+    if (showModal && product?.is_modal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -465,14 +466,14 @@ export default function OrderModal({
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showModal]);
+  }, [showModal, product?.is_modal]);
 
   return (
     <>
       {/* Modal Backdrop */}
       {showModal && (
         <div
-          className="modal-backdrop show"
+          className={product?.is_modal ? `modal-backdrop show` : 'd-none'}
           style={{
             position: 'fixed',
             top: 0,
@@ -482,15 +483,24 @@ export default function OrderModal({
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
             zIndex: 1040
           }}
-          onClick={onClose}
+          onClick={product?.is_modal ? onClose : undefined}
         />
       )}
 
       {/* Order Modal */}
-      <div className={`modal fade${showModal ? ' show' : ''}`} id="fullScreenModal" tabIndex={-1} role="dialog" aria-labelledby="fullScreenModalLabel" aria-hidden="true" style={{ display: showModal ? 'block' : 'none' }} onClick={onClose}>
-        <div className="modal-dialog modal-dialog-centered modal-fullscreen" role="document" onClick={(e) => e.stopPropagation()}>
+      <div
+        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : ''}
+        id={product?.is_modal ? `fullScreenModal` : ''}
+        tabIndex={product?.is_modal ? -1 : undefined}
+        role="dialog"
+        aria-labelledby={product?.is_modal ? `fullScreenModalLabel` : ''}
+        aria-hidden="true"
+        style={{ display: product?.is_modal ? (showModal ? 'block' : 'none') : 'block' }}
+        onClick={product?.is_modal ? onClose : undefined}
+      >
+        <div className={product?.is_modal ? `modal-dialog modal-dialog-centered modal-fullscreen` : ''} role="document" onClick={(e) => e.stopPropagation()}>
           <div className="modal-content p-0" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header py-2">
+            <div className={product?.is_modal ? `modal-header py-2` : 'd-none'}>
               <h5 className="modal-title text-center" id="fullScreenModalLabel">Sipariş Formu</h5>
               <button type="button" className="close" onClick={onClose} aria-label="Close">
                 <span aria-hidden="true">&times;</span>

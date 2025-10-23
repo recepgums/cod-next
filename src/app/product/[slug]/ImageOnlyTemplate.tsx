@@ -8,7 +8,7 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 
 // Lazy load components that are not immediately visible
-const Footer = dynamic(() => import('../../components/Footer'), { 
+const Footer = dynamic(() => import('../../components/Footer'), {
   ssr: true,
   loading: () => <div style={{ height: '200px' }} />
 });
@@ -51,6 +51,7 @@ interface Product {
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
   logoUrl?: string;
+  is_modal?: boolean;
 }
 
 const announcementTexts = [
@@ -124,16 +125,16 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
   }, [priority]);
 
   return (
-    <div 
+    <div
       ref={imgRef}
-      style={{ 
+      style={{
         width: '100%',
         position: 'relative',
         backgroundColor: '#f6f7f8',
       }}
     >
       {isInView ? (
-        <Image 
+        <Image
           src={src}
           alt={alt}
           width={800}
@@ -154,7 +155,7 @@ function LazyImage({ src, alt, priority = false, quality = 75, blurDataURL, onCl
           {...(index === 0 && { fetchPriority: 'high' as const })}
         />
       ) : (
-        <div 
+        <div
           style={{
             width: '100%',
             height: '100%',
@@ -190,10 +191,10 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       link.href = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90`;
       link.imageSrcset = `/_next/image?url=${encodeURIComponent(product.images[0].large)}&w=640&q=90 640w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=750&q=90 750w, /_next/image?url=${encodeURIComponent(product.images[0].large)}&w=828&q=90 828w`;
       link.imageSizes = '(max-width: 600px) 100vw, 600px';
-      
-      
+
+
       document.head.appendChild(link);
-      
+
       return () => {
         if (document.head.contains(link)) {
           document.head.removeChild(link);
@@ -265,7 +266,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   };
 
   return (
-    <div className="image-only-template" style={{maxWidth: '600px', margin: '0 auto'}}>
+    <div className="image-only-template" style={{ maxWidth: '600px', margin: '0 auto' }}>
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">
@@ -279,12 +280,12 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       <div className="gallery-container">
         <div className="header text-center mx-auto d-none">
           <a href="/">
-            <Image 
-              src={product.logoUrl || "/images/logo.png"} 
-              alt="Logo" 
+            <Image
+              src={product.logoUrl || "/images/logo.png"}
+              alt="Logo"
               width={200}
               height={50}
-              style={{height: 50, width: 'auto'}}
+              style={{ height: 50, width: 'auto' }}
               priority
               quality={90}
               sizes="200px"
@@ -296,7 +297,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         {product.images && product.images.length > 0 && product.images?.map((img: ProductImage, idx: number) => {
           // Sadece ilk resim hemen yüklensin, yüksek kalitede
           const isPriority = idx === 0;
-          
+
           return (
             <LazyImage
               key={img.large + idx}
@@ -312,19 +313,22 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         })}
 
         {/* Direct Order Button */}
-        <div className="product-extra-link2 my-3" style={{width: '100%'}}>
-          <button 
-            type="button" 
-            className="btn btn-success btn-block bounce w-100" 
-            onClick={openModal}
-          >
-            Sipariş Ver - {product.price.toFixed(2)}TL
-          </button>
-        </div>
+        {product.is_modal && (
+          <div className="product-extra-link2 my-3" style={{ width: '100%' }}>
+            <button
+              type="button"
+              className="btn btn-success btn-block bounce w-100"
+              onClick={openModal}
+            >
+              Sipariş Ver - {product.price.toFixed(2)}TL
+            </button>
+          </div>
+        )}
+
       </div>
 
       {/* Sticky Footer */}
-      <StickyFooter 
+      <StickyFooter
         product={product}
         selectedOption={selectedOption}
         onOrderClick={openModal}
@@ -336,7 +340,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         onClose={closeModal}
         product={{
           ...product,
-          cities: product.cities
+          cities: product.cities,
         }}
         selectedOption={selectedOption}
         onOptionSelect={selectOption}
