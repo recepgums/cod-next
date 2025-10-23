@@ -328,11 +328,13 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       </div>
 
       {/* Sticky Footer */}
+      {product.is_modal && (
       <StickyFooter
         product={product}
-        selectedOption={selectedOption}
-        onOrderClick={openModal}
-      />
+          selectedOption={selectedOption}
+          onOrderClick={openModal}
+        />
+      )}
 
       {/* Order Modal */}
       <OrderModal
