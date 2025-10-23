@@ -504,7 +504,10 @@ export default function NovaTemplate({ product }: { product: Product }) {
                 <OrderModal
                     showModal={showModal}
                     onClose={closeModal}
-                    product={product}
+                    product={{
+                        ...product,
+                        is_modal: true,
+                    }}
                     selectedOption={selectedOption}
                     onOptionSelect={selectOption}
                     selectedVariants={selectedVariants}

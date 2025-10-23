@@ -343,6 +343,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         product={{
           ...product,
           cities: product.cities,
+          is_modal: false,
         }}
         selectedOption={selectedOption}
         onOptionSelect={selectOption}

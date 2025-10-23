@@ -484,7 +484,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         onClose={closeModal}
         product={{
           ...product,
-          cities: product.cities
+          cities: product.cities,
+          is_modal: true,
         }}
         selectedOption={selectedOption}
         onOptionSelect={selectOption}
