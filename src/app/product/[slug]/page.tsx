@@ -240,7 +240,6 @@ export default async function ProductDetailPage({
 
   return (
     <>
-      <Header />
       <RefUrlScript />
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
