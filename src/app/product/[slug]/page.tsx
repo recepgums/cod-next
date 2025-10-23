@@ -60,7 +60,6 @@ interface Product {
   logoUrl?: string;
   content?: string;
   settings?: string;
-  main_product_slug?: boolean;
 }
 
 import type { Metadata } from "next";
@@ -241,11 +240,11 @@ export default async function ProductDetailPage({
 
   return (
     <>
-    {product?.main_product_slug == null && (
+    {product.is_modal && (
       <>
-      <Header />
       </>
     )}
+      <Header />
       <RefUrlScript />
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />

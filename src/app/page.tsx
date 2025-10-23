@@ -65,11 +65,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { 
-      products: mappedProducts, 
-      logoSrc: directData?.logoUrl || null,
-      hasMainProduct: !!directData?.main_product_slug
-    };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null };
     
   } catch (error: any) {
     console.log(error);
@@ -81,8 +77,7 @@ async function fetchProducts() {
     console.warn('⚠️ API fetch failed:', error instanceof Error ? error.message : 'Unknown error');
     // Fallback: Boş array yerine test verisi döndür
     console.log('🔄 Returning fallback test data...');
-    return { 
-      products: [
+    return { products: [
        {
          name: 'Test Ürün 1',
          imgSrc: '/images/placeholder.svg',
@@ -101,10 +96,7 @@ async function fetchProducts() {
          priceCurrent: '149.99 TL',
          priceOriginal: '199.99 TL',
        }
-     ], 
-     logoSrc: null,
-     hasMainProduct: false
-    };
+     ], logoSrc: null };
   }
 }
 
@@ -112,17 +104,13 @@ export default async function Home() {
   console.log('🏠 Home page rendering...');
   
   // Server-side'da veri çek
-  const {products, logoSrc, hasMainProduct} = await fetchProducts();
+  const {products, logoSrc} = await fetchProducts();
   
   console.log('📊 Final products for render:', products.length);
 
-  // Eğer main_product_slug varsa ve redirect olacaksa, bu kod çalışmaz
-  // Ama yine de güvenlik için kontrol edelim
-  const shouldShowHeader = !hasMainProduct;
-
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      {shouldShowHeader && <Header logoSrc={logoSrc || undefined} />}
+      <Header logoSrc={logoSrc || undefined} />
       <main className="flex-fill mt-3 pb-4">
         {products.length > 0 ? (
           <ProductGrid products={products} />
