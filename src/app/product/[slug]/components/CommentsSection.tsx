@@ -1,6 +1,6 @@
 'use client';
 
-import React, { RefObject } from 'react';
+import React, { RefObject, useEffect } from 'react';
 
 interface ProductComment {
   id: number;
@@ -18,6 +18,46 @@ interface CommentsSectionProps {
 }
 
 export default function CommentsSection({ comments, count, commentGridRef }: CommentsSectionProps) {
+  useEffect(() => {
+    if (!commentGridRef?.current || !comments?.length) return;
+
+    const init = () => {
+      const MasonryCtor = (window as any).Masonry;
+      if (MasonryCtor && commentGridRef.current) {
+        new MasonryCtor(commentGridRef.current, {
+          itemSelector: '.comment-item',
+          columnWidth: '.comment-item',
+          percentPosition: true,
+          gutter: 16,
+        });
+      }
+    };
+
+    if ((window as any).Masonry) {
+      init();
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if ((window as any).Masonry) {
+        init();
+      } else {
+        const checkMasonry = setInterval(() => {
+          if ((window as any).Masonry) {
+            clearInterval(checkMasonry);
+            init();
+          }
+        }, 50);
+        
+        setTimeout(() => clearInterval(checkMasonry), 10000);
+      }
+    }, 2000);
+  
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [comments, commentGridRef]);
+
   return (
     <>
       {/* comments Section Title */}

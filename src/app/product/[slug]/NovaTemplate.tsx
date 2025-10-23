@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
@@ -66,6 +66,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
     const [selectedCount, setSelectedCount] = useState<number>(1);
     const [variants, setVariants] = useState<any>({});
     const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
+    const commentGridRef = useRef<HTMLDivElement>(null);
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
@@ -499,7 +500,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     </div>
 
-                    <CommentsSection comments={product.comments || []} count={product.commentCount || 0} />
+                    <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
                 </div>
 
                 <OrderModal
