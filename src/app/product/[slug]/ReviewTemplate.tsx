@@ -233,11 +233,11 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
             init();
           }
         }, 50);
-        
+
         setTimeout(() => clearInterval(checkMasonry), 10000);
       }
     }, 2000);
-  
+
     return () => {
       clearTimeout(timer);
     };
@@ -367,6 +367,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                 <img alt="page-view-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/view3.png" width="16"
                   data-testid="image" />
+                <p className="social-proof-content">Son 24 saatte <span
+                  className="social-proof-item-focused-text">1,7B kişi</span> görüntüledi!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
                 <img alt="basket-count" height="16"
