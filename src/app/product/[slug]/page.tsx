@@ -240,10 +240,6 @@ export default async function ProductDetailPage({
 
   return (
     <>
-    {product.is_modal && (
-      <>
-      </>
-    )}
       <Header />
       <RefUrlScript />
       {renderTemplate()}
