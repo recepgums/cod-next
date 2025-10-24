@@ -124,6 +124,11 @@ export default function OrderModal({
   const memoizedTotalPrice = useMemo(() => totalPrice.toFixed(2), [totalPrice]);
   const memoizedProductName = useMemo(() => product.name, [product.name]);
   const memoizedProductId = useMemo(() => product.id, [product.id]);
+  const memorizedShippingCost = useMemo(() => {
+    return product?.shipping?.find((opt) => opt.code === selectedShippingCode)?.paymentType === "card"
+    ? parseFloat(JSON.parse(product.settings || '{}').card_payment_cost || "0")
+    : parseFloat(JSON.parse(product.settings || '{}').cash_payment_cost || "0");
+  }, [product?.settings]);
 
   // Calculate discount amount
   const calculateDiscount = () => {
@@ -530,8 +535,9 @@ export default function OrderModal({
                                 {opt.quantity} {opt.unit || 'Adet'} BEDAVA
                               </span>
                             )}
-
-                            <span className="kargo-bedava mx-2">Ücretsiz Kargo</span>
+                            {memorizedShippingCost == 0 && (
+                              <span className="kargo-bedava mx-2">Ücretsiz Kargo</span>
+                            )}
 
                             {opt.discount > 0 && (
                               <div className="discount" style={{ maxWidth: "max-content" }}>
