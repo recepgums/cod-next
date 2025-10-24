@@ -7,6 +7,7 @@ import Header from '../../components/Header';
 import NovaSlider from './component/NovaSlider';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
+import RelatedProducts from './components/RelatedProducts';
 import dynamic from 'next/dynamic';
 
 // Lazy load components that are not immediately visible
@@ -63,9 +64,10 @@ interface Product {
     pixels?: { platform: string; pixel_id: string }[];
     template?: string;
     logoUrl?: string;
-    content?: string;
-    settings?: string;
-    merchant_phone?: string;
+  content?: string;
+  settings?: string;
+  merchant_phone?: string;
+  related_products?: any[];
 }
 
 interface TekstilTemplateProps {
@@ -370,8 +372,10 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
                 {/* Product Content */}
                 {memoizedProductContent}
 
-
-                {/* Bu kısıma related ürünler gelicek */}
+                {/* Related Products */}
+                {product.related_products && product.related_products.length > 0 && (
+                    <RelatedProducts products={product.related_products} />
+                )}
 
             </div>
 

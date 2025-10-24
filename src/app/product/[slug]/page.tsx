@@ -62,6 +62,7 @@ interface Product {
   logoUrl?: string;
   content?: string;
   settings?: string;
+  related_products?: any[];
 }
 
 import type { Metadata } from "next";
@@ -101,6 +102,7 @@ async function fetchProductData(slug: string) {
 
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
     const categoriesData = Array.isArray(data.categories) ? data.categories : [];
+    const relatedProductsData = Array.isArray(data.related_products) ? data.related_products : [];
     
     // Merge all data into product object
     const product: Product = {
@@ -109,6 +111,7 @@ async function fetchProductData(slug: string) {
           cities: Array.isArray(citiesData) ? citiesData : [],
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
+          related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
           // template: templateData,
           template: "tekstil",
       logoUrl: data.logoUrl,
