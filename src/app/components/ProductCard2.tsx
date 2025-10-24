@@ -3,16 +3,17 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { calculateDiscountPercentage, formatPrice } from '../utils/priceUtils';
+import '../product/[slug]/components/RelatedProducts.css';
 
 type ProductCard2Props = {
   image: string;
   title: string;
   rating?: number | null;
-  price: string;
-  oldPrice?: string | null;
+  priceCurrent: number;
+  priceOriginal: number;
   slug: string;
   productLink: string;
-  discount?: string | null;
   variants?: any[];
 };
 
@@ -59,49 +60,31 @@ export default function ProductCard2({
   image,
   title,
   rating,
-  price,
-  oldPrice,
+  priceCurrent,
+  priceOriginal,
   slug,
   productLink,
-  discount,
   variants = []
 }: ProductCard2Props) {
   const optimizedImageUrl = getOptimizedImageUrl(image);
+  const discountPercentage = calculateDiscountPercentage(priceOriginal, priceCurrent);
+  const hasDiscount = priceOriginal > priceCurrent;
   
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    // Daha temiz error logging - sadece gerekli bilgileri göster
     console.warn('Image failed to load:', {
       src: e.currentTarget.src,
       alt: e.currentTarget.alt,
       productTitle: title
     });
     
-    // Fallback image göster
     const target = e.target as HTMLImageElement;
     target.src = '/images/placeholder.svg';
   };
   
   return (
-    <div style={{
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      overflow: 'hidden',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-      cursor: 'pointer',
-      height: '100%'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-2px)';
-      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-    }}
-    >
+    <div className="product-card-2">
       {/* Product Image */}
-      <div style={{ position: 'relative', aspectRatio: '1', overflow: 'hidden' }}>
+      <div className="product-card-2-image">
         <Link href={productLink}>
           <Image
             src={optimizedImageUrl}
@@ -118,78 +101,51 @@ export default function ProductCard2({
       </div>
 
       {/* Product Info */}
-      <div style={{ padding: '15px' }}>
+      <div className="product-card-2-info">
+        
+
         {/* Product Name */}
-        <div style={{
-          fontSize: '14px',
-          color: '#000',
-          marginBottom: '8px',
-          lineHeight: '1.3',
-          height: '36px',
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical'
-        }}>
-          <Link href={productLink} style={{ color: 'inherit', textDecoration: 'none' }}>
+        <div className="product-card-2-title">
+          <Link href={productLink}>
             {title}
           </Link>
         </div>
 
         {/* Rating */}
         {typeof rating === 'number' && (
-          <div style={{ marginBottom: '8px' }}>
-            <span style={{fontSize: '12px', color: '#f39c12'}}>
+          <div className="product-card-2-rating d-none">
+            <span className="stars">
               <StarRating rating={rating} />
-              {` ${rating.toFixed(1)}`}
+            </span>
+            <span className="rating-text">
+              {rating.toFixed(1)}
             </span>
           </div>
         )}
 
         {/* Pricing */}
-        <div style={{ marginBottom: '8px' }}>
-          {discount && (
-            <div style={{
-              backgroundColor: '#000',
-              color: '#fff',
-              padding: '2px 6px',
-              fontSize: '10px',
-              fontWeight: 'bold',
-              borderRadius: '4px',
-              display: 'inline-block',
-              marginBottom: '4px'
-            }}>
-              {discount}
+        <div className="product-card-2-pricing">
+          {hasDiscount && (
+            <div className="product-card-2-discount">
+              {discountPercentage}
             </div>
           )}
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {oldPrice && (
-              <div style={{
-                textDecoration: 'line-through',
-                color: '#999',
-                fontSize: '12px'
-              }}>
-                {oldPrice}
+          <div className="product-card-2-price-container">
+            {hasDiscount && (
+              <div className="product-card-2-old-price">
+                {formatPrice(priceOriginal)}
               </div>
             )}
-            <div style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-              color: '#000'
-            }}>
-              {price}
+            <div className="product-card-2-current-price">
+              {formatPrice(priceCurrent)}
             </div>
           </div>
         </div>
 
         {/* Variants Info */}
         {variants.length > 0 && (
-          <div style={{
-            fontSize: '12px',
-            color: '#666',
-            textAlign: 'center'
-          }}>
+          <div className="product-card-2-variants">
             {`${variants.filter((v: any) => v.type === 'Beden').length} Beden ${variants.filter((v: any) => v.type === 'Renk').length} Renk`}
           </div>
         )}

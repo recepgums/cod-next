@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import ProductCard2 from '../../../components/ProductCard2';
+import './RelatedProducts.css';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -78,22 +79,12 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="related-products-section" style={{ 
-      marginTop: '40px',
-      maxWidth: '600px',
-      margin: '40px auto 0'
-    }}>
-      <h3 style={{
-        fontSize: '20px',
-        fontWeight: 'bold',
-        color: '#000',
-        marginBottom: '20px',
-        textAlign: 'center'
-      }}>
+    <div className="related-products-section">
+      <h3 className="related-products-title">
         Benzer Ürünler
       </h3>
 
-      <div style={{ position: 'relative' }}>
+      <div className="related-products-swiper">
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={15}
@@ -124,9 +115,6 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
               spaceBetween: 15,
             },
           }}
-          style={{
-            padding: '0 5px'
-          }}
         >
           {products.map((product) => (
             <SwiperSlide key={product.id}>
@@ -134,11 +122,10 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
                 image={product.images[0]?.large || product.productImg}
                 title={product.name}
                 rating={product.rating}
-                price={`₺ ${product.priceCurrent.toFixed(2)}`}
-                oldPrice={product.priceOriginal > product.priceCurrent ? `₺ ${product.priceOriginal.toFixed(2)}` : undefined}
+                priceCurrent={product.priceCurrent}
+                priceOriginal={product.priceOriginal}
                 slug={product.slug}
                 productLink={product.productLink}
-                discount={product.discount}
                 variants={product.variants}
               />
             </SwiperSlide>
@@ -146,57 +133,16 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
         </Swiper>
 
         {/* Custom Navigation Buttons */}
-        <div className="swiper-button-prev-custom" style={{
-          position: 'absolute',
-          left: '-15px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-          width: '40px',
-          height: '40px',
-          backgroundColor: '#000',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '18px',
-          fontWeight: 'bold',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-        }}>
+        <div className="swiper-button-prev-custom">
           ‹
         </div>
 
-        <div className="swiper-button-next-custom" style={{
-          position: 'absolute',
-          right: '-15px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-          width: '40px',
-          height: '40px',
-          backgroundColor: '#000',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '18px',
-          fontWeight: 'bold',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-        }}>
+        <div className="swiper-button-next-custom">
           ›
         </div>
 
         {/* Custom Pagination */}
-        <div className="swiper-pagination-custom" style={{
-          textAlign: 'center',
-          marginTop: '20px'
-        }}></div>
+        <div className="swiper-pagination-custom"></div>
       </div>
     </div>
   );
