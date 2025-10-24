@@ -55,6 +55,7 @@ interface Product {
   commentCount: number;
   comments: ProductComment[];
   cities: any[];
+  categories?: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string; // Added for 2-step template
   logoUrl?: string; // Dynamic logo URL
