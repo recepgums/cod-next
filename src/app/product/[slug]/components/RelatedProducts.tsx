@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import ProductCard2 from '../../../components/ProductCard2';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -131,118 +130,17 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
         >
           {products.map((product) => (
             <SwiperSlide key={product.id}>
-              <Link href={product.productLink} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{
-                  backgroundColor: '#fff',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                  cursor: 'pointer',
-                  height: '100%'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                }}
-                >
-                  {/* Product Image */}
-                  <div style={{ position: 'relative', aspectRatio: '1', overflow: 'hidden' }}>
-                    <Image
-                      src={product.images[0]?.large || product.productImg}
-                      alt={product.name}
-                      fill
-                      style={{
-                        objectFit: 'cover',
-                        transition: 'transform 0.3s ease'
-                      }}
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    />
-                  </div>
-
-                  {/* Product Info */}
-                  <div style={{ padding: '15px' }}>
-                    {/* Brand Name */}
-                    <div style={{
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      color: '#000',
-                      marginBottom: '4px',
-                      textTransform: 'uppercase'
-                    }}>
-                      LUFIVA
-                    </div>
-
-                    {/* Product Name */}
-                    <div style={{
-                      fontSize: '14px',
-                      color: '#000',
-                      marginBottom: '8px',
-                      lineHeight: '1.3',
-                      height: '36px',
-                      overflow: 'hidden',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical'
-                    }}>
-                      {product.name}
-                    </div>
-
-                    {/* Pricing */}
-                    <div style={{ marginBottom: '8px' }}>
-                      {product.discount && (
-                        <div style={{
-                          backgroundColor: '#000',
-                          color: '#fff',
-                          padding: '2px 6px',
-                          fontSize: '10px',
-                          fontWeight: 'bold',
-                          borderRadius: '4px',
-                          display: 'inline-block',
-                          marginBottom: '4px'
-                        }}>
-                          {product.discount}
-                        </div>
-                      )}
-                      
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {product.priceOriginal > product.priceCurrent && (
-                          <div style={{
-                            textDecoration: 'line-through',
-                            color: '#999',
-                            fontSize: '12px'
-                          }}>
-                            ₺ {product.priceOriginal.toFixed(2)}
-                          </div>
-                        )}
-                        <div style={{
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          color: '#000'
-                        }}>
-                          ₺ {product.priceCurrent.toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Variants Info */}
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#666',
-                      textAlign: 'center'
-                    }}>
-                      {product.variants.length > 0 ? 
-                        `${product.variants.filter((v: any) => v.type === 'Beden').length} Beden ${product.variants.filter((v: any) => v.type === 'Renk').length} Renk` :
-                        '4 Beden 4 Renk'
-                      }
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <ProductCard2
+                image={product.images[0]?.large || product.productImg}
+                title={product.name}
+                rating={product.rating}
+                price={`₺ ${product.priceCurrent.toFixed(2)}`}
+                oldPrice={product.priceOriginal > product.priceCurrent ? `₺ ${product.priceOriginal.toFixed(2)}` : undefined}
+                slug={product.slug}
+                productLink={product.productLink}
+                discount={product.discount}
+                variants={product.variants}
+              />
             </SwiperSlide>
           ))}
         </Swiper>
