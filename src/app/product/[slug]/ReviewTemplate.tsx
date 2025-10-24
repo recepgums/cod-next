@@ -8,6 +8,7 @@ import Footer from '../../components/Footer';
 import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
+import Header from '@/app/components/Header';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -54,6 +55,7 @@ interface Product {
   commentCount: number;
   comments: ProductComment[];
   cities: any[];
+  categories: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
   logoUrl?: string;
@@ -270,6 +272,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
   return (
     <div className="product-details-container">
+      <Header categories={product.categories} />
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">

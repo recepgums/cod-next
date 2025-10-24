@@ -5,6 +5,7 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import NovaSlider from './component/NovaSlider';
+import Header from '@/app/components/Header';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -34,6 +35,7 @@ interface Product {
     commentCount: number;
     comments: ProductComment[];
     cities: any[];
+    categories?: any[];
     pixels?: { platform: string; pixel_id: string }[];
     template?: string;
     logoUrl?: string;
@@ -180,7 +182,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
   return (
     <div className="nova-template" style={{ paddingBottom: '100px' }}>
-        {/* <Header /> */}
+        <Header categories={product.categories || []} />
                 <div className="nova-slider-wrapper">
                     <NovaSlider
                         images={product.images}

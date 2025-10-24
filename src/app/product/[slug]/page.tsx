@@ -55,6 +55,7 @@ interface Product {
   commentCount: number;
   comments: ProductComment[];
   cities: any[];
+  categories: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
   logoUrl?: string;
@@ -98,12 +99,14 @@ async function fetchProductData(slug: string) {
     console.log(`🔍 Fetching product data for slug:`,data);
 
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
+    const categoriesData = Array.isArray(data.categories) ? data.categories : [];
     
     // Merge all data into product object
     const product: Product = {
           ...productData,
           comments: Array.isArray(commentsData) ? commentsData : [],
           cities: Array.isArray(citiesData) ? citiesData : [],
+          categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           template: templateData,
           // template: "nova",

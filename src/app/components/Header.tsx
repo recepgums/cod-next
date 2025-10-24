@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { headers } from 'next/headers';
+
 
 interface Category {
   id: number;
@@ -16,57 +16,14 @@ interface Category {
 
 interface HeaderProps {
   logoSrc?: string;
+  categories?: Category[];
 }
 
-export default async function Header({ logoSrc }: HeaderProps) {
-  // Fetch categories on the server so they render with initial HTML
-  let categories: Category[] = [];
+export default function Header({ logoSrc, categories: categoriesProp }: HeaderProps) {
+  // Categories are now passed from parent
+  let categories: Category[] = Array.isArray(categoriesProp) ? categoriesProp : [];
   let resolvedLogoSrc: string | undefined = logoSrc;
-  
-  // Get the current domain from headers
-  const h = await headers();
-  const host = h.get('host') || 'trendygoods.com.tr';
-  const protocol = h.get('x-forwarded-proto') || 'https';
-  const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
-  
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Origin': baseUrl,
-        'Referer': `${baseUrl}/`,
-        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
-      },
-      // Force server-side caching; do not make client-side fetches
-      cache: 'force-cache',
-      next: { revalidate: 300 },
-    });
-    if (res.ok) {
-      categories = await res.json();
-    }
 
-    // If logo not provided, try to read from homepage payload once (server-side)
-    if (!resolvedLogoSrc) {
-      const homepageRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Origin': baseUrl,
-          'Referer': `${baseUrl}/`,
-          'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
-        },
-        cache: 'force-cache',
-        next: { revalidate: 300 },
-      });
-      if (homepageRes.ok) {
-        const hp = await homepageRes.json();
-        resolvedLogoSrc = hp?.logoUrl || undefined;
-      }
-    }
-  } catch (err) {
-    // fail silently; render without categories
-  }
 
   return (
 
