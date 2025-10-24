@@ -1566,7 +1566,9 @@ button.close {
     width: calc(100% - 16px);
     height: 16px;
     position: relative;
-    overflow: hidden
+    overflow: hidden;
+    padding: initial;
+    border: 0;
 }
 
 .social-proof-social-proof-wrapper .social-proof-item-social-proof-item {

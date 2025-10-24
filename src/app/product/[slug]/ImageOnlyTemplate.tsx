@@ -5,6 +5,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import StickyFooter from '../../components/StickyFooter';
 import OrderModal from '../../components/OrderModal';
+import Header from '../../components/Header';
 import dynamic from 'next/dynamic';
 
 // Lazy load components that are not immediately visible
@@ -48,6 +49,7 @@ interface Product {
   commentCount: number;
   comments: any[];
   cities: any[];
+  categories?: any[];
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
   logoUrl?: string;
@@ -267,6 +269,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
 
   return (
     <div className="image-only-template" style={{ maxWidth: '600px', margin: '0 auto' }}>
+      <Header categories={product.categories} />
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">
