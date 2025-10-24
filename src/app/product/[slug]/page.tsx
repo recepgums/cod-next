@@ -12,6 +12,7 @@ import ImageOnlyTemplate from './ImageOnlyTemplate';
 import TwoStepLandingTemplate from './TwoStepLandingTemplate';
 import NovaTemplate from './NovaTemplate';
 import ReviewTemplate from './ReviewTemplate';
+import TekstilTemplate from './TekstilTemplate';
 
 interface ProductOption {
   quantity: number;
@@ -108,8 +109,8 @@ async function fetchProductData(slug: string) {
           cities: Array.isArray(citiesData) ? citiesData : [],
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
-          template: templateData,
-          // template: "nova",
+          // template: templateData,
+          template: "tekstil",
       logoUrl: data.logoUrl,
     };
 
@@ -236,6 +237,8 @@ export default async function ProductDetailPage({
     return <ImageOnlyTemplate product={product} />;
       case '2step':
         return <TwoStepLandingTemplate product={product} />;
+      case 'tekstil':
+        return <TekstilTemplate product={product} />;
       default:
     return <NovaTemplate product={product} />;
   }

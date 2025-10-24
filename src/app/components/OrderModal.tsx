@@ -343,6 +343,7 @@ export default function OrderModal({
 
   // Auto-select first product option when modal opens
   useEffect(() => {
+    product.is_modal = true;
     if (showModal && product && product.options && product.options.length > 0 && !selectedOption) {
       onOptionSelect(product.options[0]);
     }
