@@ -69,7 +69,7 @@ async function fetchCategoryProducts(slug: string) {
 
     const payload = await response.json();
     console.log('✅ Category API success:', payload);
-
+    const logoUrl = payload?.merchant?.logo_url;
     // Response robust mapping
     const categoryName = payload?.name || payload?.category?.name || slug;
 
@@ -99,7 +99,7 @@ async function fetchCategoryProducts(slug: string) {
       };
     });
 
-    return { categoryName, products: mappedProducts };
+    return { categoryName, products: mappedProducts, logoUrl };
   } catch (error: any) {
     console.warn('⚠️ Category fetch failed:', error instanceof Error ? error.message : 'Unknown error');
     return { 
@@ -114,14 +114,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   console.log('📂 Category page rendering...', resolvedParams.slug);
   
   // Server-side'da veri çek
-  const { categoryName, products } = await fetchCategoryProducts(resolvedParams.slug);
+  const { categoryName, products, logoUrl } = await fetchCategoryProducts(resolvedParams.slug);
   const categories = await fetchCategories();
   
   console.log('📊 Final products for render:', products.length);
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header categories={categories} />
+      <Header categories={categories}  logoSrc={logoUrl}/>
       <main className="flex-fill mt-3 pb-4">
         <div className="container py-4">
           <h1 className="text-center mb-4 text-capitalize">{categoryName}</h1>
