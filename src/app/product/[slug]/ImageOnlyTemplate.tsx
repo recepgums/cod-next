@@ -269,7 +269,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
 
   return (
     <div className="image-only-template" style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <Header categories={product.categories} />
+      <Header logoSrc={product.logoUrl} categories={product.categories} />
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">

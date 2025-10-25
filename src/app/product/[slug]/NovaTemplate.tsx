@@ -182,7 +182,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
   return (
     <div className="nova-template" style={{ paddingBottom: '100px' }}>
-        <Header categories={product.categories || []} />
+        <Header logoSrc={product.logoUrl} categories={product.categories || []} />
                 <div className="nova-slider-wrapper">
                     <NovaSlider
                         images={product.images}

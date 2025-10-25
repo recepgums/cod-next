@@ -272,7 +272,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
   return (
     <div className="product-details-container">
-      <Header categories={product.categories || []} />
+      <Header logoSrc={product.logoUrl} categories={product.categories || []} />
       {/* Announcement Bar */}
       <div className="announcement-bar">
         <div className="scrolling-text">
