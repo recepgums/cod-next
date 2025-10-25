@@ -119,9 +119,9 @@ export default function ProductCard({
           </div>
         )}
         <div className="product-price mt-1">
-          <span style={{fontSize: '1.2em', color: '#ff6a00'}}>{price}</span>
+          <span style={{fontSize: '1em', color: '#ff6a00'}}>{Number(price).toFixed(2)}TL</span>
           {oldPrice && (
-            <span className="old-price" style={{fontSize: '0.9em', color: '#aaa', textDecoration: 'line-through', marginLeft: '8px'}}>{oldPrice}</span>
+            <span className="old-price" style={{fontSize: '0.9em', color: '#aaa', textDecoration: 'line-through', marginLeft: '8px'}}>{Number(oldPrice).toFixed(2)}TL</span>
           )}
         </div>
       </div>
