@@ -144,11 +144,11 @@ export default function ProductCard2({
         </div>
 
         {/* Variants Info */}
-        {variants.length > 0 && (
+        {/* {variants.length > 0 && (
           <div className="product-card-2-variants">
             {`${variants.filter((v: any) => v.type === 'Beden').length} Beden ${variants.filter((v: any) => v.type === 'Renk').length} Renk`}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

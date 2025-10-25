@@ -5,6 +5,41 @@ import ProductGrid from '../../components/ProductGrid';
 import Footer from '../../components/Footer';
 import ScrollToTop from '../../components/ScrollToTop';
 
+// Categories verisini çek
+async function fetchCategories() {
+  try {
+    const h = await headers();
+    const host = h.get('host') || 'trendygoods.com.tr';
+    const protocol = h.get('x-forwarded-proto') || 'https';
+    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Origin': baseUrl,
+        'Referer': baseUrl,
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
+      },
+      ...(process.env.NEXT_IS_LOCAL === 'local'
+        ? { cache: 'no-store' as const }
+        : { next: { revalidate: 300 as const } }),
+    });
+
+    if (!response.ok) {
+      console.error('Categories fetch failed:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log("asdasd",data)
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+}
+
 // Server Component - SSR ile veri çekme
 async function fetchCategoryProducts(slug: string) {
   try {
@@ -33,7 +68,7 @@ async function fetchCategoryProducts(slug: string) {
     }
 
     const payload = await response.json();
-    console.log('✅ Category API success:', JSON.stringify(payload, null, 2));
+    console.log('✅ Category API success:', payload);
 
     // Response robust mapping
     const categoryName = payload?.name || payload?.category?.name || slug;
@@ -45,7 +80,7 @@ async function fetchCategoryProducts(slug: string) {
         ? payload.data
         : [];
 
-    console.log('Kategori ürünleri:', JSON.stringify(rawProducts, null, 2));
+    console.log('Kategori ürünleri:', rawProducts);
 
     const mappedProducts = rawProducts.map((item: any, index: number) => {
       // Media array'inden ilk resmi al
@@ -80,12 +115,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   
   // Server-side'da veri çek
   const { categoryName, products } = await fetchCategoryProducts(resolvedParams.slug);
+  const categories = await fetchCategories();
   
   console.log('📊 Final products for render:', products.length);
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
+      <Header categories={categories} />
       <main className="flex-fill mt-3 pb-4">
         <div className="container py-4">
           <h1 className="text-center mb-4 text-capitalize">{categoryName}</h1>

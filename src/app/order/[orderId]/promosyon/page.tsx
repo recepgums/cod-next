@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import './promotion.css';
 
@@ -256,6 +257,7 @@ export default function PromosyonPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
+      <Header />
       <main className="flex-fill mt-3 pb-4">
         <div className="container">
           <div className="row">

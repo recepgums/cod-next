@@ -462,6 +462,7 @@ export default function OrderModal({
 
   // Prevent body scroll when modal is open
   useEffect(() => {
+    // product.is_modal = true
     if (showModal && product?.is_modal) {
       document.body.style.overflow = 'hidden';
     } else {

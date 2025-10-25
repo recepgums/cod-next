@@ -200,6 +200,7 @@ export default function ThankYouPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
+      <Header />
       <main className="flex-fill mt-3 pb-4">
         <div className="container mx-auto px-3 py-5" style={{maxWidth: '600px'}}>
           {/* Success Icon */}
