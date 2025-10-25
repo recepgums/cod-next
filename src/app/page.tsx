@@ -34,7 +34,7 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
-    console.log(directData);
+    console.log(directData.categories);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);
@@ -65,7 +65,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { products: mappedProducts, logoSrc: directData?.logoUrl || null };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories };
     
   } catch (error: any) {
     console.log(error);
@@ -104,13 +104,13 @@ export default async function Home() {
   console.log('🏠 Home page rendering...');
   
   // Server-side'da veri çek
-  const {products, logoSrc} = await fetchProducts();
+  const {products, logoSrc, categories} = await fetchProducts();
   
   console.log('📊 Final products for render:', products.length);
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header logoSrc={logoSrc || undefined} />
+      <Header logoSrc={logoSrc || undefined} categories={categories} />
       <main className="flex-fill mt-3 pb-4">
         {products.length > 0 ? (
           <ProductGrid products={products} />
