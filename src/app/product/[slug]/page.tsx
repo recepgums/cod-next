@@ -112,8 +112,7 @@ async function fetchProductData(slug: string) {
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
-          template: templateData,
-          // template: "tekstil",
+          template: process.env.NEXT_IS_LOCAL == "true" ? "tekstil" : templateData,
       logoUrl: data.logoUrl,
     };
 

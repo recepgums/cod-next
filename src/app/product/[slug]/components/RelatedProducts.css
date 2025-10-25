@@ -49,7 +49,7 @@
 
 .swiper-button-prev-custom:hover,
 .swiper-button-next-custom:hover {
-  background-color: #333;
+  background-color: #EFEFEF;
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -76,7 +76,6 @@
 /* Product Card Styles */
 .product-card-2 {
   background-color: #fff;
-  border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
@@ -180,7 +179,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   flex-wrap: wrap;
   flex-direction: column;
 }
@@ -231,9 +229,7 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .related-products-section {
-    padding: 0 10px;
-  }
+
   
   .swiper-button-prev-custom {
     left: -10px;
