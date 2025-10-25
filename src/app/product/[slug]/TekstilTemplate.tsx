@@ -296,10 +296,9 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
                                         border: selectedSize === variant.name ? '2px solid #000' : '1px solid #ddd',
                                         backgroundColor: selectedSize === variant.name ? '#000' : '#fff',
                                         color: selectedSize === variant.name ? '#fff' : '#000',
-                                        borderRadius: '4px',
                                         cursor: 'pointer',
                                         fontSize: '14px',
-                                        fontWeight: '500'
+                                        fontWeight: '700'
                                     }}
                                 >
                                     {variant.name}
@@ -326,17 +325,18 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
                                     key={index}
                                     onClick={() => handleColorChange(variant.name)}
                                     style={{
-                                        width: '40px',
-                                        height: '40px',
+                                        padding: '8px 16px',
                                         border: selectedColor === variant.name ? '2px solid #000' : '1px solid #ddd',
-                                        borderRadius: '4px',
+                                        backgroundColor: selectedColor === variant.name ? '#000' : '#fff',
+                                        color: selectedColor === variant.name ? '#fff' : '#000',
                                         cursor: 'pointer',
-                                        backgroundColor: variant.name.toLowerCase() === 'siyah' ? '#000' :
-                                            variant.name.toLowerCase() === 'gri' ? '#666' :
-                                                variant.name.toLowerCase() === 'kırmızı' ? '#cc0000' : '#333'
+                                        fontSize: '14px',
+                                        fontWeight: '700'
                                     }}
                                     title={variant.name}
-                                />
+                                >
+                                   {variant.name} 
+                             </button>
                             ))}
                         </div>
                     </div>
