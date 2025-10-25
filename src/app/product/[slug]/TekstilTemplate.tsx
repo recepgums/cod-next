@@ -236,13 +236,15 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
                         <div style={{
                             backgroundColor: '#000',
                             color: '#fff',
-                            padding: '4px 8px',
+                            padding: '10px 6px',
                             fontSize: '12px',
                             fontWeight: 'bold',
                             marginRight: '10px'
                         }}>
                             %50
                         </div>
+
+                        <div className='d-flex flex-column'>
                         <div style={{
                             textDecoration: 'line-through',
                             color: '#999',
@@ -252,12 +254,14 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
                             ₺ {product.oldPrice?.toFixed(2) || '1,900.00'}
                         </div>
                         <div style={{
-                            fontSize: '24px',
+                            fontSize: '18px',
                             fontWeight: 'bold',
                             color: '#000'
                         }}>
                             ₺ {selectedOption?.price?.toFixed(2) || product.price.toFixed(2)}
                         </div>
+                        </div>
+   
                     </div>
 
                     <div style={{
