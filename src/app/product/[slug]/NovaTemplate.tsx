@@ -245,10 +245,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     </div>
 
-                    <div className='campaign-text pt-3' style={{ color: "#3c59ff", fontSize: "10px" }}>
-                        <p className='text-center' style={{ fontSize: "16px" }}>DAHA FAZLA AL, DAHA AZ ÖDE!</p>
-                    </div>
-
                     <div className="count-containers">
                         {false && product.options.map((item, index) => (
                             <div className={`count-item-wrapper ${selectedCount === index ? "active" : ""}`}
