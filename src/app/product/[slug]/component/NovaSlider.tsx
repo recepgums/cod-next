@@ -87,19 +87,18 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                         focus: 'center',
                         gap: '1.1px',
                         fixedWidth: 124,    // 5'li kare
-                        fixedHeight: 124,
                         rewind: true,
                         breakpoints: {
-                            992: { fixedWidth: 110, fixedHeight: 110 },
-                            768: { fixedWidth: 96, fixedHeight: 96 },
-                            480: { fixedWidth: 76, fixedHeight: 76 },
+                            992: { fixedWidth: 110 },
+                            768: { fixedWidth: 96 },
+                            480: { fixedWidth: 76 },
                         },
                     }}
                     aria-label="Thumbnails"
                 >
                     {images.map((img: ProductImage, i: number) => (
                         <SplideSlide key={'thumb-' + img.medium + i}>
-                            <img src={img.thumbnail} alt={`Thumb ${i + 1}`} />
+                            <img src={img.thumbnail} alt={`Thumb ${i + 1}`} style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '4px' }} />
                         </SplideSlide>
                     ))}
                 </Splide>
