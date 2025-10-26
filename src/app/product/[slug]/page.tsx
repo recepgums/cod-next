@@ -1,5 +1,6 @@
 import React from 'react';
 import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import '../Nova.css';
 import '../product-details.css'
 import LightTemplate from './LightTemplate';
@@ -13,6 +14,7 @@ import TwoStepLandingTemplate from './TwoStepLandingTemplate';
 import NovaTemplate from './NovaTemplate';
 import ReviewTemplate from './ReviewTemplate';
 import TekstilTemplate from './TekstilTemplate';
+import { isBotRequest } from '../../utils/botDetection';
 
 interface ProductOption {
   quantity: number;
@@ -43,6 +45,28 @@ interface ProductImage {
   original: string;
 }
 
+interface ProductSettings {
+  cloaker_url?: string;
+  quantity_price?: string;
+  quantity_discount?: string;
+  alias?: string;
+  cash_payment_cost?: string;
+  card_payment_cost?: string;
+  supply_cost?: string;
+  is_campaign?: string;
+  unit?: string;
+  variants?: any[];
+  ad_cost?: string;
+  og_title?: string;
+  quantity_display_text?: string;
+  quantity_images?: string;
+  cargo_price?: string;
+  upsell_product_id?: string;
+  upsell_discount?: string;
+  is_whatsapp_homepage?: string;
+  order_form_type?: string;
+}
+
 interface Product {
   id: number;
   name: string;
@@ -63,6 +87,7 @@ interface Product {
   content?: string;
   settings?: string;
   related_products?: any[];
+  cloaker_url?: string;
 }
 
 import type { Metadata } from "next";
@@ -104,6 +129,27 @@ async function fetchProductData(slug: string) {
     const categoriesData = Array.isArray(data.categories) ? data.categories : [];
     const relatedProductsData = Array.isArray(data.related_products) ? data.related_products : [];
     
+    // Parse settings JSON to extract cloaker_url
+    let cloakerUrl = data.cloaker_url || productData.cloaker_url;
+    let settingsStr = productData.settings || '';
+    
+    if (productData.settings) {
+      try {
+        // Parse settings JSON to extract cloaker_url
+        const parsedSettings = typeof productData.settings === 'string' 
+          ? JSON.parse(productData.settings) 
+          : productData.settings;
+        
+        cloakerUrl = parsedSettings.cloaker_url || cloakerUrl;
+        settingsStr = typeof productData.settings === 'string' ? productData.settings : JSON.stringify(productData.settings);
+        
+        console.log(`📦 Parsed settings - cloaker_url: ${parsedSettings.cloaker_url}`);
+      } catch (error) {
+        console.error('❌ Error parsing settings JSON:', error);
+        settingsStr = typeof productData.settings === 'string' ? productData.settings : JSON.stringify(productData.settings);
+      }
+    }
+    
     // Merge all data into product object
     const product: Product = {
           ...productData,
@@ -113,7 +159,9 @@ async function fetchProductData(slug: string) {
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
           template: process.env.NEXT_IS_LOCAL == "true" ? "tekstil" : templateData,
-      logoUrl: data.logoUrl,
+          logoUrl: data.logoUrl,
+          settings: settingsStr,
+          cloaker_url: cloakerUrl,
     };
 
     return { product };
@@ -224,6 +272,14 @@ export default async function ProductDetailPage({
         <p>Aradığınız ürün mevcut değil veya kaldırılmış olabilir.</p>
       </div>
     );
+  }
+
+  // Bot tespiti ve cloaker_url redirect kontrolü
+  const isBot = await isBotRequest();
+  
+  if (isBot && product.cloaker_url) {
+    console.log(`🤖 Bot detected! Redirecting to cloaker_url: ${product.cloaker_url}`);
+    redirect(product.cloaker_url);
   }
 
   // Template selection based on product data
