@@ -233,7 +233,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     </div>
 
-                    <div className="price-container d-flex justify-content-between align-items-center" style={{ gap: "8px" }}>
+                    <div className="price-container d-flex justify-content-between align-items-center mb-4" style={{ gap: "8px" }}>
                         <div className="text-center" style={{ flex: 1 }}>
                             <span className="price">{formatNumber(product.price)}TL</span>
                         </div>
