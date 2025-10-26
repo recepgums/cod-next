@@ -189,7 +189,7 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
 
     return (
         <div className="tekstil-template">
-            <Header categories={product.categories} />
+            <Header categories={product.categories} logoSrc={product.logoUrl} />
 
             <NovaSlider productName={product.name} images={product.images} />
 
