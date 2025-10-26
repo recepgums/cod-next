@@ -64,14 +64,13 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                         pagination: false,
                         arrows: true,
                         gap: '1px',
-                        heightRatio: 1,   // 1:1 kare
                         cover: true,      // img'ler slide'ı kaplasın
                     }}
                     aria-label="Product gallery"
                 >
                     {images.map((img: ProductImage, i: number) => (
                         <SplideSlide key={img.medium + i}>
-                            <img src={img.medium} alt={`${productName} - ${i + 1}`} />
+                            <img src={img.medium} alt={`${productName} - ${i + 1}`} style={{ objectFit: 'cover', width: '100%', height: 'auto' }} />
                         </SplideSlide>
                     ))}
                 </Splide>
