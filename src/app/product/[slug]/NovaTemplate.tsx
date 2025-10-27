@@ -97,6 +97,36 @@ export default function NovaTemplate({ product }: { product: Product }) {
         return product.content ? { __html: product.content } : null;
     }, [product.content]);
 
+    // FAQ'yi settings'ten dinamik olarak parse et
+    const parsedFaq = useMemo(() => {
+        try {
+            const rawFaq = parsedSettings?.faq;
+            if (!rawFaq) return [] as { question: string; answer: string }[];
+
+            let faqValue = rawFaq as any;
+            if (typeof rawFaq === 'string') {
+                try {
+                    faqValue = JSON.parse(rawFaq);
+                } catch {
+                    return [] as { question: string; answer: string }[];
+                }
+            }
+
+            if (Array.isArray(faqValue)) {
+                return faqValue
+                    .map((item: any) => ({
+                        question: String(item?.question ?? '').trim(),
+                        answer: String(item?.answer ?? '').trim()
+                    }))
+                    .filter((i: any) => i.question && i.answer);
+            }
+            return [] as { question: string; answer: string }[];
+        } catch (e) {
+            console.error('❌ Error parsing faq:', e);
+            return [] as { question: string; answer: string }[];
+        }
+    }, [parsedSettings?.faq]);
+
     const formatNumber = (number: number) => {
         return number.toLocaleString('tr-TR', {
             minimumFractionDigits: 2,
@@ -392,109 +422,42 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     </div>
                     <div className="faq-container">
-
                         <div className="faq-list">
-                            <div className="faq-item">
-                                <div
-                                    className="faq-question"
-                                    onClick={() => setOpenFaq(openFaq === 1 ? null : 1)}
-                                >
-                                    <span>
-                                        Kurulumunu Nasıl Yaparım?
-                                    </span>
-                                    <svg
-                                        width="20"
-                                        height="20"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className={openFaq === 1 ? "open" : "closed"}
+                            {parsedFaq.map((item, index) => (
+                                <div key={index} className="faq-item">
+                                    <div
+                                        className="faq-question"
+                                        onClick={() => setOpenFaq(openFaq === index ? null : index)}
                                     >
-                                        <path
-                                            d="M6 9L12 15L18 9"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                </div>
-                                <div
-                                    className={`faq-answer ${openFaq === 1 ? "open" : "closed"}`}
-                                >
-                                    <p>
-                                        Rexing Link adaptörünü kurmak çok kolaydır. Sadece adaptörü arabanızın USB portuna takın ve telefonunuzla Bluetooth bağlantısını kurun. Otomatik olarak CarPlay özelliği aktif hale gelecektir.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="faq-item">
-                                <div
-                                    className="faq-question"
-                                    onClick={() => setOpenFaq(openFaq === 2 ? null : 2)}
-                                >
-                                    <span>
-                                        Tüm Arabalarla Uyumlu Mu?
-                                    </span>
-                                    <svg
-                                        width="20"
-                                        height="20"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className={openFaq === 2 ? "open" : "closed"}
+                                        <span>
+                                            {item.question}
+                                        </span>
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className={openFaq === index ? "open" : "closed"}
+                                        >
+                                            <path
+                                                d="M6 9L12 15L18 9"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div
+                                        className={`faq-answer ${openFaq === index ? "open" : "closed"}`}
                                     >
-                                        <path
-                                            d="M6 9L12 15L18 9"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
+                                        <p>
+                                            {item.answer}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div
-                                    className={`faq-answer ${openFaq === 2 ? "open" : "closed"}`}
-                                >
-                                    <p>
-                                        Evet! Rexing Link adaptörü USB portu olan tüm araçlarla uyumludur. 2010 yılından sonra üretilen çoğu araçta sorunsuz çalışır. Android ve iOS telefonlarla da tam uyumludur.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="faq-item">
-                                <div
-                                    className="faq-question"
-                                    onClick={() => setOpenFaq(openFaq === 3 ? null : 3)}
-                                >
-                                    <span>
-                                        Video İzleme Özelliği Var Mı?
-                                    </span>
-                                    <svg
-                                        width="20"
-                                        height="20"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className={openFaq === 3 ? "open" : "closed"}
-                                    >
-                                        <path
-                                            d="M6 9L12 15L18 9"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                </div>
-                                <div
-                                    className={`faq-answer ${openFaq === 3 ? "open" : "closed"}`}
-                                >
-                                    <p>
-                                        Evet! Netflix, YouTube ve diğer video platformlarında içerik izleyebilirsiniz. Yüksek çözünürlüklü video desteği ile araç içinde premium video deneyimi yaşayın.
-                                    </p>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
