@@ -34,7 +34,7 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
-    console.log(directData.categories);
+    // console.log(directData);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);

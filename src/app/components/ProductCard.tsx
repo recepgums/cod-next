@@ -88,7 +88,7 @@ export default function ProductCard({
               width={320}
               height={200}
               className="lozad default-img w-100"
-              style={{height: '200px', objectFit: 'cover'}}
+              style={{height: '200px', objectFit: 'contain'}}
               // Performance optimizasyonları
               priority={false} // İlk 4 ürün için true yapılabilir
               quality={80} // next.config.ts'deki ayarla uyumlu
