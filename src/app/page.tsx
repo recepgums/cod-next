@@ -34,7 +34,7 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
-    // console.log(directData);
+    console.log(directData);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);
@@ -56,6 +56,7 @@ async function fetchProducts() {
       return {
         name: item.name || `Ürün ${index + 1}`,
         imgSrc: item.productImg || '/images/placeholder.svg',
+        thumbnail_image_url: item.thumbnail_image_url,
         productLink: `/product/${item.slug}`,
         slug: item.slug || `product-${index + 1}`,
         rating: item.rating ? parseFloat(item.rating) : null, // String'den number'a çevir
