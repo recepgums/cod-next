@@ -220,7 +220,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     />
                 </div>
 
-                <div style={{ padding: "2px 5px 0" }}>
+                <div style={{ padding: "2px 18px 0" }}>
                     <div>
                         <div className="d-flex" style={{ lineHeight: "1.0" }}>
                             <div>
