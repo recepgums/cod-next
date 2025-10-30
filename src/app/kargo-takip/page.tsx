@@ -101,7 +101,7 @@ export default function CargoTrackingPage() {
                            type="tel"
                            className="form-control form-control-lg"
                            id="trackingNumber"
-                           placeholder="Örn: 05350339711"
+                           placeholder="Örn: 05428285336"
                            value={trackingNumber}
                            onChange={(e) => setTrackingNumber(e.target.value)}
                            style={{ borderRadius: '10px 0 0 10px', border: '2px solid #e9ecef' }}
