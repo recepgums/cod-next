@@ -66,7 +66,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: "type1" };
     
   } catch (error: any) {
     console.log(error);
@@ -105,7 +105,7 @@ export default async function Home() {
   console.log('🏠 Home page rendering...');
   
   // Server-side'da veri çek
-  const {products, logoSrc, categories} = await fetchProducts();
+  const {products, logoSrc, categories, productType} = await fetchProducts();
   
   console.log('📊 Final products for render:', products.length);
 
@@ -114,7 +114,7 @@ export default async function Home() {
       <Header logoSrc={logoSrc || undefined} categories={categories} />
       <main className="flex-fill mt-3 pb-4">
         {products.length > 0 ? (
-          <ProductGrid products={products} />
+          <ProductGrid products={products} productType={productType} />
         ) : (
           <div className="container text-center py-5">
             <h3>Ürünler yükleniyor...</h3>
