@@ -61,3 +61,6 @@ body {
 .ml-3 {
   margin-left: 16px !important;
 }
+.row.product-grid-3 a{
+  text-decoration: none;
+}
