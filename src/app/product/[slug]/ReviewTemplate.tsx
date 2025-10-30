@@ -238,7 +238,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
         setTimeout(() => clearInterval(checkMasonry), 10000);
       }
-    }, 2000);
+    }, 2500);
 
     return () => {
       clearTimeout(timer);
