@@ -88,6 +88,7 @@ interface Product {
   settings?: string;
   related_products?: any[];
   cloaker_url?: string;
+  merchant?: any;
 }
 
 import type { Metadata } from "next";
@@ -123,6 +124,7 @@ async function fetchProductData(slug: string) {
     const commentsData = data.comments;
     const pixelsData = data.pixels;
     const templateData = data.template;
+    const merchantData = data.merchant;
     console.log(`🔍 Fetching product data for slug:`,data);
 
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
@@ -162,6 +164,7 @@ async function fetchProductData(slug: string) {
           logoUrl: data.logoUrl,
           settings: settingsStr,
           cloaker_url: cloakerUrl,
+          merchant: merchantData,
     };
 
     return { product };
@@ -196,7 +199,7 @@ export async function generateMetadata({
         title: 'Ürün Bulunamadı - TrendyGoods',
         description: 'Aradığınız ürün bulunamadı.',
         url: `${origin}/product/${slug}`,
-        siteName: 'TrendyGoods',
+        siteName: product.merchant?.name || 'TrendyGoods',
         locale: 'tr_TR',
         type: 'website',
       },
@@ -207,7 +210,7 @@ export async function generateMetadata({
   const description = 
    Array.isArray(product.features) && product.features.length > 0
       ? product.features.slice(0, 3).map(f => f).join(', ')
-      : `${product.name} ürününü TrendyGoods'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
+      : `${product.name} ürününü ${product.merchant?.name || 'TrendyGoods'}'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
 
   // Ürün resmi URL'si
   const imageUrl = product.images && product.images.length > 0 
@@ -232,7 +235,7 @@ export async function generateMetadata({
        title: product.name,
        description: description,
        url: productUrl,
-       siteName: 'TrendyGoods',
+       siteName: product.merchant?.name || 'TrendyGoods',
        locale: 'tr_TR',
        type: 'website',
        images: [
