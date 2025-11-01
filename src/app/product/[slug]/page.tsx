@@ -210,7 +210,7 @@ export async function generateMetadata({
   const description = 
    Array.isArray(product.features) && product.features.length > 0
       ? product.features.slice(0, 3).map(f => f).join(', ')
-      : `${product.name} ürününü ${product.merchant?.name || 'TrendyGoods'}'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
+      : `${product.name} ürününü ${product.merchant?.name || 'Sayfa'}'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
 
   // Ürün resmi URL'si
   const imageUrl = product.images && product.images.length > 0 
