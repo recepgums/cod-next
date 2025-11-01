@@ -126,7 +126,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         <div className="container py-4">
           <h1 className="text-center mb-4 text-capitalize">{categoryName}</h1>
           {products.length > 0 ? (
-            <ProductGrid products={products} />
+            <ProductGrid products={products} productType="default" />
           ) : (
             <div className="container text-center py-5">
               <h3>Bu kategoride ürün bulunamadı</h3>
