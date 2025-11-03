@@ -66,7 +66,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: "tekstil" };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: directData?.merchant?.product_card_design == "modern" ? "tekstil": "type1" };
     
   } catch (error: any) {
     console.log(error);
