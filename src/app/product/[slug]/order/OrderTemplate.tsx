@@ -366,16 +366,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   
   const firePurchaseEvent = (orderData: any) => {
     try {
-      // Check if already sent within 24 hours
+      // Check if already sent within 24 hours for the same order
       const purchaseEvent = localStorage.getItem('purchase_event');
       if (purchaseEvent) {
         const purchaseEventData = JSON.parse(purchaseEvent);
         const lastSent = new Date(purchaseEventData.timestamp);
         const now = new Date();
         const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        
-        if (lastSent > oneDayAgo) {
-          console.log('🔒 Purchase event already sent within 24 hours, skipping...');
+        if (
+          lastSent > oneDayAgo &&
+          purchaseEventData.order_id &&
+          orderData?.order_id &&
+          purchaseEventData.order_id === orderData.order_id
+        ) {
+          console.log('🔒 Purchase event already sent within 24 hours for this order, skipping...');
           return;
         }
       }
@@ -421,10 +425,12 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         console.log('💰 TikTok PlaceAnOrder event sent!');
       }
 
-      // Cache with timestamp
+      // Cache with timestamp and order context
       localStorage.setItem('purchase_event', JSON.stringify({
         timestamp: new Date().toISOString(),
-        event: 'Purchase'
+        event: 'Purchase',
+        order_id: orderData?.order_id || null,
+        product_id: pid
       }));
       console.log('📦 Purchase event cached for 24 hours');
     } catch (error) {
