@@ -12,7 +12,7 @@ async function fetchProducts() {
   try {
     // Get the current domain from headers
     const h = await headers();
-    const host = h.get('host') || 'trendygoods.com.tr';
+    const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl =  process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
@@ -66,7 +66,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: "type1" };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: "tekstil" };
     
   } catch (error: any) {
     console.log(error);

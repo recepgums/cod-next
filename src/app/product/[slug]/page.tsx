@@ -98,7 +98,7 @@ async function fetchProductData(slug: string) {
   try {
     // Get the current domain from headers
     const h = await headers();
-    const host = h.get('host') || 'trendygoods.com.tr';
+    const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
@@ -185,7 +185,7 @@ export async function generateMetadata({
 
   // Get the current domain from headers
   const h = await headers();
-  const host = h.get('host') || 'trendygoods.com.tr';
+  const host = h.get('host');
   const protocol = h.get('x-forwarded-proto') || 'https';
   const origin = `${protocol}://${host}`;
   
@@ -193,13 +193,13 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: 'Ürün Bulunamadı - TrendyGoods',
+      title: 'Ürün Bulunamadı',
       description: 'Aradığınız ürün bulunamadı.',
       openGraph: {
-        title: 'Ürün Bulunamadı - TrendyGoods',
+        title: 'Ürün Bulunamadı',
         description: 'Aradığınız ürün bulunamadı.',
         url: `${origin}/product/${slug}`,
-        siteName: product.merchant?.name || 'TrendyGoods',
+        siteName: product.merchant?.name ,
         locale: 'tr_TR',
         type: 'website',
       },
@@ -225,7 +225,6 @@ export async function generateMetadata({
     description: description,
     keywords: [
       product.name,
-      'TrendyGoods',
       'online alışveriş',
       'kapıda ödeme',
       'ücretsiz kargo',
@@ -235,7 +234,7 @@ export async function generateMetadata({
        title: product.name,
        description: description,
        url: productUrl,
-       siteName: product.merchant?.name || 'TrendyGoods',
+       siteName: product.merchant?.name,
        locale: 'tr_TR',
        type: 'website',
        images: [
