@@ -133,7 +133,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
           
           if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
-            console.log('OrderTemplate: AddToCart event already sent within 24 hours, skipping...');
+            console.log('🔒 OrderTemplate:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
             return;
           }
         }
@@ -146,6 +146,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         // Send immediately if pixels are ready
         const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
         const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
+        console.log('🧪 OrderTemplate:AddToCart:precheck', { hasFbq, hasTtq, pid, pname, value, qty });
 
         if (hasFbq) {
           (window as any).fbq('track', 'AddToCart', {
@@ -156,7 +157,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             num_items: qty
           });
-          console.log('✅ Facebook AddToCart event sent');
+          console.log('✅ FB AddToCart sent', { pid, value });
         }
 
         if (hasTtq) {
@@ -168,7 +169,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             quantity: qty
           });
-          console.log('✅ TikTok AddToCart event sent');
+          console.log('✅ TT AddToCart sent', { pid, value });
         }
 
         if (hasFbq || hasTtq) {
@@ -178,12 +179,12 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             event: 'AddToCart',
             product_id: pid
           }));
-          console.log('📦 AddToCart event cached for 24 hours');
+          console.log('📦 AddToCart cached', { pid });
         } else {
-          console.log('⏳ Pixels not ready yet, will retry...');
+          console.warn('⏳ Pixels not ready yet, will retry...', { pid });
         }
       } catch (error) {
-        console.error('❌ Error sending AddToCart event:', error);
+        console.error('❌ AddToCart error', error);
       }
     };
 
@@ -354,11 +355,12 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         setOrderSuccess(true);
         
         // Try to send purchase event immediately, then retry after a delay
+        console.log('🧪 OrderTemplate:submit:success', { order_id: response.data.order_id, totalPrice, product_id: apiProduct?.id });
         firePurchaseEvent(response.data);
         setTimeout(() => firePurchaseEvent(response.data), 1000);
       }
     } catch (error: any) {
-      console.error('Order submission failed:', error);
+      console.error('❌ Order submission failed:', error);
       alert(error.response?.data?.message || 'Sipariş gönderilirken bir hata oluştu.');
     }
   };
@@ -379,7 +381,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           orderData?.order_id &&
           purchaseEventData.order_id === orderData.order_id
         ) {
-          console.log('🔒 Purchase event already sent within 24 hours for this order, skipping...');
+          console.log('🔒 Purchase skipped (cached for order)', { order_id: orderData.order_id, lastSent: purchaseEventData.timestamp });
           return;
         }
       }
@@ -399,7 +401,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           num_items: qty
         });
-        console.log('💰 Facebook Purchase event sent!');
+        console.log('💰 FB Purchase sent', { pid, value, qty });
       }
 
       // TikTok Pixel Purchase Event
@@ -412,7 +414,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           quantity: qty
         });
-        console.log('💰 TikTok CompletePayment event sent!');
+        console.log('💰 TT CompletePayment sent', { pid, value, qty });
 
         (window as any).ttq.track('PlaceAnOrder', {
           value,
@@ -422,7 +424,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           quantity: qty
         });
-        console.log('💰 TikTok PlaceAnOrder event sent!');
+        console.log('💰 TT PlaceAnOrder sent', { pid, value, qty });
       }
 
       // Cache with timestamp and order context
@@ -432,9 +434,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         order_id: orderData?.order_id || null,
         product_id: pid
       }));
-      console.log('📦 Purchase event cached for 24 hours');
+      console.log('📦 Purchase cached', { order_id: orderData?.order_id, pid });
     } catch (error) {
-      console.error('❌ Error sending purchase events:', error);
+      console.error('❌ Purchase error', error);
     }
   };
 

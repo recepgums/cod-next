@@ -70,7 +70,7 @@ export default function ThankYouPage() {
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
           
           if (lastSent > oneDayAgo && data.order_id === order.id) {
-            console.log('Purchase event already sent within 24 hours for this order, skipping...');
+            console.log('🔒 TY:Purchase skipped (cached for order)', { order_id: order.id, lastSent: data.timestamp });
             return; // 1 gün içinde aynı sipariş için gönderilmiş
           }
         }
@@ -90,6 +90,7 @@ export default function ThankYouPage() {
             content_name: pname,
             num_items: qty
           });
+          console.log('💰 TY:FB Purchase sent', { pid, value, qty });
         }
 
         // TikTok Pixel Purchase Event
@@ -102,6 +103,7 @@ export default function ThankYouPage() {
             content_name: pname,
             quantity: qty
           });
+          console.log('💰 TY:TT CompletePayment sent', { pid, value, qty });
 
           (window as any).ttq.track('PlaceAnOrder', {
             value,
@@ -111,6 +113,7 @@ export default function ThankYouPage() {
             content_name: pname,
             quantity: qty
           });
+          console.log('💰 TY:TT PlaceAnOrder sent', { pid, value, qty });
         }
 
         // Cache'e kaydet (timestamp ile)
@@ -120,13 +123,13 @@ export default function ThankYouPage() {
           order_id: order.id
         }));
 
-        console.log('Purchase events sent:', {
+        console.log('TY:Purchase events sent:', {
           facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
           tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
           order_id: order.id
         });
       } catch (error) {
-        console.error('Error sending Purchase events:', error);
+        console.error('❌ TY:Purchase error', error);
       }
     };
 
@@ -136,6 +139,7 @@ export default function ThankYouPage() {
         sendPurchaseEvent();
       } else {
         // 2 saniye sonra tekrar kontrol et
+        console.warn('⏳ TY:Pixels not ready, retrying in 2s');
         setTimeout(checkPixelsLoaded, 2000);
       }
     };

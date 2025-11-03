@@ -54,6 +54,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
 
   const redirectToOrder = () => {
     // Order sayfasında AddToCart eventi gönderilecek, burada sadece yönlendir
+    try { console.log('🧪 TwoStep:redirectToOrder', { productId: product?.id, host: typeof window !== 'undefined' ? window.location.host : 'ssr' }); } catch {}
     sendAddToCartEvent();
     window.location.href = orderHref;
   };
@@ -69,7 +70,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         
         if (lastSent > oneDayAgo && data.product_id === product?.id?.toString()) {
-          console.log('TwoStep AddToCart event already sent within 24 hours, skipping...');
+          console.log('🔒 TwoStep:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
           return; // 1 gün içinde aynı ürün için gönderilmiş
         }
       }
@@ -79,7 +80,10 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
       const pname = product?.name || '';
 
       // Facebook Pixel AddToCart Event
-      if (typeof window !== 'undefined' && (window as any).fbq) {
+      const hasFbq = typeof window !== 'undefined' && (window as any).fbq;
+      const hasTtq = typeof window !== 'undefined' && (window as any).ttq;
+      console.log('🧪 TwoStep:AddToCart:precheck', { hasFbq, hasTtq, pid, pname, value });
+      if (hasFbq) {
         (window as any).fbq('track', 'AddToCart', {
           value,
           currency: 'TRY',
@@ -88,10 +92,11 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           content_name: pname,
           num_items: 1
         });
+        console.log('✅ TwoStep:FB AddToCart sent', { pid, value });
       }
 
       // TikTok Pixel AddToCart Event
-      if (typeof window !== 'undefined' && (window as any).ttq) {
+      if (hasTtq) {
         (window as any).ttq.track('AddToCart', {
           value,
           currency: 'TRY',
@@ -100,6 +105,7 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           content_name: pname,
           quantity: 1
         });
+        console.log('✅ TwoStep:TT AddToCart sent', { pid, value });
       }
 
       // Cache'e kaydet (timestamp ile)
