@@ -132,8 +132,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           const lastSent = new Date(data.timestamp);
           const now = new Date();
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
           
-          if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
+          if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString() && data.host === host) {
             console.log('🔒 OrderTemplate:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
             return;
           }
@@ -181,7 +182,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           localStorage.setItem('add_to_cart_event', JSON.stringify({
             timestamp: new Date().toISOString(),
             event: 'AddToCart',
-            product_id: pid
+            product_id: pid,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           }));
           console.log('📦 AddToCart cached', { pid });
         } else {
@@ -379,11 +381,13 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         const lastSent = new Date(purchaseEventData.timestamp);
         const now = new Date();
         const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
         if (
           lastSent > oneDayAgo &&
           purchaseEventData.order_id &&
           orderData?.order_id &&
-          purchaseEventData.order_id === orderData.order_id
+          purchaseEventData.order_id === orderData.order_id &&
+          purchaseEventData.host === host
         ) {
           console.log('🔒 Purchase skipped (cached for order)', { order_id: orderData.order_id, lastSent: purchaseEventData.timestamp });
           return;
@@ -440,7 +444,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           timestamp: new Date().toISOString(),
           event: 'Purchase',
           order_id: orderData?.order_id || null,
-          product_id: pid
+          product_id: pid,
+          host: typeof window !== 'undefined' ? window.location.host : 'ssr'
         }));
         console.log('📦 Purchase cached', { order_id: orderData?.order_id, pid });
       } else {

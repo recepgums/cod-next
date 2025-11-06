@@ -68,8 +68,9 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         const lastSent = new Date(data.timestamp);
         const now = new Date();
         const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
         
-        if (lastSent > oneDayAgo && data.product_id === product?.id?.toString()) {
+        if (lastSent > oneDayAgo && data.product_id === product?.id?.toString() && data.host === host) {
           console.log('🔒 TwoStep:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
           return; // 1 gün içinde aynı ürün için gönderilmiş
         }
@@ -113,7 +114,8 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         localStorage.setItem('twostep_add_to_cart_event', JSON.stringify({
           timestamp: new Date().toISOString(),
           event: 'AddToCart',
-          product_id: pid
+          product_id: pid,
+          host: typeof window !== 'undefined' ? window.location.host : 'ssr'
         }));
       } else {
         console.warn('⏳ TwoStep:AddToCart not cached (no pixel available)');

@@ -68,8 +68,9 @@ export default function ThankYouPage() {
           const lastSent = new Date(data.timestamp);
           const now = new Date();
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
           
-          if (lastSent > oneDayAgo && data.order_id === order.id) {
+          if (lastSent > oneDayAgo && data.order_id === order.id && data.host === host) {
             console.log('🔒 TY:Purchase skipped (cached for order)', { order_id: order.id, lastSent: data.timestamp });
             return; // 1 gün içinde aynı sipariş için gönderilmiş
           }
@@ -124,7 +125,8 @@ export default function ThankYouPage() {
           localStorage.setItem('purchase_event', JSON.stringify({
             timestamp: new Date().toISOString(),
             event: 'Purchase',
-            order_id: order.id
+            order_id: order.id,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           }));
         } else {
           console.warn('⏳ TY:Purchase not cached (no pixel available)');
