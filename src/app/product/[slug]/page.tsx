@@ -309,7 +309,9 @@ export default async function ProductDetailPage({
     <>
       <RefUrlScript />
       {/* Floating notification every 40s */}
-      <ProductNotificationClient />
+      {product.template !== '2step' &&(
+        <ProductNotificationClient />
+      )}
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
     </>
