@@ -94,6 +94,18 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           num_items: 1
         });
         console.log('✅ TwoStep:FB AddToCart sent', { pid, value });
+        try {
+          (window as any).fbq('trackCustom', 'KartaEklendi', {
+            value,
+            currency: 'TRY',
+            content_ids: [pid],
+            content_type: 'product',
+            content_name: pname,
+            num_items: 1,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+          });
+          console.log('📤 TwoStep:FB trackCustom KartaEklendi sent');
+        } catch {}
       }
 
       // TikTok Pixel AddToCart Event

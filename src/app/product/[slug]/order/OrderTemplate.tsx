@@ -161,6 +161,18 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             num_items: qty
           });
           console.log('✅ FB AddToCart sent', { pid, value });
+          try {
+            (window as any).fbq('trackCustom', 'KartaEklendi', {
+              value,
+              currency: 'TRY',
+              content_ids: [pid],
+              content_type: 'product',
+              content_name: pname,
+              num_items: qty,
+              host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+            });
+            console.log('📤 FB trackCustom KartaEklendi sent');
+          } catch {}
           sent = true;
         }
 
@@ -411,6 +423,19 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           num_items: qty
         });
         console.log('💰 FB Purchase sent', { pid, value, qty });
+        try {
+          (window as any).fbq('trackCustom', 'SatinAlindi', {
+            value,
+            currency: 'TRY',
+            content_ids: [pid],
+            content_type: 'product',
+            content_name: pname,
+            num_items: qty,
+            order_id: orderData?.order_id || null,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+          });
+          console.log('📤 FB trackCustom SatinAlindi sent');
+        } catch {}
         purchaseSent = true;
       }
 
