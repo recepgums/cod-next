@@ -100,7 +100,7 @@ async function fetchProductData(slug: string) {
     const h = await headers();
     const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
-    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
+    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://vitalizma.com.tr" : `${protocol}://${host}`;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
       headers: {
@@ -160,7 +160,7 @@ async function fetchProductData(slug: string) {
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
-          template: process.env.NEXT_IS_LOCAL == "true" ? "tekstil" : templateData,
+          template: process.env.NEXT_IS_LOCAL == "false" ? "tekstil" : templateData,
           logoUrl: data.logoUrl,
           settings: settingsStr,
           cloaker_url: cloakerUrl,
