@@ -93,22 +93,6 @@ export default function ThankYouPage() {
             num_items: qty
           });
           console.log('💰 TY:FB Purchase sent', { pid, value, qty });
-          try {
-            const isProdHost = typeof window !== 'undefined' && !/^localhost|^127\.0\.0\.1/.test(window.location.hostname);
-            if (isProdHost) {
-              (window as any).fbq('trackCustom', 'SatinAlindi', {
-                value,
-                currency: 'TRY',
-                content_ids: [pid],
-                content_type: 'product',
-                content_name: pname,
-                num_items: qty,
-                host: window.location.host,
-                order_id: order.id
-              });
-              console.log('📤 TY:FB trackCustom SatinAlindi sent');
-            }
-          } catch {}
           sent = true;
         }
 
