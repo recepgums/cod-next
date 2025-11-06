@@ -94,6 +94,21 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           num_items: 1
         });
         console.log('✅ TwoStep:FB AddToCart sent', { pid, value });
+        try {
+          const isProdHost = typeof window !== 'undefined' && !/^localhost|^127\.0\.0\.1/.test(window.location.hostname);
+          if (isProdHost) {
+            (window as any).fbq('trackCustom', 'ATC', {
+              value,
+              currency: 'TRY',
+              content_ids: [pid],
+              content_type: 'product',
+              content_name: pname,
+              num_items: 1,
+              host: window.location.host
+            });
+            console.log('📤 TwoStep:FB trackCustom ATC mirrored');
+          }
+        } catch {}
       }
 
       // TikTok Pixel AddToCart Event

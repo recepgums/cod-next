@@ -161,6 +161,21 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             num_items: qty
           });
           console.log('✅ FB AddToCart sent', { pid, value });
+          try {
+            const isProdHost = typeof window !== 'undefined' && !/^localhost|^127\.0\.0\.1/.test(window.location.hostname);
+            if (isProdHost) {
+              (window as any).fbq('trackCustom', 'ATC', {
+                value,
+                currency: 'TRY',
+                content_ids: [pid],
+                content_type: 'product',
+                content_name: pname,
+                num_items: qty,
+                host: window.location.host
+              });
+              console.log('📤 FB trackCustom ATC mirrored');
+            }
+          } catch {}
           sent = true;
         }
 
@@ -411,6 +426,22 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           num_items: qty
         });
         console.log('💰 FB Purchase sent', { pid, value, qty });
+        try {
+          const isProdHost = typeof window !== 'undefined' && !/^localhost|^127\.0\.0\.1/.test(window.location.hostname);
+          if (isProdHost) {
+            (window as any).fbq('trackCustom', 'PURCHASE', {
+              value,
+              currency: 'TRY',
+              content_ids: [pid],
+              content_type: 'product',
+              content_name: pname,
+              num_items: qty,
+              host: window.location.host,
+              order_id: orderData?.order_id || null
+            });
+            console.log('📤 FB trackCustom PURCHASE mirrored');
+          }
+        } catch {}
         purchaseSent = true;
       }
 

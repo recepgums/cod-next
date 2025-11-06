@@ -182,6 +182,19 @@ export default function ScriptLoader() {
         const host = window.location.host;
         console.log('🩺 Pixel diag start', { host });
 
+        // Consent quick readout (best-effort)
+        try {
+          const dl = (window as any).dataLayer || [];
+          const consentEvents = dl.filter((e: any) => Array.isArray(e) ? e[0] === 'consent' : e?.event === 'consent');
+          console.log('🧾 Consent snapshot', { entries: consentEvents });
+        } catch {}
+
+        // CSP quick check (best-effort from meta tag)
+        try {
+          const metaCsp = document.querySelector('meta[http-equiv="Content-Security-Policy"]') as HTMLMetaElement | null;
+          if (metaCsp) console.log('🔐 Meta CSP found');
+        } catch {}
+
         // Script load errors (CSP/network)
         const onScriptError = (e: any) => {
           try {
