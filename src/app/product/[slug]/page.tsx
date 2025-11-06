@@ -15,6 +15,7 @@ import NovaTemplate from './NovaTemplate';
 import ReviewTemplate from './ReviewTemplate';
 import TekstilTemplate from './TekstilTemplate';
 import { isBotRequest } from '../../utils/botDetection';
+import ProductNotificationClient from './ProductNotificationClient';
 
 interface ProductOption {
   quantity: number;
@@ -307,6 +308,8 @@ export default async function ProductDetailPage({
   return (
     <>
       <RefUrlScript />
+      {/* Floating notification every 40s */}
+      <ProductNotificationClient />
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
     </>

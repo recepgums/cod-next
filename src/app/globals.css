@@ -64,3 +64,79 @@ body {
 .row.product-grid-3 a{
   text-decoration: none;
 }
+
+/* Notification Card */
+.notification-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: clamp(12px, 3vw, 20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  width: min(92vw, 560px);
+  border-left: 6px solid #00b894;
+}
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 3vw, 16px);
+  margin-bottom: clamp(10px, 3vw, 16px);
+}
+.notification-card .icon-circle {
+  width: clamp(44px, 12vw, 64px);
+  height: clamp(44px, 12vw, 64px);
+  background: linear-gradient(135deg, #4a1a1a 0%, #2d0a0a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.notification-card .shopping-icon {
+  font-size: clamp(20px, 7vw, 28px);
+}
+.notification-card .header-content { flex: 1; }
+.notification-card .header-title {
+  color: #00b894;
+  font-size: clamp(14px, 5vw, 18px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.notification-card .order-message {
+  color: #2d3436;
+  font-size: clamp(13px, 4.5vw, 16px);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+.notification-card .time-badge {
+  display: inline-block;
+  color: #636e72;
+  font-size: clamp(11px, 3.5vw, 14px);
+  font-weight: 500;
+  padding: clamp(4px, 1.2vw, 6px) clamp(8px, 2vw, 12px);
+  border-radius: 20px;
+}
+.notification-card .customer-highlight {
+  color: #00b894;
+  font-weight: 700;
+}
+
+/* Floating/transition container for notification */
+.notification-float {
+  position: fixed;
+  top: -200px; /* hidden above */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  transition: top 0.5s ease-in-out;
+  padding: 8px;
+}
+.notification-float.show {
+  top: max(10px, env(safe-area-inset-top)); /* slide down into view */
+}
+
+/* Extra fine-tuning for very small screens */
+@media (max-width: 360px) {
+  .notification-card { border-radius: 14px; }
+  .notification-card .order-message { line-height: 1.35; }
+}
