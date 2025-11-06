@@ -123,7 +123,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   // Fire AddToCart when order page is visited (once per day)
   useEffect(() => {
     const sendAddToCartEvent = () => {
-      debugger;
+      console.log("🧪 OrderTemplate:sendAddToCartEvent:attempt");
       try {
         // Check if already sent within 24 hours
         const cached = localStorage.getItem('add_to_cart_event');
