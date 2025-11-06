@@ -14,7 +14,7 @@ async function fetchProducts() {
     const h = await headers();
     const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
-    const baseUrl =  process.env.NEXT_IS_LOCAL == "true" ?  "https://vitalizma.com.tr" : `${protocol}://${host}`;
+    const baseUrl =  process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
       // next: { revalidate: 60 },
@@ -34,7 +34,7 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
-    console.log(directData);
+    console.log("direcdata: ",directData);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);
@@ -66,7 +66,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: directData?.merchant?.product_card_design == "modern" ? "tekstil": "type1" };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: directData?.merchant?.settings?.product_card_design == "modern" ? "tekstil": "type1" };
     
   } catch (error: any) {
     console.log(error);
