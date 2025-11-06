@@ -173,6 +173,39 @@ export default function ScriptLoader() {
     addGlobalScripts();
     addGlobalStyles();
     try { console.log('🚀 ScriptLoader mounted', { host: typeof window !== 'undefined' ? window.location.host : 'ssr' }); } catch {}
+
+    // Lightweight production diagnostics (safe for live)
+    try {
+      const w = (window as any);
+      if (!w.__pixelDiag) {
+        w.__pixelDiag = true;
+        const host = window.location.host;
+        console.log('🩺 Pixel diag start', { host });
+
+        // Script load errors (CSP/network)
+        const onScriptError = (e: any) => {
+          try {
+            const target = e?.target as HTMLScriptElement | undefined;
+            if (target && target.tagName === 'SCRIPT') {
+              const src = target.src;
+              console.error('❌ Script load error', { src, host });
+            }
+          } catch {}
+        };
+        window.addEventListener('error', onScriptError, true);
+
+        // fbq/ttq availability poll (5 attempts)
+        let polls = 0;
+        const poll = () => {
+          polls++;
+          const fbq = (window as any).fbq;
+          const ttq = (window as any).ttq;
+          console.log('🔎 Pixel poll', { polls, hasFbq: !!fbq, hasTtq: !!ttq, host });
+          if (polls < 5 && (!fbq || !ttq)) setTimeout(poll, 1000);
+        };
+        setTimeout(poll, 400);
+      }
+    } catch {}
   }, []);
 
   return null; // This component doesn't render anything

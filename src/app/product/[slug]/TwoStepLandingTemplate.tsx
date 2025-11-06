@@ -108,12 +108,16 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         console.log('✅ TwoStep:TT AddToCart sent', { pid, value });
       }
 
-      // Cache'e kaydet (timestamp ile)
-      localStorage.setItem('twostep_add_to_cart_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'AddToCart',
-        product_id: pid
-      }));
+      // Cache'e kaydet — yalnızca en az bir gönderim denendiyse
+      if (hasFbq || hasTtq) {
+        localStorage.setItem('twostep_add_to_cart_event', JSON.stringify({
+          timestamp: new Date().toISOString(),
+          event: 'AddToCart',
+          product_id: pid
+        }));
+      } else {
+        console.warn('⏳ TwoStep:AddToCart not cached (no pixel available)');
+      }
 
       console.log('TwoStep AddToCart events sent:', {
         facebook: { event: 'AddToCart', value, content_ids: [pid], content_name: pname },

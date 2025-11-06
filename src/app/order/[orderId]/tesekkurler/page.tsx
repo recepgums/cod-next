@@ -80,6 +80,7 @@ export default function ThankYouPage() {
         const pname = order.products || '';
         const qty = parseInt(order.quantity?.toString() || '1') || 1;
 
+        let sent = false;
         // Facebook Pixel Purchase Event
         if (typeof window !== 'undefined' && (window as any).fbq) {
           (window as any).fbq('track', 'Purchase', {
@@ -91,6 +92,7 @@ export default function ThankYouPage() {
             num_items: qty
           });
           console.log('💰 TY:FB Purchase sent', { pid, value, qty });
+          sent = true;
         }
 
         // TikTok Pixel Purchase Event
@@ -114,14 +116,19 @@ export default function ThankYouPage() {
             quantity: qty
           });
           console.log('💰 TY:TT PlaceAnOrder sent', { pid, value, qty });
+          sent = true;
         }
 
-        // Cache'e kaydet (timestamp ile)
-        localStorage.setItem('purchase_event', JSON.stringify({
-          timestamp: new Date().toISOString(),
-          event: 'Purchase',
-          order_id: order.id
-        }));
+        // Cache'e kaydet (timestamp ile) — yalnızca en az bir gönderim denendiyse
+        if (sent) {
+          localStorage.setItem('purchase_event', JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'Purchase',
+            order_id: order.id
+          }));
+        } else {
+          console.warn('⏳ TY:Purchase not cached (no pixel available)');
+        }
 
         console.log('TY:Purchase events sent:', {
           facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },

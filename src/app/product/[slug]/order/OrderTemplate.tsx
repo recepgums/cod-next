@@ -149,6 +149,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
         console.log('🧪 OrderTemplate:AddToCart:precheck', { hasFbq, hasTtq, pid, pname, value, qty });
 
+        let sent = false;
         if (hasFbq) {
           (window as any).fbq('track', 'AddToCart', {
             value,
@@ -159,6 +160,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             num_items: qty
           });
           console.log('✅ FB AddToCart sent', { pid, value });
+          sent = true;
         }
 
         if (hasTtq) {
@@ -171,9 +173,10 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             quantity: qty
           });
           console.log('✅ TT AddToCart sent', { pid, value });
+          sent = true;
         }
 
-        if (hasFbq || hasTtq) {
+        if (sent) {
           // Cache the event with timestamp
           localStorage.setItem('add_to_cart_event', JSON.stringify({
             timestamp: new Date().toISOString(),
@@ -392,6 +395,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       const pname = apiProduct?.name || '';
       const qty = Number(selectedQuantity) || 1;
 
+      let purchaseSent = false;
       // Facebook Pixel Purchase Event
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'Purchase', {
@@ -403,6 +407,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           num_items: qty
         });
         console.log('💰 FB Purchase sent', { pid, value, qty });
+        purchaseSent = true;
       }
 
       // TikTok Pixel Purchase Event
@@ -426,16 +431,21 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           quantity: qty
         });
         console.log('💰 TT PlaceAnOrder sent', { pid, value, qty });
+        purchaseSent = true;
       }
 
-      // Cache with timestamp and order context
-      localStorage.setItem('purchase_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'Purchase',
-        order_id: orderData?.order_id || null,
-        product_id: pid
-      }));
-      console.log('📦 Purchase cached', { order_id: orderData?.order_id, pid });
+      // Cache only if at least one send attempted
+      if (purchaseSent) {
+        localStorage.setItem('purchase_event', JSON.stringify({
+          timestamp: new Date().toISOString(),
+          event: 'Purchase',
+          order_id: orderData?.order_id || null,
+          product_id: pid
+        }));
+        console.log('📦 Purchase cached', { order_id: orderData?.order_id, pid });
+      } else {
+        console.warn('⏳ Purchase not cached (no pixel available)');
+      }
     } catch (error) {
       console.error('❌ Purchase error', error);
     }
