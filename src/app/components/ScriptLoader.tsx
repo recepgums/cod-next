@@ -173,6 +173,85 @@ export default function ScriptLoader() {
     addGlobalScripts();
     addGlobalStyles();
     try { console.log('🚀 ScriptLoader mounted', { host: typeof window !== 'undefined' ? window.location.host : 'ssr' }); } catch {}
+
+    // Enable live diagnostics (prod debugging)
+    try {
+      const w = (window as any);
+      if (!w.__pixelDiagnosticsEnabled) {
+        w.__pixelDiagnosticsEnabled = true;
+        console.log('🩺 Pixel diagnostics enabled', { host: window.location.host });
+
+        // Script load errors (CSP/network)
+        window.addEventListener('error', (e: any) => {
+          try {
+            const target = e?.target as HTMLElement | undefined;
+            if (target && (target as HTMLScriptElement).tagName === 'SCRIPT') {
+              const src = (target as HTMLScriptElement).src;
+              console.error('❌ Script load error', { src });
+            }
+          } catch {}
+        }, true);
+
+        // Unhandled rejections
+        window.addEventListener('unhandledrejection', (e) => {
+          try { console.error('❌ Unhandled rejection', e.reason); } catch {}
+        });
+
+        // Poll fbq/ttq availability
+        let polls = 0;
+        const poll = () => {
+          polls++;
+          const fbq = (window as any).fbq;
+          const ttq = (window as any).ttq;
+          console.log('🔎 Pixel poll', {
+            polls,
+            hasFbq: !!fbq,
+            hasTtq: !!ttq,
+            fbqVersion: fbq?.version,
+            ttqReady: typeof ttq?.ready === 'function'
+          });
+          if (polls < 12 && (!fbq || !ttq)) setTimeout(poll, 1000);
+        };
+        setTimeout(poll, 500);
+
+        // Hook fbq to log calls
+        const hookFbq = () => {
+          const fbq = w.fbq;
+          if (!fbq || fbq.__hooked) return;
+          const original = fbq.bind(w);
+          const hooked = function(...args: any[]) {
+            try { console.log('📤 fbq call', { args }); } catch {}
+            return original(...args as any);
+          } as any;
+          Object.assign(hooked, original);
+          hooked.__hooked = true;
+          w.fbq = hooked;
+          console.log('🪝 fbq hooked');
+        };
+
+        // Hook ttq to log track calls
+        const hookTtq = () => {
+          const ttq = w.ttq;
+          if (!ttq || ttq.__hooked) return;
+          const origTrack = ttq.track?.bind(ttq);
+          if (origTrack) {
+            ttq.track = function(...args: any[]) {
+              try { console.log('📤 ttq.track call', { args }); } catch {}
+              return origTrack(...args as any);
+            };
+            ttq.__hooked = true;
+            console.log('🪝 ttq hooked');
+          }
+        };
+
+        // Attempt hooks now and later
+        hookFbq(); hookTtq();
+        setTimeout(() => { hookFbq(); hookTtq(); }, 1000);
+        setTimeout(() => { hookFbq(); hookTtq(); }, 3000);
+      }
+    } catch (e) {
+      try { console.error('❌ Diagnostics setup error', e); } catch {}
+    }
   }, []);
 
   return null; // This component doesn't render anything
