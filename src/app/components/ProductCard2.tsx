@@ -131,7 +131,7 @@ export default function ProductCard2({
             </div>
           )}
           
-          <div className="product-card-2-price-container">
+          <div className={"product-card-2-price-container" + (hasDiscount ? '' : 'w-100')}>
             {hasDiscount && (
               <div className="product-card-2-old-price">
                 {formatPrice(priceOriginal)}
