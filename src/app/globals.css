@@ -73,6 +73,11 @@ body {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
   width: min(69vw, 420px);
   border-left: 6px solid #00b894;
+  animation-name: slideIn;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
 }
 .notification-header {
   display: flex;
@@ -102,7 +107,6 @@ body {
   letter-spacing: 1px;
 }
 .notification-card .order-message {
-  color: #2d3436;
   font-size: clamp(13px, 4.5vw, 16px);
   font-weight: 600;
   line-height: 1.4;
@@ -140,4 +144,37 @@ body {
 @media (max-width: 360px) {
   .notification-card { border-radius: 10px; }
   .notification-card .order-message { line-height: 1.35; }
+}
+
+@keyframes slideIn {
+10% {
+  background: rgb(245, 245, 220);
+}
+20% {
+  background: rgb(240, 240, 215);
+}
+30% {
+  background: rgb(235, 235, 205);
+}
+40% {
+  background: rgb(230, 230, 200); 
+}
+50% {
+  background: rgb(225, 225, 195);
+}
+60% {
+  background: rgb(215, 215, 190);
+}
+70% {
+  background: rgb(210, 210, 185);
+}
+80% {
+  background: rgb(205, 205, 180);
+}
+90% {
+  background: rgb(200, 200, 175);
+}
+100% {
+  background: rgb(195, 195, 170);
+}
 }
