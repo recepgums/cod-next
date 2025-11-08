@@ -132,12 +132,12 @@ body {
   left: -100%;
   transform: translateX(-50%);
   z-index: 1000;
-  transition: top 0.5s ease-in-out;
+  transition: all 1.5s ease-in-out;
   padding: 8px;
 }
 .notification-float.show {
-  bottom: 10px;
-  left: 50%;
+  bottom: 80px;
+  left: 40%;
 }
 
 /* Extra fine-tuning for very small screens */
