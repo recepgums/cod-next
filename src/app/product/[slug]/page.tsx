@@ -90,6 +90,7 @@ interface Product {
   related_products?: any[];
   cloaker_url?: string;
   merchant?: any;
+  isSendNotification?: boolean;
 }
 
 import type { Metadata } from "next";
@@ -126,6 +127,8 @@ async function fetchProductData(slug: string) {
     const pixelsData = data.pixels;
     const templateData = data.template;
     const merchantData = data.merchant;
+    const isSendNotification = JSON.parse(data?.product.settings).send_notification == "1";
+    console.log(isSendNotification);
     console.log(`🔍 Fetching product data for slug:`,data);
 
     const citiesData = Array.isArray(data.cities) ? data.cities : [];
@@ -166,6 +169,7 @@ async function fetchProductData(slug: string) {
           settings: settingsStr,
           cloaker_url: cloakerUrl,
           merchant: merchantData,
+          isSendNotification: isSendNotification
     };
 
     return { product };
@@ -266,7 +270,6 @@ export default async function ProductDetailPage({
 }) {
   const { slug } = await params;
   const { product } = await fetchProductData(slug);
-  
 
   if (!product) {
     return (
@@ -309,9 +312,9 @@ export default async function ProductDetailPage({
     <>
       <RefUrlScript />
       {/* Floating notification every 40s */}
-      {product.template != '2step' &&(
+      {(product.template != '2step' && product.isSendNotification) ?(
         <ProductNotificationClient />
-      )}
+      ): null}
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
     </>
