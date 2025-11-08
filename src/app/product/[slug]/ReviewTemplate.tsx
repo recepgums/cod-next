@@ -9,6 +9,7 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import Header from '@/app/components/Header';
+import { faR } from '@fortawesome/free-solid-svg-icons';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -100,8 +101,68 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     setSelectedOption(option);
   };
 
+  const randomCounts = ()=>{
+    const dateString = localStorage.getItem('date');
+    const dateObject = JSON.parse(dateString);
+    if(dateString){
+      const date = new Date(JSON.parse(dateString).date);
+      const now = new Date();
+      const fark = now.getHours() - date.getHours();
+      if(fark > 0){
+        const percentage = randomNumber(1, 100);
+        let son24saat:number,sevilen:number,sepetinde:number;
+        if (percentage < 70 ) {
+          son24saat = Number(dateObject.son24saat.split(",")[1].split("B")[0]) + 1;
+          sevilen = Number(dateObject.sevilen.split(",")[1].split("B")[0]) + 1;
+          sepetinde = Number(dateObject.sepetinde.split(",")[1].split("B")[0]) + 1;
+        }
+        else{
+          son24saat = Number(dateObject.son24saat.split(",")[1].split("B")[0]) - 1;
+          sevilen = Number(dateObject.sevilen.split(",")[1].split("B")[0]) - 1;
+          sepetinde = Number(dateObject.sepetinde.split(",")[1].split("B")[0]) - 1;
+        }
+        localStorage.setItem('date', JSON.stringify({
+          date: new Date().toISOString(),
+          son24saat: "1," + son24saat + "B",
+          sevilen: "9," + sevilen + "B",
+          sepetinde: "1," + sepetinde + "B"
+        }));
+        return {
+          son24saat: dateObject.son24saat,
+          sevilen: dateObject.sevilen,
+          sepetinde: dateObject.sepetinde
+        }
+      }
+
+      else{
+        return {
+          son24saat: dateObject.son24saat,
+          sevilen: dateObject.sevilen,
+          sepetinde: dateObject.sepetinde
+        }
+      }
+    }
+
+    else{
+      localStorage.setItem('date', JSON.stringify({date: new Date().toISOString(),son24saat: "1,7B",sevilen: "9,6B",sepetinde: "1,4B"}));
+      return {
+        son24saat: "1,7B",
+        sevilen: "9,6B",
+        sepetinde: "1,4B"
+      }
+    }
+
+  }
+
+  const randomNumber = (min: number, max: number)=>{
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   // Timer state - optimized to prevent unnecessary re-renders
   useEffect(() => {
+
+   randomCounts();
+
     let countdownEndTime = Math.floor(Date.now() / 1000) + 2 * 60 * 60 + Math.floor(Math.random() * 59 + 1) * 60;
     let intervalId: NodeJS.Timeout;
 
@@ -356,14 +417,14 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                 <img alt="basket-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
                   data-testid="image" />
-                <p className="social-proof-content"><span className="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                <p className="social-proof-content"><span className="social-proof-item-focused-text">{randomCounts().sepetinde} kişinin</span> sepetinde,
                   tükenmeden al!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
                 <img alt="favorite-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/orange-heart_1f9e1.png" width="16"
                   data-testid="image" />
-                <p className="social-proof-content">Sevilen ürün! <span className="social-proof-item-focused-text">9,6B</span> kişi
+                <p className="social-proof-content">Sevilen ürün! <span className="social-proof-item-focused-text">{randomCounts().sevilen}</span> kişi
                   favoriledi!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
@@ -371,13 +432,13 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/view3.png" width="16"
                   data-testid="image" />
                 <p className="social-proof-content">Son 24 saatte <span
-                  className="social-proof-item-focused-text">1,7B kişi</span> görüntüledi!</p>
+                  className="social-proof-item-focused-text">{randomCounts().son24saat} kişi</span> görüntüledi!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
                 <img alt="basket-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
                   data-testid="image" />
-                <p className="social-proof-content"><span className="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                <p className="social-proof-content"><span className="social-proof-item-focused-text">{randomCounts().sepetinde} kişinin</span> sepetinde,
                   tükenmeden al!</p>
               </div>
             </div>
