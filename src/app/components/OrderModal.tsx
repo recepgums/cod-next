@@ -463,7 +463,7 @@ export default function OrderModal({
   // Prevent body scroll when modal is open
   useEffect(() => {
     if(process.env.NEXT_IS_LOCAL = "true"){
-      product.is_modal = true
+      // product.is_modal = true
     }
 
     if (showModal && product?.is_modal) {
@@ -498,7 +498,7 @@ export default function OrderModal({
 
       {/* Order Modal */}
       <div
-        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : ''}
+        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : 'ssss'}
         id={product?.is_modal ? `fullScreenModal` : ''}
         tabIndex={product?.is_modal ? -1 : undefined}
         role="dialog"

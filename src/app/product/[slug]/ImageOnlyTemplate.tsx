@@ -53,7 +53,7 @@ interface Product {
   pixels?: { platform: string; pixel_id: string }[];
   template?: string;
   logoUrl?: string;
-  is_modal?: boolean;
+  settings?:string;
 }
 
 const announcementTexts = [
@@ -181,6 +181,32 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
 
   // Memoize blur data URL to avoid recreating on every render
   const blurDataURL = useMemo(() => `data:image/svg+xml;base64,${toBase64(shimmer(800, 600))}`, []);
+  const parsedSettings = useMemo(() => {
+    if (!product?.settings) return {};
+    try {
+      const raw = typeof product.settings === 'string' ? JSON.parse(product.settings) : product.settings;
+      return raw && typeof raw === 'object' ? raw : {};
+    } catch (error) {
+      console.error('❌ Failed to parse product.settings:', error);
+      return {};
+    }
+  }, [product?.settings]);
+
+  let is_modal = useMemo(() => {
+    const modalType = typeof (parsedSettings as any)?.modaltype === 'string'
+      ? String((parsedSettings as any).modaltype).toLowerCase()
+      : undefined;
+
+    if (modalType === 'bottom') {
+      return false;
+    }
+
+    if (typeof product.is_modal === 'boolean') {
+      return product.is_modal;
+    }
+
+    return true;
+  }, [parsedSettings]);
 
   // Preload first image for better LCP (client-side only)
   useEffect(() => {
@@ -316,7 +342,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         })}
 
         {/* Direct Order Button */}
-        {product.is_modal && (
+        {isModalEnabled && (
           <div className="product-extra-link2 my-3" style={{ width: '100%' }}>
             <button
               type="button"
@@ -331,7 +357,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       </div>
 
       {/* Sticky Footer */}
-      {product.is_modal && (
+      {isModalEnabled && (
       <StickyFooter
         product={product}
           selectedOption={selectedOption}
