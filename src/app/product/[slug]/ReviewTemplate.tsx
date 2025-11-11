@@ -89,6 +89,31 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     return product.content ? { __html: product.content } : null;
   }, [product.content]);
 
+  // Settings'i parse et
+  const parsedSettings = useMemo(() => {
+    try {
+      const settings = product?.settings;
+      const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
+      console.log('⚙️ Parsed settings:', parsed);
+      return parsed || {};
+    } catch (error) {
+      console.error('❌ Error parsing settings:', error);
+      return {};
+    }
+  }, [product?.settings]);
+
+  let is_modal = useMemo(() => {
+    const modalType = typeof (parsedSettings as any)?.modaltype === 'string'
+      ? String((parsedSettings as any).modaltype).toLowerCase()
+      : undefined;
+
+    if (modalType === 'bottom') {
+      return false;
+    }
+    return true;
+  }, [parsedSettings]);
+
+
   const openModal = () => {
     setShowModal(true);
   };
@@ -101,22 +126,22 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     setSelectedOption(option);
   };
 
-  const randomCounts = ()=>{
+  const randomCounts = () => {
     const dateString = localStorage.getItem('date');
     const dateObject = JSON.parse(dateString);
-    if(dateString){
+    if (dateString) {
       const date = new Date(JSON.parse(dateString).date);
       const now = new Date();
       const fark = now.getHours() - date.getHours();
-      if(fark > 0){
+      if (fark > 0) {
         const percentage = randomNumber(1, 100);
-        let son24saat:number,sevilen:number,sepetinde:number;
-        if (percentage < 70 ) {
+        let son24saat: number, sevilen: number, sepetinde: number;
+        if (percentage < 70) {
           son24saat = Number(dateObject.son24saat.split(",")[1].split("B")[0]) + 1;
           sevilen = Number(dateObject.sevilen.split(",")[1].split("B")[0]) + 1;
           sepetinde = Number(dateObject.sepetinde.split(",")[1].split("B")[0]) + 1;
         }
-        else{
+        else {
           son24saat = Number(dateObject.son24saat.split(",")[1].split("B")[0]) - 1;
           sevilen = Number(dateObject.sevilen.split(",")[1].split("B")[0]) - 1;
           sepetinde = Number(dateObject.sepetinde.split(",")[1].split("B")[0]) - 1;
@@ -134,7 +159,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         }
       }
 
-      else{
+      else {
         return {
           son24saat: dateObject.son24saat,
           sevilen: dateObject.sevilen,
@@ -143,8 +168,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       }
     }
 
-    else{
-      localStorage.setItem('date', JSON.stringify({date: new Date().toISOString(),son24saat: "1,7B",sevilen: "9,6B",sepetinde: "1,4B"}));
+    else {
+      localStorage.setItem('date', JSON.stringify({ date: new Date().toISOString(), son24saat: "1,7B", sevilen: "9,6B", sepetinde: "1,4B" }));
       return {
         son24saat: "1,7B",
         sevilen: "9,6B",
@@ -154,14 +179,14 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
   }
 
-   const randomNumber = (min: number, max: number)=>{
+  const randomNumber = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   // Timer state - optimized to prevent unnecessary re-renders
   useEffect(() => {
 
-   randomCounts();
+    randomCounts();
 
     let countdownEndTime = Math.floor(Date.now() / 1000) + 2 * 60 * 60 + Math.floor(Math.random() * 59 + 1) * 60;
     let intervalId: NodeJS.Timeout;
@@ -524,23 +549,28 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         <p>tarihleri arasında siparişin kapında!</p>
       </div>
 
-      {/* Order Buttons */}
-      <div className="product-extra-link2 mb-3 w-100">
-        <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
-          Kapıda Ödemeli Sipariş Ver
-        </button>
-      </div>
+      {is_modal == false ? (
+        <div className="product-extra-link2 mb-3 w-100">
+          <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
+            Kapıda Ödemeli Sipariş Ver
+          </button>
+        </div>
+      ) : null
+
+      }
 
       {/* Product Content */}
       {memoizedProductContent && (
         <div className="container product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
       )}
 
-      <div className="product-extra-link2 mb-3 w-100">
-        <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
-          Şimdi Sipariş Ver
-        </button>
-      </div>
+      {is_modal == false ? (
+        <div className="product-extra-link2 mb-3 w-100">
+          <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
+            Şimdi Sipariş Ver
+          </button>
+        </div>) : null
+      }
 
       <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
 
@@ -551,7 +581,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         product={{
           ...product,
           cities: product.cities,
-          is_modal: true,
+          is_modal: false,
         }}
         selectedOption={selectedOption}
         onOptionSelect={selectOption}
@@ -571,17 +601,19 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         </a>
       </div>
 
-      {/* Sticky Footer */}
-      <div className="sticky-footer">
-        <div className="product-info">
-          <div className="product-name">{product.name}</div>
-          <div className="product-price">
-            <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
-            <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{product.price.toFixed(2)}TL</span>
+      {!is_modal && (
+        <div className="sticky-footer">
+          <div className="product-info">
+            <div className="product-name">{product.name}</div>
+            <div className="product-price">
+              <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
+              <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{product.price.toFixed(2)}TL</span>
+            </div>
           </div>
+          <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
         </div>
-        <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
-      </div>
+      )}
+
 
       {/* Footer */}
       <Footer />

@@ -100,8 +100,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
         if (modalType === 'bottom') {
             return false;
         }
-
-
         return true;
     }, [parsedSettings]);
 
