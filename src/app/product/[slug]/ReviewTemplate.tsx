@@ -549,7 +549,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         <p>tarihleri arasında siparişin kapında!</p>
       </div>
 
-      {is_modal == false ? (
+      {is_modal ? (
         <div className="product-extra-link2 mb-3 w-100">
           <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
             Kapıda Ödemeli Sipariş Ver
@@ -564,7 +564,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         <div className="container product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
       )}
 
-      {is_modal == false ? (
+      {is_modal  ? (
         <div className="product-extra-link2 mb-3 w-100">
           <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
             Şimdi Sipariş Ver
