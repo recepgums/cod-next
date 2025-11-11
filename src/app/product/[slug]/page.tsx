@@ -164,7 +164,7 @@ async function fetchProductData(slug: string) {
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
-          template: process.env.NEXT_IS_LOCAL == "true" ? "image" : templateData,
+          template: process.env.NEXT_IS_LOCAL == "true" ? "nova" : templateData,
           logoUrl: data.logoUrl,
           settings: settingsStr,
           cloaker_url: cloakerUrl,

@@ -201,9 +201,6 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       return false;
     }
 
-    if (typeof product.is_modal === 'boolean') {
-      return product.is_modal;
-    }
 
     return true;
   }, [parsedSettings]);
@@ -342,7 +339,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         })}
 
         {/* Direct Order Button */}
-        {isModalEnabled && (
+        {is_modal && (
           <div className="product-extra-link2 my-3" style={{ width: '100%' }}>
             <button
               type="button"
@@ -357,7 +354,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       </div>
 
       {/* Sticky Footer */}
-      {isModalEnabled && (
+      {is_modal && (
       <StickyFooter
         product={product}
           selectedOption={selectedOption}
@@ -372,7 +369,7 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         product={{
           ...product,
           cities: product.cities,
-          is_modal: false,
+          is_modal: is_modal,
         }}
         selectedOption={selectedOption}
         onOptionSelect={selectOption}
