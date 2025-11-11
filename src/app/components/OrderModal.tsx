@@ -508,7 +508,7 @@ export default function OrderModal({
         onClick={product?.is_modal ? onClose : undefined}
       >
         <div className={product?.is_modal ? `modal-dialog modal-dialog-centered modal-fullscreen` : ''} role="document" onClick={(e) => e.stopPropagation()}>
-          <div className={"modal-content p-0" + product?.is_modal ? "": "bottom" } onClick={(e) => e.stopPropagation()}>
+          <div className={`modal-content p-0 ${product?.is_modal ?'':'bottom'}`} onClick={(e) => e.stopPropagation()}>
             <div className={product?.is_modal ? `modal-header py-2` : 'd-none'}>
               <h5 className="modal-title text-center" id="fullScreenModalLabel">Sipariş Formu</h5>
               <button type="button" className="close" onClick={onClose} aria-label="Close">
