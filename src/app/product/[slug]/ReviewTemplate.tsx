@@ -106,7 +106,6 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     const modal_type = typeof (parsedSettings as any)?.modal_type === 'string'
       ? String((parsedSettings as any).modal_type).toLowerCase()
       : undefined;
-      debugger;
     if (modal_type === 'bottom') {
       return false;
     }

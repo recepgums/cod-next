@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { randomNumber } from "../utils/priceUtils";
 
 interface FloatingNotificationProps {
   intervalMs?: number; // default 40000
@@ -35,11 +36,22 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
       hideRef.current = setTimeout(() => setShow(false), visibleMs);
     };
 
-    // initial delay to avoid immediate popup if needed
-    timerRef.current = setTimeout(function loop() {
+    const nextDelay = () => {
+
+      if (intervalMs && intervalMs > 20000) {
+        const min = Math.max(10000, intervalMs - 5000);
+        const max = intervalMs + 5000;
+        return randomNumber(min, max);
+      }
+      return randomNumber(10000, 20000);
+    };
+
+    const schedule = () => {
       trigger();
-      timerRef.current = setTimeout(loop, intervalMs);
-    }, intervalMs);
+      timerRef.current = setTimeout(schedule, nextDelay());
+    };
+
+    timerRef.current = setTimeout(schedule, nextDelay());
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
