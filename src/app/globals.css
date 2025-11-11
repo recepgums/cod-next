@@ -178,3 +178,9 @@ body {
   background: rgb(195, 195, 170);
 }
 }
+
+.modal-content.bottom{
+  box-shadow: initial !important;
+  border-radius: 0 !important;
+  box-shadow: initial !important;
+}
