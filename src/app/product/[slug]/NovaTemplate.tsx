@@ -482,7 +482,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     onClose={closeModal}
                     product={{
                         ...product,
-                        is_modal: false,
+                        is_modal: is_modal,
                     }}
                     selectedOption={selectedOption}
                     onOptionSelect={selectOption}

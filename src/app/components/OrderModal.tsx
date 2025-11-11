@@ -93,7 +93,7 @@ export default function OrderModal({
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [variants, setVariants] = useState<any>({});
   // selectedVariants artık prop olarak geliyor
-  const [selectedShippingCode, setSelectedShippingCode] = useState<string>("");
+  const [selectedShippingCode, setSelectedShippingCode] = useState<string>("360");
   const [showShippingError, setShowShippingError] = useState<boolean>(false);
   const shippingSectionRef = useRef<HTMLDivElement>(null);
 
@@ -635,7 +635,7 @@ export default function OrderModal({
                   {/* Shipping Company Selection */}
                   {Array.isArray(product?.shipping) && product?.shipping?.length > 0 && (
                     <div className="mb-3" ref={shippingSectionRef}>
-                      <span className="mb-2 fw-bold">Kargo Bilgileri</span>
+                      <span className="mb-2 fw-bold">Kargo Seçiniz</span>
                       {showShippingError && (
                         <span className="text-danger mt-2 ms-2" style={{ fontWeight: 'bold' }} role="alert">Lütfen bir kargo firması seçiniz.</span>
                       )}
