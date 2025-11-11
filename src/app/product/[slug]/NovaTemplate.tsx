@@ -93,11 +93,11 @@ export default function NovaTemplate({ product }: { product: Product }) {
     }, [product?.settings]);
 
     let is_modal = useMemo(() => {
-        const modalType = typeof (parsedSettings as any)?.modaltype === 'string'
-            ? String((parsedSettings as any).modaltype).toLowerCase()
+        const modal_type = typeof (parsedSettings as any)?.modal_type === 'string'
+            ? String((parsedSettings as any).modal_type).toLowerCase()
             : undefined;
 
-        if (modalType === 'bottom') {
+        if (modal_type === 'bottom') {
             return false;
         }
         return true;
