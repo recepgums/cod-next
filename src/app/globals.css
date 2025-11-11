@@ -67,17 +67,18 @@ body {
 
 /* Notification Card */
 .notification-card {
-  background: #fff;
+  /* Gradient background similar to reference */
+  background: linear-gradient(135deg, #3a0f10 0%, #5a1b1e 50%, #7a2740 100%);
   border-radius: 16px;
   padding: clamp(9px, 2.25vw, 15px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
   width: min(69vw, 420px);
   border-left: 6px solid #00b894;
-  animation-name: slideIn;
+  /* animation-name: slideIn;
   animation-duration: 1s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  animation-fill-mode: forwards;
+  animation-fill-mode: forwards; */
 }
 .notification-header {
   display: flex;
@@ -100,13 +101,14 @@ body {
 }
 .notification-card .header-content { flex: 1; }
 .notification-card .header-title {
-  color: #00b894;
+  color: #ffffff;
   font-size: clamp(10.5px, 3.75vw, 13.5 px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 .notification-card .order-message {
+  color: #f7f9fb;
   font-size: clamp(13px, 4.5vw, 16px);
   font-weight: 600;
   line-height: 1.4;
@@ -114,14 +116,15 @@ body {
 }
 .notification-card .time-badge {
   display: inline-block;
-  color: #636e72;
+  color: #e7eef4;
   font-size: clamp(11px, 3.5vw, 14px);
   font-weight: 500;
   padding: clamp(4px, 1.2vw, 6px) clamp(8px, 2vw, 12px);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 20px;
 }
 .notification-card .customer-highlight {
-  color: #00b894;
+  color: #00d3a8;
   font-weight: 700;
 }
 
@@ -132,7 +135,7 @@ body {
   left: -100%;
   transform: translateX(-50%);
   z-index: 1000;
-  transition: all 1.5s ease-in-out;
+  /* transition: all 1.5s ease-in-out;  temporarily disabled animation */
   padding: 8px;
 }
 .notification-float.show {
