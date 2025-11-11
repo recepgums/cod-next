@@ -601,7 +601,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         </a>
       </div>
 
-      {!is_modal && (
+      {is_modal && (
         <div className="sticky-footer">
           <div className="product-info">
             <div className="product-name">{product.name}</div>
