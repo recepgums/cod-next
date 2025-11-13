@@ -43,7 +43,7 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
         const max = intervalMs + 5000;
         return randomNumber(min, max);
       }
-      return randomNumber(10000, 20000);
+      return randomNumber(15000, 30000);
     };
 
     const schedule = () => {
