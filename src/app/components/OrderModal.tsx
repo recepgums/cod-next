@@ -509,7 +509,7 @@ export default function OrderModal({
 
       {/* Order Modal */}
       <div
-        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : 'ssss'}
+        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : 'form-bottom'}
         id={product?.is_modal ? `fullScreenModal` : ''}
         tabIndex={product?.is_modal ? -1 : undefined}
         role="dialog"

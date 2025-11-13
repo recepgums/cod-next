@@ -187,3 +187,8 @@ body {
   border-radius: 0 !important;
   box-shadow: initial !important;
 }
+
+.form-bottom{
+  z-index: 1100;
+  position: relative;
+}
