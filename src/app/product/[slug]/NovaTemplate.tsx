@@ -379,7 +379,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                 )}
 
 
-                {is_modal ? null : (
+                {is_modal ? (
                     <div
                         className="button-container mb-3"
                         style={{
@@ -402,7 +402,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                             <span>Sepete ekle</span>
                         </button>
                     </div>
-                )
+                ) : null
                 }
                 <div className="faq-container">
                     <div className="faq-list">

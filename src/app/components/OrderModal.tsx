@@ -425,6 +425,17 @@ export default function OrderModal({
         window.location.href = `/order/${response.data.order_id}/promosyon`;
       } else {
         setSubmitError(response.data.message || "Sipariş gönderilirken bir hata oluştu.");
+        await axios.post('/api/order-log', {
+          name: formData.get('name') ?? null,
+          phone: formData.get('phone') ?? null,
+          address: formData.get('address') ?? null,
+          quantity: selectedOption?.quantity ?? null,
+          total_price: typeof totalPrice !== 'undefined' ? totalPrice : null,
+          product_id: product?.id ?? null,
+          products: product?.name ?? null,
+          ref_url: typeof window !== 'undefined' && window.location ? window.location.href : null,
+          order_id: "sipariş oluşmadı",
+        });
       }
     } catch (error: any) {
 
