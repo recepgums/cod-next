@@ -63,6 +63,7 @@ interface Product {
   content?: string;
   settings?: string;
   merchant_phone?: string;
+  is_whatsapp_homepage?: string;
 }
 
 interface ReviewTemplateProps {
@@ -586,6 +587,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         onOptionSelect={selectOption}
       />
 
+      {product?.is_whatsapp_homepage === "on" && (
       <div className="whatsapp-icon-container">
         <a
           href={`https://wa.me/${product.merchant_phone}?text=Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`}
@@ -599,7 +601,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           </svg>
         </a>
       </div>
-
+      )}
       {is_modal && (
         <div className="sticky-footer">
           <div className="product-info">
