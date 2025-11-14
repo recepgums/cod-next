@@ -388,7 +388,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     </div>
                 )}
 
-
                     <div
                         className="button-container mb-3"
                         style={{

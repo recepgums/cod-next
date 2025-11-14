@@ -112,9 +112,9 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-       ...(process.env.NEXT_IS_LOCAL === 'local'
-         ? { cache: 'no-store' as const }
-         : { next: { revalidate: 300 as const } }),
+      //  ...(process.env.NEXT_IS_LOCAL === 'local'
+      //    ? { cache: 'no-store' as const }
+      //    : { next: { revalidate: 300 as const } }),
     });
 
     if (!response.ok) {
