@@ -83,6 +83,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
+  const [variants, setVariants] = useState<any>({});
+  const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
   const commentGridRef = useRef<HTMLDivElement>(null);
   const orderModalRef = useRef<HTMLDivElement>(null);
 
@@ -133,6 +135,18 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
   const selectOption = (option: any) => {
     setSelectedOption(option);
+  };
+
+  const handleVariantChange = (index: number, type: string, value: string) => {
+    const newSelectedVariants = [...selectedVariants];
+    newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
+    setSelectedVariants(newSelectedVariants);
+    console.log('🔄 ReviewTemplate: variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
+  };
+
+  const handleOrderModalVariantChange = (newVariants: any[]) => {
+    setSelectedVariants(newVariants);
+    console.log('🔄 ReviewTemplate: OrderModal variant change received:', newVariants);
   };
 
   const randomCounts = () => {
@@ -339,6 +353,57 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       clearTimeout(timer);
     };
   }, [product?.comments]);
+
+  // Variants'ları parse et
+  useEffect(() => {
+    if (!parsedSettings?.variants) return;
+    try {
+      let rawVariants = parsedSettings.variants;
+
+      // If variants is a JSON string, parse it
+      if (typeof rawVariants === 'string') {
+        try {
+          rawVariants = JSON.parse(rawVariants);
+        } catch {
+          rawVariants = undefined;
+        }
+      }
+
+      // If variants is an array like [{ name, type, stock, alias }, ...],
+      // group by type to build select options per type.
+      if (Array.isArray(rawVariants)) {
+        const grouped: Record<string, { title: string; options: string[] }> = {};
+        rawVariants.forEach((v: any) => {
+          const typeKey = (v?.type || 'Seçenek').toString();
+          const optionName = (v?.name || '').toString();
+          if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+          if (optionName && !grouped[typeKey].options.includes(optionName)) {
+            grouped[typeKey].options.push(optionName);
+          }
+        });
+        setVariants(grouped);
+        console.log('🎨 ReviewTemplate: Variants grouped:', grouped);
+        return;
+      }
+
+      // If variants is already an object map { type: { title, options[] }, ... }
+      if (rawVariants && typeof rawVariants === 'object') {
+        setVariants(rawVariants);
+      }
+    } catch (error) {
+      console.error('❌ Error parsing variants:', error);
+    }
+  }, [parsedSettings?.variants]);
+
+  // Update variant fields when quantity changes
+  useEffect(() => {
+    if (selectedOption && Object.keys(variants).length > 0) {
+      const quantity = selectedOption.quantity;
+      const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
+      setSelectedVariants(newSelectedVariants);
+      console.log('🛍️ ReviewTemplate: Updated selected variants for quantity:', quantity, newSelectedVariants);
+    }
+  }, [selectedOption, variants]);
 
   // Auto-select first option
   useEffect(() => {
@@ -591,6 +656,8 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           }}
           selectedOption={selectedOption}
           onOptionSelect={selectOption}
+          selectedVariants={selectedVariants}
+          onVariantChange={handleOrderModalVariantChange}
         />
       </div>
 
