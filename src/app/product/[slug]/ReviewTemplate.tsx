@@ -372,13 +372,17 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       // If variants is an array like [{ name, type, stock, alias }, ...],
       // group by type to build select options per type.
       if (Array.isArray(rawVariants)) {
-        const grouped: Record<string, { title: string; options: string[] }> = {};
+        const grouped: Record<string, { title: string; options: string[]; stock: Record<string, string> }> = {};
         rawVariants.forEach((v: any) => {
           const typeKey = (v?.type || 'Seçenek').toString();
           const optionName = (v?.name || '').toString();
-          if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+          const stockValue = (v?.stock || '0').toString();
+          if (!grouped[typeKey]) {
+            grouped[typeKey] = { title: typeKey, options: [], stock: {} };
+          }
           if (optionName && !grouped[typeKey].options.includes(optionName)) {
             grouped[typeKey].options.push(optionName);
+            grouped[typeKey].stock[optionName] = stockValue;
           }
         });
         setVariants(grouped);
