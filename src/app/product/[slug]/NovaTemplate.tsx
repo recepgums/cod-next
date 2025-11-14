@@ -393,7 +393,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                 )}
 
                 <div
-                    className="button-container mb-3"
+                    className="button-container mb-1"
                     style={{
                         position: 'fixed',
                         bottom: '0',
