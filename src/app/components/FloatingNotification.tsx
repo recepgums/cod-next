@@ -62,14 +62,14 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
   return (
     <div className={`notification-float${show ? " show" : ""}`} aria-live="polite" aria-atomic="true">
       <div className="notification-card">
-        <div className="notification-header">
+        {/* <div className="notification-header">
           <div className="icon-circle">
             <div className="shopping-icon">🛍️</div>
           </div>
           <div className="header-content">
             <div className="header-title">YENİ SİPARİŞ</div>
           </div>
-        </div>
+        </div> */}
         <div className="order-message">
           <span className="customer-highlight">{nameCity.name} ({nameCity.city})</span> hızlı kargo ile bugün sipariş oluşturdu!
         </div>
