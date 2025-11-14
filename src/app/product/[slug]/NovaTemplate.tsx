@@ -415,7 +415,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     </button>
                 </div>
 
-                <div className="faq-container">
+                <div className={`faq-container ${parsedFaq.length > 0 ? "" : "d-none"}`}>
                     <div className="faq-list">
                         {parsedFaq.map((item, index) => (
                             <div key={index} className="faq-item">
