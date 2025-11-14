@@ -343,7 +343,7 @@ export default function PromosyonPage() {
                         
                         <div className="col-12 pr-1">
                           <button 
-                            className={`btn w-100 btn-sm ${addedToCart[product.id] ? 'btn-success' : 'btn-primary'}`}
+                            className={`btn-add-to-cart btn w-100 btn-sm ${addedToCart[product.id] ? 'btn-success' : 'btn-primary'}`}
                             style={{
                               background: addedToCart[product.id] 
                                 ? 'linear-gradient(180deg, #f27a1a 0%, #ff983f 100%)'
@@ -354,7 +354,11 @@ export default function PromosyonPage() {
                               borderRadius: '5px',
                               padding: '10px 15px'
                             }}
-                            onClick={() => addToCart(product.id)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              addToCart(product.id);
+                            }}
                             disabled={addingToCart[product.id] || addedToCart[product.id]}
                             data-product-name={product.settings?.alias || product.name}
                             data-product-id={product.id}
