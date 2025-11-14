@@ -178,6 +178,8 @@ interface ImageOnlyTemplateProps {
 export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
+  const [variants, setVariants] = useState<any>({});
+  const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
   const orderModalRef = useRef<HTMLDivElement>(null);
 
   // Memoize blur data URL to avoid recreating on every render
@@ -205,6 +207,57 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
 
     return true;
   }, [parsedSettings]);
+
+  // Variants'ları parse et
+  useEffect(() => {
+    if (!parsedSettings?.variants) return;
+    try {
+      let rawVariants = parsedSettings.variants;
+
+      // If variants is a JSON string, parse it
+      if (typeof rawVariants === 'string') {
+        try {
+          rawVariants = JSON.parse(rawVariants);
+        } catch {
+          rawVariants = undefined;
+        }
+      }
+
+      // If variants is an array like [{ name, type, stock, alias }, ...],
+      // group by type to build select options per type.
+      if (Array.isArray(rawVariants)) {
+        const grouped: Record<string, { title: string; options: string[] }> = {};
+        rawVariants.forEach((v: any) => {
+          const typeKey = (v?.type || 'Seçenek').toString();
+          const optionName = (v?.name || '').toString();
+          if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+          if (optionName && !grouped[typeKey].options.includes(optionName)) {
+            grouped[typeKey].options.push(optionName);
+          }
+        });
+        setVariants(grouped);
+        console.log('🎨 ImageOnlyTemplate: Variants grouped:', grouped);
+        return;
+      }
+
+      // If variants is already an object map { type: { title, options[] }, ... }
+      if (rawVariants && typeof rawVariants === 'object') {
+        setVariants(rawVariants);
+      }
+    } catch (error) {
+      console.error('❌ Error parsing variants:', error);
+    }
+  }, [parsedSettings?.variants]);
+
+  // Update variant fields when quantity changes
+  useEffect(() => {
+    if (selectedOption && Object.keys(variants).length > 0) {
+      const quantity = selectedOption.quantity;
+      const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
+      setSelectedVariants(newSelectedVariants);
+      console.log('🛍️ ImageOnlyTemplate: Updated selected variants for quantity:', quantity, newSelectedVariants);
+    }
+  }, [selectedOption, variants]);
 
   // Preload first image for better LCP (client-side only)
   useEffect(() => {
@@ -298,6 +351,18 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
     setSelectedOption(option);
   };
 
+  const handleVariantChange = (index: number, type: string, value: string) => {
+    const newSelectedVariants = [...selectedVariants];
+    newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
+    setSelectedVariants(newSelectedVariants);
+    console.log('🔄 ImageOnlyTemplate: variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
+  };
+
+  const handleOrderModalVariantChange = (newVariants: any[]) => {
+    setSelectedVariants(newVariants);
+    console.log('🔄 ImageOnlyTemplate: OrderModal variant change received:', newVariants);
+  };
+
   return (
     <div className="image-only-template" style={{ maxWidth: '600px', margin: '0 auto' }}>
       <Header logoSrc={product.logoUrl} categories={product.categories} />
@@ -347,7 +412,6 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         })}
 
         {/* Direct Order Button */}
-        {is_modal && (
           <div className="product-extra-link2 my-3" style={{ width: '100%' }}>
             <button
               type="button"
@@ -357,18 +421,15 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
               Sipariş Ver - {product.price.toFixed(2)}TL
             </button>
           </div>
-        )}
 
       </div>
 
       {/* Sticky Footer */}
-      {is_modal && (
       <StickyFooter
         product={product}
           selectedOption={selectedOption}
           onOrderClick={openModal}
         />
-      )}
 
       <div ref={orderModalRef}>
         <OrderModal
@@ -381,6 +442,8 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
           }}
           selectedOption={selectedOption}
           onOptionSelect={selectOption}
+          selectedVariants={selectedVariants}
+          onVariantChange={handleOrderModalVariantChange}
         />
       </div>
 
