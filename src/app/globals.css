@@ -192,3 +192,7 @@ body {
   z-index: 1100;
   position: relative;
 }
+.form-bottom .modal-content{
+  border: 0;
+  margin-top :22px;
+}
