@@ -178,6 +178,7 @@ interface ImageOnlyTemplateProps {
 export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
+  const orderModalRef = useRef<HTMLDivElement>(null);
 
   // Memoize blur data URL to avoid recreating on every render
   const blurDataURL = useMemo(() => `data:image/svg+xml;base64,${toBase64(shimmer(800, 600))}`, []);
@@ -280,6 +281,13 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
   const openModal = () => {
     setShowModal(true);
     sendAddToCartEvent();
+    if (!is_modal) {
+      setTimeout(() => {
+        if (orderModalRef.current) {
+          orderModalRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
   };
 
   const closeModal = () => {
@@ -362,18 +370,19 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         />
       )}
 
-      {/* Order Modal */}
-      <OrderModal
-        showModal={showModal}
-        onClose={closeModal}
-        product={{
-          ...product,
-          cities: product.cities,
-          is_modal: is_modal,
-        }}
-        selectedOption={selectedOption}
-        onOptionSelect={selectOption}
-      />
+      <div ref={orderModalRef}>
+        <OrderModal
+          showModal={showModal}
+          onClose={closeModal}
+          product={{
+            ...product,
+            cities: product.cities,
+            is_modal: is_modal,
+          }}
+          selectedOption={selectedOption}
+          onOptionSelect={selectOption}
+        />
+      </div>
 
       {/* Footer */}
       <Footer />

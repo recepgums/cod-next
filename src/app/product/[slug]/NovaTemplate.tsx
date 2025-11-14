@@ -69,8 +69,18 @@ export default function NovaTemplate({ product }: { product: Product }) {
     const [variants, setVariants] = useState<any>({});
     const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
     const commentGridRef = useRef<HTMLDivElement>(null);
+    const orderModalRef = useRef<HTMLDivElement>(null);
 
-    const openModal = () => setShowModal(true);
+    const openModal = () => {
+        setShowModal(true);
+        if (!is_modal) {
+            setTimeout(() => {
+                if (orderModalRef.current) {
+                    orderModalRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+    };
     const closeModal = () => setShowModal(false);
 
 
@@ -477,18 +487,20 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
 
                 <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
-                <OrderModal
-                    showModal={showModal}
-                    onClose={closeModal}
-                    product={{
-                        ...product,
-                        is_modal: is_modal,
-                    }}
-                    selectedOption={selectedOption}
-                    onOptionSelect={selectOption}
-                    selectedVariants={selectedVariants}
-                    onVariantChange={handleOrderModalVariantChange}
-                />
+                <div ref={orderModalRef}>
+                    <OrderModal
+                        showModal={showModal}
+                        onClose={closeModal}
+                        product={{
+                            ...product,
+                            is_modal: is_modal,
+                        }}
+                        selectedOption={selectedOption}
+                        onOptionSelect={selectOption}
+                        selectedVariants={selectedVariants}
+                        onVariantChange={handleOrderModalVariantChange}
+                    />
+                </div>
             </div>
 
 
