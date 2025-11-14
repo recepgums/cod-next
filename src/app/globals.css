@@ -196,3 +196,9 @@ body {
   border: 0;
   margin-top :22px;
 }
+.form-bottom .fixed-bottom-button{
+  position: static;
+  box-shadow: none;
+  background-color: white;
+  animation: none;
+}

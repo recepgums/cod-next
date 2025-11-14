@@ -84,6 +84,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const commentGridRef = useRef<HTMLDivElement>(null);
+  const orderModalRef = useRef<HTMLDivElement>(null);
 
   // Memoize product content to prevent unnecessary re-renders
   const memoizedProductContent = useMemo(() => {
@@ -116,6 +117,14 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
   const openModal = () => {
     setShowModal(true);
+    // If is_modal is false, scroll to OrderModal after state update
+    if (!is_modal) {
+      setTimeout(() => {
+        if (orderModalRef.current) {
+          orderModalRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
   };
 
   const closeModal = () => {
@@ -549,43 +558,41 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         <p>tarihleri arasında siparişin kapında!</p>
       </div>
 
-      {is_modal ? (
+      
         <div className="product-extra-link2 mb-3 w-100">
           <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
             Kapıda Ödemeli Sipariş Ver
           </button>
         </div>
-      ) : null
-
-      }
 
       {/* Product Content */}
       {memoizedProductContent && (
         <div className="container product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
       )}
 
-      {is_modal  ? (
         <div className="product-extra-link2 mb-3 w-100">
           <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
             Şimdi Sipariş Ver
           </button>
-        </div>) : null
-      }
+        </div>
+      
 
       <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
 
       {/* Order Modal */}
-      <OrderModal
-        showModal={showModal}
-        onClose={closeModal}
-        product={{
-          ...product,
-          cities: product.cities,
-          is_modal: is_modal,
-        }}
-        selectedOption={selectedOption}
-        onOptionSelect={selectOption}
-      />
+      <div ref={orderModalRef}>
+        <OrderModal
+          showModal={showModal}
+          onClose={closeModal}
+          product={{
+            ...product,
+            cities: product.cities,
+            is_modal: is_modal,
+          }}
+          selectedOption={selectedOption}
+          onOptionSelect={selectOption}
+        />
+      </div>
 
       {product?.is_whatsapp_homepage === "on" && (
       <div className="whatsapp-icon-container">
@@ -602,7 +609,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         </a>
       </div>
       )}
-      {is_modal && (
+      
         <div className="sticky-footer">
           <div className="product-info">
             <div className="product-name">{product.name}</div>
@@ -613,7 +620,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           </div>
           <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
         </div>
-      )}
+     
 
 
       {/* Footer */}
