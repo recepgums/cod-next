@@ -391,6 +391,30 @@ export default function OrderModal({
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
+    
+    // Format variants according to API requirements
+    let formattedVariants = null;
+    if (selectedVariants && selectedVariants.length > 0 && selectedVariants[0]) {
+      const firstProductVariants = selectedVariants[0];
+      const variantEntries = Object.entries(firstProductVariants);
+      
+      if (variantEntries.length > 0) {
+        // If only one variant type, send as single object
+        if (variantEntries.length === 1) {
+          formattedVariants = {
+            variant_type: variantEntries[0][0],
+            variant_name: variantEntries[0][1]
+          };
+        } else {
+          // If multiple variant types, send as array
+          formattedVariants = variantEntries.map(([type, name]) => ({
+            variant_type: type,
+            variant_name: name
+          }));
+        }
+      }
+    }
+    
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
@@ -407,7 +431,8 @@ export default function OrderModal({
         ref_url: window.location.href,
         protected_shipping: isProtectedShippingEnabled,
         protected_shipping_cost: isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0,
-        shipping_code: selectedShippingCode || null
+        shipping_code: selectedShippingCode || null,
+        ...(formattedVariants && { variants: formattedVariants })
       });
 
       if (response.data.success) {
