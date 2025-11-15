@@ -346,6 +346,24 @@ export default function OrderModal({
     }
   }, [product]);
 
+  // Initialize selectedVariants when selectedOption changes
+  // Only update if the length doesn't match exactly - don't include selectedVariants in deps to avoid loops
+  useEffect(() => {
+    if (showModal && selectedOption && Object.keys(variants).length > 0) {
+      const quantity = selectedOption.quantity;
+      // Only update if length doesn't match exactly
+      // Use a ref or check current length without including it in deps
+      if (selectedVariants.length !== quantity) {
+        // Create array of empty objects for each product - exactly quantity items (0-indexed, so quantity items)
+        const newSelectedVariants = Array(quantity).fill(null).map(() => ({}));
+        if (onVariantChange) {
+          onVariantChange(newSelectedVariants);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showModal, selectedOption?.quantity, Object.keys(variants).length]);
+
   // Auto-select first product option when modal opens
   useEffect(() => {
     if (showModal && product && product.options && product.options.length > 0 && !selectedOption) {
@@ -393,25 +411,16 @@ export default function OrderModal({
     const formData = new FormData(e.target as HTMLFormElement);
     
     // Format variants according to API requirements
+    // Backend expects array of variant objects like [{ "Beden": "M", "Renk": "Kırmızı" }, ...]
     let formattedVariants = null;
-    if (selectedVariants && selectedVariants.length > 0 && selectedVariants[0]) {
-      const firstProductVariants = selectedVariants[0];
-      const variantEntries = Object.entries(firstProductVariants);
+    if (selectedVariants && selectedVariants.length > 0) {
+      // Filter out empty variant objects and keep only filled ones
+      const validVariants = selectedVariants.filter(v => v && Object.keys(v).length > 0);
       
-      if (variantEntries.length > 0) {
-        // If only one variant type, send as single object
-        if (variantEntries.length === 1) {
-          formattedVariants = {
-            variant_type: variantEntries[0][0],
-            variant_name: variantEntries[0][1]
-          };
-        } else {
-          // If multiple variant types, send as array
-          formattedVariants = variantEntries.map(([type, name]) => ({
-            variant_type: type,
-            variant_name: name
-          }));
-        }
+      if (validVariants.length > 0) {
+        // Convert to array format that backend expects: array of objects
+        // Each object represents one product's variant selections: { "Beden": "M", "Renk": "Kırmızı" }
+        formattedVariants = validVariants;
       }
     }
     
