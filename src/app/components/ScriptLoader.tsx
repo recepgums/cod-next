@@ -188,7 +188,7 @@ export default function ScriptLoader() {
             const target = e?.target as HTMLScriptElement | undefined;
             if (target && target.tagName === 'SCRIPT') {
               const src = target.src;
-              console.error('❌ Script load error', { src, host });
+              // console.error('❌ Script load error', { src, host });
             }
           } catch {}
         };

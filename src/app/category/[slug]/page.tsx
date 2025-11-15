@@ -11,7 +11,7 @@ async function fetchCategories() {
     const h = await headers();
     const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
-    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://blackmamba.tr" : `${protocol}://${host}`;
+    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
       headers: {
@@ -47,7 +47,7 @@ async function fetchCategoryProducts(slug: string) {
     const h = await headers();
     const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
-    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://blackmamba.tr" : `${protocol}://${host}`;
+    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category/${slug}`, {
       headers: {
