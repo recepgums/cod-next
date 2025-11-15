@@ -122,18 +122,18 @@ async function fetchProductData(slug: string) {
     }
 
     const data = await response.json();
-    const productData = data.product;
-    const commentsData = data.comments?.data;
-    const pixelsData = data.pixels;
-    const templateData = data.template;
-    const merchantData = data.merchant;
-    const isSendNotification = JSON.parse(data?.product.settings).send_notification == "1";
+    const productData = data?.product;
+    const commentsData = data?.comments?.data;
+    const pixelsData = data?.pixels;
+    const templateData = data?.template;
+    const merchantData = data?.merchant;
+    const isSendNotification = JSON.parse(data?.product?.settings).send_notification == "1";
     console.log(isSendNotification);
     console.log(`🔍 Fetching product data for slug:`,data);
 
-    const citiesData = Array.isArray(data.cities) ? data.cities : [];
-    const categoriesData = Array.isArray(data.categories) ? data.categories : [];
-    const relatedProductsData = Array.isArray(data.related_products) ? data.related_products : [];
+    const citiesData = Array.isArray(data?.cities) ? data?.cities : [];
+    const categoriesData = Array.isArray(data?.categories) ? data?.categories : [];
+    const relatedProductsData = Array.isArray(data?.related_products) ? data?.related_products : [];
     
     // Parse settings JSON to extract cloaker_url
     let cloakerUrl = data.cloaker_url || productData.cloaker_url;
