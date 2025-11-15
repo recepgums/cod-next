@@ -8,7 +8,7 @@ async function fetchOrderByPhone(phone: string) {
     const h = await headers();
     const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
-    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
+    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://blackmamba.tr" : `${protocol}://${host}`;
     
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-track?phone=${encodeURIComponent(phone)}`,
       {
