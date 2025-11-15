@@ -953,11 +953,6 @@ export default function OrderModal({
                       {submitError}
                     </div>
                   )}
-
-                  <div className="pb-5 text-center">
-                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
-                  </div>
-
                   <div className="product-extra-link2 fixed-bottom-button">
                     <button
                       type="submit"
@@ -974,6 +969,11 @@ export default function OrderModal({
                       )}
                     </button>
                   </div>
+
+                  <div className="pb-5 text-center">
+                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
+                  </div>
+
 
                 </div>
               </form>
