@@ -123,7 +123,7 @@ async function fetchProductData(slug: string) {
 
     const data = await response.json();
     const productData = data.product;
-    const commentsData = data.comments;
+    const commentsData = data.comments.data;
     const pixelsData = data.pixels;
     const templateData = data.template;
     const merchantData = data.merchant;
