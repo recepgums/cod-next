@@ -365,18 +365,44 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         product_id: apiProduct?.id,
         products: apiProduct?.name,
         ref_url: refUrlData?.fullUrl,
-        
       });
 
-      if (response.data.success) {
+ 
+
+      if (response?.data?.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
-        
+        await axios.post('/api/order-log', {
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          address: formData.get('address'),
+          quantity: selectedQuantity,
+          total_price: totalPrice,
+          product_id: apiProduct?.id,
+          products: apiProduct.name,
+          ref_url: refUrlData?.fullUrl,
+          order_id: response.data.order_id,
+        });
         // Try to send purchase event immediately, then retry after a delay
         console.log('🧪 OrderTemplate:submit:success', { order_id: response.data.order_id, totalPrice, product_id: apiProduct?.id });
         firePurchaseEvent(response.data);
         setTimeout(() => firePurchaseEvent(response.data), 1000);
       }
+      else{
+        await axios.post('/api/order-log', {
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          address: formData.get('address'),
+          quantity: selectedQuantity,
+          total_price: totalPrice,
+          product_id: apiProduct?.id,
+          products: apiProduct?.name,
+          ref_url: refUrlData?.fullUrl,
+          order_id: response?.data?.order_id || null,
+        });
+
+      }
+
     } catch (error: any) {
       console.error('❌ Order submission failed:', error);
       alert(error.response?.data?.message || 'Sipariş gönderilirken bir hata oluştu.');

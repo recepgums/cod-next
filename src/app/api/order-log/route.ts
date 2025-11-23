@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { time } from 'console';
 
 export async function POST(request: Request) {
   try {
@@ -35,7 +36,19 @@ export async function POST(request: Request) {
       .filter(Boolean)
       .join(' | ');
 
-    await fs.promises.appendFile(filePath, line + '\n', { encoding: 'utf8' });
+      const lineObject = {
+        time : timestamp,
+        name : body?.name,
+        phone : body?.phone,
+        address: body?.address,
+        quantity: body?.quantity,
+        total_price: body?.total_price,
+        product_id : body?.product_id,
+        products: body?.products,
+        ref_url: body?.ref_url
+      }
+
+    await fs.promises.appendFile(filePath, JSON.stringify(lineObject) + '\n', { encoding: 'utf8' });
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
