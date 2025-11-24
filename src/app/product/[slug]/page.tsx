@@ -164,7 +164,7 @@ async function fetchProductData(slug: string) {
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
-          template: process.env.NEXT_IS_LOCAL == "true" ? "2step" : templateData,
+          template: process.env.NEXT_IS_LOCAL == "true" ? templateData : templateData,
           logoUrl: data.logoUrl,
           settings: settingsStr,
           cloaker_url: cloakerUrl,
@@ -313,7 +313,7 @@ export default async function ProductDetailPage({
       <RefUrlScript />
       {/* Floating notification every 40s */}
       {(product.template != '2step' && product.isSendNotification) ?(
-        <ProductNotificationClient />
+        <ProductNotificationClient product={product} />
       ): null}
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />

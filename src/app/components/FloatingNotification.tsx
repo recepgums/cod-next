@@ -6,20 +6,27 @@ import { randomNumber } from "../utils/priceUtils";
 interface FloatingNotificationProps {
   intervalMs?: number; // default 40000
   visibleMs?: number; // default 6000
+  product?: any;
 }
 
-export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6000 }: FloatingNotificationProps) {
+export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6000, product }: FloatingNotificationProps) {
   const [show, setShow] = useState(false);
   const [nameCity, setNameCity] = useState<{ name: string; city: string }>({ name: 'R. Yıldız', city: 'İstanbul' });
   const [minutesAgo, setMinutesAgo] = useState<number>(7);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hideRef = useRef<NodeJS.Timeout | null>(null);
 
+  // const names = useRef<string[]>([
+  //   'A. Demir','E. Şahin','M. Yıldırım','B. Kaya','H. Çelik','S. Yıldız','K. Koç','N. Arslan','G. Kılıç','T. Özdemir',
+  //   'R. Polat','D. Acar','C. Kaplan','Y. Uçar','İ. Yavuz','Z. Çetin','P. Aydın','F. Bozkurt','V. Duman','L. Karaca',
+  //   'O. Akın','U. Doğan','I. Korkmaz','Ş. Erdem','Ü. Sarı','S. Aksoy','M. Eker','E. Tunç','K. Taş','N. Güner'
+  // ]).current;
   const names = useRef<string[]>([
-    'A. Demir','E. Şahin','M. Yıldırım','B. Kaya','H. Çelik','S. Yıldız','K. Koç','N. Arslan','G. Kılıç','T. Özdemir',
-    'R. Polat','D. Acar','C. Kaplan','Y. Uçar','İ. Yavuz','Z. Çetin','P. Aydın','F. Bozkurt','V. Duman','L. Karaca',
-    'O. Akın','U. Doğan','I. Korkmaz','Ş. Erdem','Ü. Sarı','S. Aksoy','M. Eker','E. Tunç','K. Taş','N. Güner'
+    'Ahmet Demir','Emre Şahin','Mehmet Yıldırım','Burak Kaya','Hasan Çelik','Seda Yıldız','Kerem Koç','Nazan Arslan','Gamze Kılıç','Tolga Özdemir',
+    'Rıza Polat','Deniz Acar','Cem Kaplan','Yusuf Uçar','İsmail Yavuz','Zeynep Çetin','Pelin Aydın','Fatma Bozkurt','Volkan Duman','Levent Karaca',
+    'Okan Akın','Umut Doğan','Işık Korkmaz','Şule Erdem','Ümit Sarı','Selin Aksoy','Murat Eker','Eren Tunç','Kaan Taş','Necla Güner'
   ]).current;
+  
   const cities = useRef<string[]>([
     'İstanbul','Ankara','İzmir','Bursa','Antalya','Adana','Konya','Şanlıurfa','Gaziantep','Kocaeli',
     'Mersin','Diyarbakır','Hatay','Kayseri','Samsun','Tekirdağ','Balıkesir','Aydın','Manisa','Sakarya',
@@ -29,6 +36,7 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
 
   useEffect(() => {
     const trigger = () => {
+      console.log(product);
       setNameCity({ name: pick(names), city: pick(cities) });
       setMinutesAgo(1 + Math.floor(Math.random() * 10));
       setShow(true);
@@ -71,7 +79,14 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
           </div>
         </div> */}
         <div className="order-message">
-          <span className="customer-highlight">{nameCity.name} ({nameCity.city})</span> hızlı kargo ile bugün sipariş oluşturdu!
+          <span className="customer-highlight">{nameCity.name} ({nameCity.city})</span> {(() => {
+  let adet = 1;
+
+  if (product.price < 600) adet = randomNumber(1, 3);
+  else if (product.price < 1000) adet = randomNumber(1, 2);
+
+  return adet;
+})()} adet {product.name} siparişi verdi!
         </div>
         <div className="time-badge">{minutesAgo} dakika önce</div>
       </div>
