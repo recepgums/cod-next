@@ -476,6 +476,13 @@ export default function OrderModal({
             order_id: response.data.order_id,
           });
         } catch { }
+
+        axios.delete('/api/added-to-cart', {
+          data: {
+            phone: inputPhone,
+            product_id: product?.id,
+          },
+        });
         // Redirect to promotion page
         sendPurchaseEvent(response.data);
         window.location.href = `/order/${response.data.order_id}/promosyon`;

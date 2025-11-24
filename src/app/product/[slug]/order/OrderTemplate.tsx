@@ -295,11 +295,10 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     let remaining = val.slice(2);
 
     const newValue = prefix + areaCode + (areaCode.length === 2 ? ") " : "") + formatPhoneNumber(remaining);
-    console.log(newValue.length)
     if(newValue.length == 17){
        axios.post('/api/added-to-cart', {
         name: nameRef.current.value,
-        phone: newValue,
+        phone: newValue?.replace(/\D/g, ""),
         address: null,
         quantity: selectedQuantity,
         total_price: totalPrice,
