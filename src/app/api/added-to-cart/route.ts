@@ -49,6 +49,7 @@ export async function DELETE(request: Request) {
         // Gerekli verilerin varlığını kontrol et
         const targetPhone = body?.phone;
         const targetProductId = body?.product_id;
+        console.log(body);
   
         if (!targetPhone || !targetProductId) {
             return NextResponse.json(

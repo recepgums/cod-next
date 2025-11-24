@@ -402,6 +402,15 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         console.log('🧪 OrderTemplate:submit:success', { order_id: response.data.order_id, totalPrice, product_id: apiProduct?.id });
         firePurchaseEvent(response.data);
         setTimeout(() => firePurchaseEvent(response.data), 1000);
+
+
+        axios.delete('/api/added-to-cart', {
+          data: {
+            phone: phoneValue,
+            product_id: apiProduct?.id,
+          },
+        });
+
       }
       else{
         await axios.post('/api/order-log', {
