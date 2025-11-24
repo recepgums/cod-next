@@ -102,6 +102,8 @@ export default function OrderModal({
   const PROTECTED_SHIPPING_PRICE = 89.00;
   const [isProtectedShippingEnabled, setIsProtectedShippingEnabled] = useState<boolean>(false);
 
+  const nameRef = useRef<HTMLInputElement>(null);
+
   // Use cities from product prop
   const cities = product.cities || [];
 
@@ -204,6 +206,21 @@ export default function OrderModal({
     if ((phone?.[0] == "0" && phone.length < 2) || phone?.[1] == "5") {
       setInputPhone(phone);
     }
+
+    if (isValid) {
+       axios.post('/api/added-to-cart', {
+        name: nameRef.current.value,
+        phone: phone,
+        address: null,
+        quantity: selectedOption?.quantity || 1,
+        total_price: totalPrice,
+        product_id: product.id,
+        products: product.name,
+        ref_url: window.location.href,
+        order_id: null,
+      });
+    }
+
   };
 
   // Safely read card payment cost from settings
@@ -862,7 +879,7 @@ export default function OrderModal({
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-user"></i></span>
-                      <input name="name" type="text" required className="form-control" placeholder="Adınız Soyadınız" />
+                      <input name="name" ref={nameRef} type="text" required className="form-control" placeholder="Adınız Soyadınız" />
                     </div>
                   </div>
                   <div className="mb-3">

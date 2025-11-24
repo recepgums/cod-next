@@ -20,6 +20,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [refUrlData, setRefUrlData] = useState<any>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<string>('1');
   const formRef = useRef<HTMLFormElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const quantityImages = useMemo(() => {
     try {
       const settings = apiProduct?.settings;
@@ -294,6 +295,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     let remaining = val.slice(2);
 
     const newValue = prefix + areaCode + (areaCode.length === 2 ? ") " : "") + formatPhoneNumber(remaining);
+    console.log(newValue.length)
+    if(newValue.length == 17){
+       axios.post('/api/added-to-cart', {
+        name: nameRef.current.value,
+        phone: newValue,
+        address: null,
+        quantity: selectedQuantity,
+        total_price: totalPrice,
+        product_id: apiProduct?.id,
+        products: apiProduct?.name,
+        ref_url: refUrlData?.fullUrl,
+        order_id:  null,
+      });
+    }
     setPhoneValue(newValue);
     
     setTimeout(() => {
@@ -673,7 +688,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
               <div className="form-group mb-3">
                 <label className="mb-1">Ad Soyad</label>
-                <input type="text" className="form-control" name="name" required />
+                <input type="text" className="form-control" ref={nameRef} name="name" required />
               </div>
 
               <div className="form-group mb-3">
