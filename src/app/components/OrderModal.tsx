@@ -479,9 +479,7 @@ export default function OrderModal({
 
         axios.delete('/api/added-to-cart', {
           data: {
-            phone: inputPhone,
-            product_id: product?.id,
-          },
+            ref_url: window.location.href          },
         });
         // Redirect to promotion page
         sendPurchaseEvent(response.data);

@@ -405,8 +405,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
         axios.delete('/api/added-to-cart', {
           data: {
-            phone: phoneValue,
-            product_id: apiProduct?.id,
+            ref_url: refUrlData?.fullUrl,
           },
         });
 

@@ -22,15 +22,15 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
   //   'O. Akın','U. Doğan','I. Korkmaz','Ş. Erdem','Ü. Sarı','S. Aksoy','M. Eker','E. Tunç','K. Taş','N. Güner'
   // ]).current;
   const names = useRef<string[]>([
-    'Ahmet Demir','Emre Şahin','Mehmet Yıldırım','Burak Kaya','Hasan Çelik','Seda Yıldız','Kerem Koç','Nazan Arslan','Gamze Kılıç','Tolga Özdemir',
-    'Rıza Polat','Deniz Acar','Cem Kaplan','Yusuf Uçar','İsmail Yavuz','Zeynep Çetin','Pelin Aydın','Fatma Bozkurt','Volkan Duman','Levent Karaca',
-    'Okan Akın','Umut Doğan','Işık Korkmaz','Şule Erdem','Ümit Sarı','Selin Aksoy','Murat Eker','Eren Tunç','Kaan Taş','Necla Güner'
+    'Ahmet Demir', 'Emre Şahin', 'Mehmet Yıldırım', 'Burak Kaya', 'Hasan Çelik', 'Seda Yıldız', 'Kerem Koç', 'Nazan Arslan', 'Gamze Kılıç', 'Tolga Özdemir',
+    'Rıza Polat', 'Deniz Acar', 'Cem Kaplan', 'Yusuf Uçar', 'İsmail Yavuz', 'Zeynep Çetin', 'Pelin Aydın', 'Fatma Bozkurt', 'Volkan Duman', 'Levent Karaca',
+    'Okan Akın', 'Umut Doğan', 'Işık Korkmaz', 'Şule Erdem', 'Ümit Sarı', 'Selin Aksoy', 'Murat Eker', 'Eren Tunç', 'Kaan Taş', 'Necla Güner'
   ]).current;
-  
+
   const cities = useRef<string[]>([
-    'İstanbul','Ankara','İzmir','Bursa','Antalya','Adana','Konya','Şanlıurfa','Gaziantep','Kocaeli',
-    'Mersin','Diyarbakır','Hatay','Kayseri','Samsun','Tekirdağ','Balıkesir','Aydın','Manisa','Sakarya',
-    'Eskişehir','Trabzon','Van','Malatya','Kahramanmaraş','Erzurum','Muğla','Denizli','Ordu','Sivas'
+    'İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Şanlıurfa', 'Gaziantep', 'Kocaeli',
+    'Mersin', 'Diyarbakır', 'Hatay', 'Kayseri', 'Samsun', 'Tekirdağ', 'Balıkesir', 'Aydın', 'Manisa', 'Sakarya',
+    'Eskişehir', 'Trabzon', 'Van', 'Malatya', 'Kahramanmaraş', 'Erzurum', 'Muğla', 'Denizli', 'Ordu', 'Sivas'
   ]).current;
   const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
@@ -80,13 +80,13 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
         </div> */}
         <div className="order-message">
           <span className="customer-highlight">{nameCity.name} ({nameCity.city})</span> {(() => {
-  let adet = 1;
+            let adet = 1;
 
-  if (product.price < 600) adet = randomNumber(1, 3);
-  else if (product.price < 1000) adet = randomNumber(1, 2);
+            if (product.price < 600) adet = randomNumber(1, 3);
+            else if (product.price < 1000) adet = randomNumber(1, 2);
 
-  return adet;
-})()} adet {product.name} siparişi verdi!
+            return adet;
+          })()} adet {product.name} siparişi verdi!
         </div>
         <div className="time-badge">{minutesAgo} dakika önce</div>
       </div>
