@@ -9,6 +9,7 @@ import OrderModal from '../../components/OrderModal';
 import dynamic from 'next/dynamic';
 import CommentsSection from './components/CommentsSection';
 import Header from '@/app/components/Header';
+import { faR } from '@fortawesome/free-solid-svg-icons';
 
 const PixelScripts = dynamic(() => import('./PixelScripts'), { ssr: false });
 
@@ -62,6 +63,7 @@ interface Product {
   content?: string;
   settings?: string;
   merchant_phone?: string;
+  is_whatsapp_homepage?: string;
 }
 
 interface ReviewTemplateProps {
@@ -81,15 +83,50 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
+  const [variants, setVariants] = useState<any>({});
+  const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
   const commentGridRef = useRef<HTMLDivElement>(null);
+  const orderModalRef = useRef<HTMLDivElement>(null);
 
   // Memoize product content to prevent unnecessary re-renders
   const memoizedProductContent = useMemo(() => {
     return product.content ? { __html: product.content } : null;
   }, [product.content]);
 
+  // Settings'i parse et
+  const parsedSettings = useMemo(() => {
+    try {
+      const settings = product?.settings;
+      const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
+      console.log('⚙️ Parsed settings:', parsed);
+      return parsed || {};
+    } catch (error) {
+      console.error('❌ Error parsing settings:', error);
+      return {};
+    }
+  }, [product?.settings]);
+
+  let is_modal = useMemo(() => {
+    const modal_type = typeof (parsedSettings as any)?.modal_type === 'string'
+      ? String((parsedSettings as any).modal_type).toLowerCase()
+      : undefined;
+    if (modal_type === 'bottom') {
+      return false;
+    }
+    return true;
+  }, [parsedSettings]);
+
+
   const openModal = () => {
     setShowModal(true);
+    // If is_modal is false, scroll to OrderModal after state update
+    if (!is_modal) {
+      setTimeout(() => {
+        if (orderModalRef.current) {
+          orderModalRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
   };
 
   const closeModal = () => {
@@ -100,8 +137,80 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     setSelectedOption(option);
   };
 
+  const handleVariantChange = (index: number, type: string, value: string) => {
+    const newSelectedVariants = [...selectedVariants];
+    newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
+    setSelectedVariants(newSelectedVariants);
+    console.log('🔄 ReviewTemplate: variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
+  };
+
+  const handleOrderModalVariantChange = (newVariants: any[]) => {
+    setSelectedVariants(newVariants);
+    console.log('🔄 ReviewTemplate: OrderModal variant change received:', newVariants);
+  };
+
+  const randomCounts = () => {
+    const dateString = localStorage.getItem('date');
+    const dateObject = JSON.parse(dateString);
+    if (dateString) {
+      const date = new Date(JSON.parse(dateString).date);
+      const now = new Date();
+      const fark = now.getHours() - date.getHours();
+      if (fark > 0) {
+        const percentage = randomNumber(1, 100);
+        let son24saat: number, sevilen: number, sepetinde: number;
+        if (percentage < 70) {
+          son24saat = Number(dateObject.son24saat.split(",")[1].split("B")[0]) + 1;
+          sevilen = Number(dateObject.sevilen.split(",")[1].split("B")[0]) + 1;
+          sepetinde = Number(dateObject.sepetinde.split(",")[1].split("B")[0]) + 1;
+        }
+        else {
+          son24saat = Number(dateObject.son24saat.split(",")[1].split("B")[0]) - 1;
+          sevilen = Number(dateObject.sevilen.split(",")[1].split("B")[0]) - 1;
+          sepetinde = Number(dateObject.sepetinde.split(",")[1].split("B")[0]) - 1;
+        }
+        localStorage.setItem('date', JSON.stringify({
+          date: new Date().toISOString(),
+          son24saat: "1," + son24saat + "B",
+          sevilen: "9," + sevilen + "B",
+          sepetinde: "1," + sepetinde + "B"
+        }));
+        return {
+          son24saat: dateObject.son24saat,
+          sevilen: dateObject.sevilen,
+          sepetinde: dateObject.sepetinde
+        }
+      }
+
+      else {
+        return {
+          son24saat: dateObject.son24saat,
+          sevilen: dateObject.sevilen,
+          sepetinde: dateObject.sepetinde
+        }
+      }
+    }
+
+    else {
+      localStorage.setItem('date', JSON.stringify({ date: new Date().toISOString(), son24saat: "1,7B", sevilen: "9,6B", sepetinde: "1,4B" }));
+      return {
+        son24saat: "1,7B",
+        sevilen: "9,6B",
+        sepetinde: "1,4B"
+      }
+    }
+
+  }
+
+  const randomNumber = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   // Timer state - optimized to prevent unnecessary re-renders
   useEffect(() => {
+
+    randomCounts();
+
     let countdownEndTime = Math.floor(Date.now() / 1000) + 2 * 60 * 60 + Math.floor(Math.random() * 59 + 1) * 60;
     let intervalId: NodeJS.Timeout;
 
@@ -238,12 +347,67 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
 
         setTimeout(() => clearInterval(checkMasonry), 10000);
       }
-    }, 2000);
+    }, 2500);
 
     return () => {
       clearTimeout(timer);
     };
   }, [product?.comments]);
+
+  // Variants'ları parse et
+  useEffect(() => {
+    if (!parsedSettings?.variants) return;
+    try {
+      let rawVariants = parsedSettings.variants;
+
+      // If variants is a JSON string, parse it
+      if (typeof rawVariants === 'string') {
+        try {
+          rawVariants = JSON.parse(rawVariants);
+        } catch {
+          rawVariants = undefined;
+        }
+      }
+
+      // If variants is an array like [{ name, type, stock, alias }, ...],
+      // group by type to build select options per type.
+      if (Array.isArray(rawVariants)) {
+        const grouped: Record<string, { title: string; options: string[]; stock: Record<string, string> }> = {};
+        rawVariants.forEach((v: any) => {
+          const typeKey = (v?.type || 'Seçenek').toString();
+          const optionName = (v?.name || '').toString();
+          const stockValue = (v?.stock || '0').toString();
+          if (!grouped[typeKey]) {
+            grouped[typeKey] = { title: typeKey, options: [], stock: {} };
+          }
+          if (optionName && !grouped[typeKey].options.includes(optionName)) {
+            grouped[typeKey].options.push(optionName);
+            grouped[typeKey].stock[optionName] = stockValue;
+          }
+        });
+        setVariants(grouped);
+        console.log('🎨 ReviewTemplate: Variants grouped:', grouped);
+        return;
+      }
+
+      // If variants is already an object map { type: { title, options[] }, ... }
+      if (rawVariants && typeof rawVariants === 'object') {
+        setVariants(rawVariants);
+      }
+    } catch (error) {
+      console.error('❌ Error parsing variants:', error);
+    }
+  }, [parsedSettings?.variants]);
+
+  // Update variant fields when quantity changes
+  useEffect(() => {
+    if (selectedOption && Object.keys(variants).length > 0) {
+      const quantity = selectedOption.quantity;
+      const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
+      setSelectedVariants(newSelectedVariants);
+      console.log('🛍️ ReviewTemplate: Updated selected variants for quantity:', quantity, newSelectedVariants);
+    }
+  }, [selectedOption, variants]);
 
   // Auto-select first option
   useEffect(() => {
@@ -356,14 +520,14 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                 <img alt="basket-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
                   data-testid="image" />
-                <p className="social-proof-content"><span className="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                <p className="social-proof-content"><span className="social-proof-item-focused-text">{randomCounts().sepetinde} kişinin</span> sepetinde,
                   tükenmeden al!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
                 <img alt="favorite-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/orange-heart_1f9e1.png" width="16"
                   data-testid="image" />
-                <p className="social-proof-content">Sevilen ürün! <span className="social-proof-item-focused-text">9,6B</span> kişi
+                <p className="social-proof-content">Sevilen ürün! <span className="social-proof-item-focused-text">{randomCounts().sevilen}</span> kişi
                   favoriledi!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
@@ -371,13 +535,13 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/view3.png" width="16"
                   data-testid="image" />
                 <p className="social-proof-content">Son 24 saatte <span
-                  className="social-proof-item-focused-text">1,7B kişi</span> görüntüledi!</p>
+                  className="social-proof-item-focused-text">{randomCounts().son24saat} kişi</span> görüntüledi!</p>
               </div>
               <div className="social-proof-item-social-proof-item">
                 <img alt="basket-count" height="16"
                   src="https://cdn.dsmcdn.com/mnresize/30/30/mobile/pdp/Additional/basket3.png" width="16"
                   data-testid="image" />
-                <p className="social-proof-content"><span className="social-proof-item-focused-text">1,4B kişinin</span> sepetinde,
+                <p className="social-proof-content"><span className="social-proof-item-focused-text">{randomCounts().sepetinde} kişinin</span> sepetinde,
                   tükenmeden al!</p>
               </div>
             </div>
@@ -463,39 +627,45 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
         <p>tarihleri arasında siparişin kapında!</p>
       </div>
 
-      {/* Order Buttons */}
-      <div className="product-extra-link2 mb-3 w-100">
-        <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
-          Kapıda Ödemeli Sipariş Ver
-        </button>
-      </div>
+      
+        <div className="product-extra-link2 mb-3 w-100">
+          <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
+            Kapıda Ödemeli Sipariş Ver
+          </button>
+        </div>
 
       {/* Product Content */}
       {memoizedProductContent && (
         <div className="container product-content mb-3" dangerouslySetInnerHTML={memoizedProductContent} />
       )}
 
-      <div className="product-extra-link2 mb-3 w-100">
-        <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
-          Şimdi Sipariş Ver
-        </button>
-      </div>
+        <div className="product-extra-link2 mb-3 w-100">
+          <button type="button" className="btn btn-success btn-block w-100 bounce" onClick={openModal}>
+            Şimdi Sipariş Ver
+          </button>
+        </div>
+      
 
       <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
 
       {/* Order Modal */}
-      <OrderModal
-        showModal={showModal}
-        onClose={closeModal}
-        product={{
-          ...product,
-          cities: product.cities,
-          is_modal: true,
-        }}
-        selectedOption={selectedOption}
-        onOptionSelect={selectOption}
-      />
+      <div ref={orderModalRef}>
+        <OrderModal
+          showModal={showModal}
+          onClose={closeModal}
+          product={{
+            ...product,
+            cities: product.cities,
+            is_modal: is_modal,
+          }}
+          selectedOption={selectedOption}
+          onOptionSelect={selectOption}
+          selectedVariants={selectedVariants}
+          onVariantChange={handleOrderModalVariantChange}
+        />
+      </div>
 
+      {product?.is_whatsapp_homepage === "on" && (
       <div className="whatsapp-icon-container">
         <a
           href={`https://wa.me/${product.merchant_phone}?text=Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`}
@@ -509,18 +679,20 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           </svg>
         </a>
       </div>
-
-      {/* Sticky Footer */}
-      <div className="sticky-footer">
-        <div className="product-info">
-          <div className="product-name">{product.name}</div>
-          <div className="product-price">
-            <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
-            <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{product.price.toFixed(2)}TL</span>
+      )}
+      
+        <div className="sticky-footer">
+          <div className="product-info">
+            <div className="product-name">{product.name}</div>
+            <div className="product-price">
+              <span className="original-price">{product.oldPrice.toFixed(2)}TL</span>
+              <span className="text-danger" style={{ fontWeight: 'bolder', fontSize: '1.1rem' }}>{product.price.toFixed(2)}TL</span>
+            </div>
           </div>
+          <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
         </div>
-        <button className="add-to-cart-btn" onClick={openModal}>Sipariş Ver</button>
-      </div>
+     
+
 
       {/* Footer */}
       <Footer />

@@ -12,7 +12,7 @@ async function fetchProducts() {
   try {
     // Get the current domain from headers
     const h = await headers();
-    const host = h.get('host') || 'trendygoods.com.tr';
+    const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl =  process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
@@ -34,7 +34,7 @@ async function fetchProducts() {
     }
     
     const directData = await directRes.json();
-    console.log(directData);
+    console.log("direcdata: ",directData);
 
     if (directData?.main_product_slug) {
       console.log('✅ Redirecting to main product:', directData.main_product_slug);
@@ -66,7 +66,7 @@ async function fetchProducts() {
     });
     
     console.log('✅ Products mapped successfully:', mappedProducts.length);
-    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories };
+    return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: directData?.merchant?.settings?.product_card_design == "modern" ? "tekstil": "type1" };
     
   } catch (error: any) {
     console.log(error);
@@ -105,7 +105,7 @@ export default async function Home() {
   console.log('🏠 Home page rendering...');
   
   // Server-side'da veri çek
-  const {products, logoSrc, categories} = await fetchProducts();
+  const {products, logoSrc, categories, productType} = await fetchProducts();
   
   console.log('📊 Final products for render:', products.length);
 
@@ -114,7 +114,7 @@ export default async function Home() {
       <Header logoSrc={logoSrc || undefined} categories={categories} />
       <main className="flex-fill mt-3 pb-4">
         {products.length > 0 ? (
-          <ProductGrid products={products} />
+          <ProductGrid products={products} productType={productType} />
         ) : (
           <div className="container text-center py-5">
             <h3>Ürünler yükleniyor...</h3>

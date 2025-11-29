@@ -7,7 +7,7 @@ import { isBotRequest } from '../../../utils/botDetection';
 async function fetchProductData(slug: string) {
   // Get the current domain from headers
   const h = await headers();
-  const host = h.get('host') || 'trendygoods.com.tr';
+  const host = h.get('host');
   const protocol = h.get('x-forwarded-proto') || 'https';
   const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 

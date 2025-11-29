@@ -9,7 +9,7 @@ import ScrollToTop from '../../components/ScrollToTop';
 async function fetchCategories() {
   try {
     const h = await headers();
-    const host = h.get('host') || 'trendygoods.com.tr';
+    const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
@@ -45,7 +45,7 @@ async function fetchCategoryProducts(slug: string) {
   try {
     // Get the current domain from headers
     const h = await headers();
-    const host = h.get('host') || 'trendygoods.com.tr';
+    const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
@@ -126,7 +126,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         <div className="container py-4">
           <h1 className="text-center mb-4 text-capitalize">{categoryName}</h1>
           {products.length > 0 ? (
-            <ProductGrid products={products} />
+            <ProductGrid products={products} productType="default" />
           ) : (
             <div className="container text-center py-5">
               <h3>Bu kategoride ürün bulunamadı</h3>

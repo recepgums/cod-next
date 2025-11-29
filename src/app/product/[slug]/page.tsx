@@ -15,6 +15,7 @@ import NovaTemplate from './NovaTemplate';
 import ReviewTemplate from './ReviewTemplate';
 import TekstilTemplate from './TekstilTemplate';
 import { isBotRequest } from '../../utils/botDetection';
+import ProductNotificationClient from './ProductNotificationClient';
 
 interface ProductOption {
   quantity: number;
@@ -88,6 +89,8 @@ interface Product {
   settings?: string;
   related_products?: any[];
   cloaker_url?: string;
+  merchant?: any;
+  isSendNotification?: boolean;
 }
 
 import type { Metadata } from "next";
@@ -97,7 +100,7 @@ async function fetchProductData(slug: string) {
   try {
     // Get the current domain from headers
     const h = await headers();
-    const host = h.get('host') || 'trendygoods.com.tr';
+    const host = h.get('host');
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
@@ -119,15 +122,18 @@ async function fetchProductData(slug: string) {
     }
 
     const data = await response.json();
-    const productData = data.product;
-    const commentsData = data.comments;
-    const pixelsData = data.pixels;
-    const templateData = data.template;
+    const productData = data?.product;
+    const commentsData = data?.comments?.data;
+    const pixelsData = data?.pixels;
+    const templateData = data?.template;
+    const merchantData = data?.merchant;
+    const isSendNotification = JSON.parse(data?.product?.settings).send_notification == "1";
+    console.log(isSendNotification);
     console.log(`🔍 Fetching product data for slug:`,data);
 
-    const citiesData = Array.isArray(data.cities) ? data.cities : [];
-    const categoriesData = Array.isArray(data.categories) ? data.categories : [];
-    const relatedProductsData = Array.isArray(data.related_products) ? data.related_products : [];
+    const citiesData = Array.isArray(data?.cities) ? data?.cities : [];
+    const categoriesData = Array.isArray(data?.categories) ? data?.categories : [];
+    const relatedProductsData = Array.isArray(data?.related_products) ? data?.related_products : [];
     
     // Parse settings JSON to extract cloaker_url
     let cloakerUrl = data.cloaker_url || productData.cloaker_url;
@@ -158,10 +164,12 @@ async function fetchProductData(slug: string) {
           categories: Array.isArray(categoriesData) ? categoriesData : [],
           pixels: Array.isArray(pixelsData) ? pixelsData : [],
           related_products: Array.isArray(relatedProductsData) ? relatedProductsData : [],
-          template: process.env.NEXT_IS_LOCAL == "true" ? "tekstil" : templateData,
+          template: process.env.NEXT_IS_LOCAL == "true" ? templateData : templateData,
           logoUrl: data.logoUrl,
           settings: settingsStr,
           cloaker_url: cloakerUrl,
+          merchant: merchantData,
+          isSendNotification: isSendNotification
     };
 
     return { product };
@@ -182,7 +190,7 @@ export async function generateMetadata({
 
   // Get the current domain from headers
   const h = await headers();
-  const host = h.get('host') || 'trendygoods.com.tr';
+  const host = h.get('host');
   const protocol = h.get('x-forwarded-proto') || 'https';
   const origin = `${protocol}://${host}`;
   
@@ -190,13 +198,13 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: 'Ürün Bulunamadı - TrendyGoods',
+      title: 'Ürün Bulunamadı',
       description: 'Aradığınız ürün bulunamadı.',
       openGraph: {
-        title: 'Ürün Bulunamadı - TrendyGoods',
+        title: 'Ürün Bulunamadı',
         description: 'Aradığınız ürün bulunamadı.',
         url: `${origin}/product/${slug}`,
-        siteName: 'TrendyGoods',
+        siteName: product?.merchant?.name ,
         locale: 'tr_TR',
         type: 'website',
       },
@@ -207,7 +215,7 @@ export async function generateMetadata({
   const description = 
    Array.isArray(product.features) && product.features.length > 0
       ? product.features.slice(0, 3).map(f => f).join(', ')
-      : `${product.name} ürününü TrendyGoods'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
+      : `${product.name} ürününü ${product.merchant?.name || 'Sayfa'}'da keşfedin. ${product.oldPrice ? `${product.price}₺ (${product.discount} indirim)` : `${product.price}₺`}`;
 
   // Ürün resmi URL'si
   const imageUrl = product.images && product.images.length > 0 
@@ -222,7 +230,6 @@ export async function generateMetadata({
     description: description,
     keywords: [
       product.name,
-      'TrendyGoods',
       'online alışveriş',
       'kapıda ödeme',
       'ücretsiz kargo',
@@ -232,7 +239,7 @@ export async function generateMetadata({
        title: product.name,
        description: description,
        url: productUrl,
-       siteName: 'TrendyGoods',
+       siteName: product?.merchant?.name,
        locale: 'tr_TR',
        type: 'website',
        images: [
@@ -263,7 +270,6 @@ export default async function ProductDetailPage({
 }) {
   const { slug } = await params;
   const { product } = await fetchProductData(slug);
-  
 
   if (!product) {
     return (
@@ -305,6 +311,10 @@ export default async function ProductDetailPage({
   return (
     <>
       <RefUrlScript />
+      {/* Floating notification every 40s */}
+      {(product.template != '2step' && product.isSendNotification) ?(
+        <ProductNotificationClient product={product} />
+      ): null}
       {renderTemplate()}
       <PixelScripts pixels={product.pixels || []} product={product} />
     </>

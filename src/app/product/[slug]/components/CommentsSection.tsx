@@ -51,7 +51,7 @@ export default function CommentsSection({ comments, count, commentGridRef }: Com
         
         setTimeout(() => clearInterval(checkMasonry), 10000);
       }
-    }, 2000);
+    }, 2500);
   
     return () => {
       clearTimeout(timer);

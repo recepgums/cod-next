@@ -69,8 +69,18 @@ export default function NovaTemplate({ product }: { product: Product }) {
     const [variants, setVariants] = useState<any>({});
     const [selectedVariants, setSelectedVariants] = useState<any[]>([]);
     const commentGridRef = useRef<HTMLDivElement>(null);
+    const orderModalRef = useRef<HTMLDivElement>(null);
 
-    const openModal = () => setShowModal(true);
+    const openModal = () => {
+        setShowModal(true);
+        if (!is_modal) {
+            setTimeout(() => {
+                if (orderModalRef.current) {
+                    orderModalRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+    };
     const closeModal = () => setShowModal(false);
 
 
@@ -91,6 +101,17 @@ export default function NovaTemplate({ product }: { product: Product }) {
             return {};
         }
     }, [product?.settings]);
+
+    let is_modal = useMemo(() => {
+        const modal_type = typeof (parsedSettings as any)?.modal_type === 'string'
+            ? String((parsedSettings as any).modal_type).toLowerCase()
+            : undefined;
+
+        if (modal_type === 'bottom') {
+            return false;
+        }
+        return true;
+    }, [parsedSettings]);
 
     // Ürün içeriğini (HTML) memoize et
     const memoizedProductContent = useMemo(() => {
@@ -157,13 +178,17 @@ export default function NovaTemplate({ product }: { product: Product }) {
             // If variants is an array like [{ name, type, stock, alias }, ...],
             // group by type to build select options per type.
             if (Array.isArray(rawVariants)) {
-                const grouped: Record<string, { title: string; options: string[] }> = {};
+                const grouped: Record<string, { title: string; options: string[]; stock: Record<string, string> }> = {};
                 rawVariants.forEach((v: any) => {
                     const typeKey = (v?.type || 'Seçenek').toString();
                     const optionName = (v?.name || '').toString();
-                    if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+                    const stockValue = (v?.stock || '0').toString();
+                    if (!grouped[typeKey]) {
+                        grouped[typeKey] = { title: typeKey, options: [], stock: {} };
+                    }
                     if (optionName && !grouped[typeKey].options.includes(optionName)) {
                         grouped[typeKey].options.push(optionName);
+                        grouped[typeKey].stock[optionName] = stockValue;
                     }
                 });
                 setVariants(grouped);
@@ -210,9 +235,10 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
     const categories = [] as any[];
 
-  return (
-    <div className="nova-template" style={{ paddingBottom: '100px' }}>
-        <Header logoSrc={product.logoUrl} categories={product.categories || []} />
+    return (
+        <>
+            <Header logoSrc={product.logoUrl} categories={product.categories || []} />
+            <div className="nova-template">
                 <div className="nova-slider-wrapper">
                     <NovaSlider
                         images={product.images}
@@ -220,7 +246,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     />
                 </div>
 
-                <div style={{ padding: "2px 18px 0" }}>
+                <div style={{ padding: "2px 4px 0" }}>
                     <div>
                         <div className="d-flex" style={{ lineHeight: "1.0" }}>
                             <div>
@@ -270,7 +296,7 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         <div className="text-center" style={{ flex: 1 }}>
                             <span className="oldPrice">{formatNumber(product.oldPrice)}TL</span>
                         </div>
-                        <div className=" text-white discount-container"  style={{ flex: 1 }}>
+                        <div className=" text-white discount-container" style={{ flex: 1 }}>
                             <span className='discount d-md-none'> {calculateDiscount(product.oldPrice, product.price)}% İNDİRİM</span>
                         </div>
                     </div>
@@ -306,18 +332,18 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
                     {/* Variant Selection */}
                     {false && Object.keys(variants || {}).length > 0 && (
-                        <div className="variant-selection-container" style={{ 
-                            marginTop: "20px", 
+                        <div className="variant-selection-container" style={{
+                            marginTop: "20px",
                             marginBottom: "20px",
                             padding: "15px",
                             backgroundColor: "#f8f9fa",
                             borderRadius: "8px",
                             border: "1px solid #e9ecef"
                         }}>
-                            <h5 style={{ 
-                                fontSize: "16px", 
-                                fontWeight: "600", 
-                                marginBottom: "15px", 
+                            <h5 style={{
+                                fontSize: "16px",
+                                fontWeight: "600",
+                                marginBottom: "15px",
                                 color: "#333",
                                 textAlign: "center"
                             }}>
@@ -367,9 +393,8 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         </div>
                     )}
 
-
-                    <div 
-                        className="button-container mb-3" 
+                    <div
+                        className="button-container mb-1"
                         style={{
                             position: 'fixed',
                             bottom: '0',
@@ -387,10 +412,11 @@ export default function NovaTemplate({ product }: { product: Product }) {
                         <button type='button' className='add-to-cart w-100' onClick={openModal}>
                             <svg height="40" width="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor" data-id="508817629909549416">
                                 <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" d="M58,76a58,58,0,0,1,116,0,6,6,0,0,1-12,0,46,46,0,0,0-92,0,6,6,0,0,1-12,0Zm138,46a25.87,25.87,0,0,0-14.59,4.49A26,26,0,0,0,142,110.1V76a26,26,0,0,0-52,0v87l-7.53-12.1a26,26,0,0,0-45,26.13l29.32,50A6,6,0,0,0,77.16,221L47.87,171a14,14,0,0,1,24.25-14,1,1,0,0,0,.1.17l18.68,30A6,6,0,0,0,102,184V76a14,14,0,0,1,28,0v68a6,6,0,0,0,12,0V132a14,14,0,0,1,28,0v20a6,6,0,0,0,12,0v-4a14,14,0,0,1,28,0v36c0,22.13-7.3,37.18-7.37,37.32a6,6,0,0,0,2.69,8A5.83,5.83,0,0,0,208,230a6,6,0,0,0,5.38-3.32c.35-.7,8.63-17.55,8.63-42.68V148A26,26,0,0,0,196,122Z"></path></svg>
-                            <span>Sepete ekle</span>
+                            <span>SİPARİŞ VER</span>
                         </button>
                     </div>
-                    <div className="faq-container">
+
+                    <div className={`faq-container ${parsedFaq.length > 0 ? "" : "d-none"}`}>
                         <div className="faq-list">
                             {parsedFaq.map((item, index) => (
                                 <div key={index} className="faq-item">
@@ -463,22 +489,26 @@ export default function NovaTemplate({ product }: { product: Product }) {
 
 
                     <CommentsSection comments={product.comments || []} count={product.commentCount || 0} commentGridRef={commentGridRef} />
-                <OrderModal
-                    showModal={showModal}
-                    onClose={closeModal}
-                    product={{
-                        ...product,
-                        is_modal: true,
-                    }}
-                    selectedOption={selectedOption}
-                    onOptionSelect={selectOption}
-                    selectedVariants={selectedVariants}
-                    onVariantChange={handleOrderModalVariantChange}
-                />
+                    <div ref={orderModalRef}>
+                        <OrderModal
+                            showModal={showModal}
+                            onClose={closeModal}
+                            product={{
+                                ...product,
+                                is_modal: is_modal,
+                            }}
+                            selectedOption={selectedOption}
+                            onOptionSelect={selectOption}
+                            selectedVariants={selectedVariants}
+                            onVariantChange={handleOrderModalVariantChange}
+                        />
+                    </div>
                 </div>
 
 
             </div>
+
+        </>
     );
 }
 

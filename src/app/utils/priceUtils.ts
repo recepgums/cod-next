@@ -23,3 +23,7 @@ export function calculateDiscountPercentage(originalPrice: number, currentPrice:
 export function formatPrice(price: number): string {
   return `₺ ${price.toFixed(2)}`;
 }
+
+export const randomNumber = (min: number, max: number)=>{
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

@@ -45,7 +45,7 @@ export default function Header({ logoSrc, categories: categoriesProp }: HeaderPr
             <Link href="/" className="navbar-brand">
               <Image
                 src={resolvedLogoSrc || "/images/logo.png"}
-                alt="TrendyGoods"
+                alt="logo"
                 width={185}
                 height={50}
                 style={{ height: '50px' }}

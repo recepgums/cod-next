@@ -85,7 +85,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`)
       .then(res => {
         const productData = res.data.product;
-        const commentsData = res.data.comments;
+        const commentsData = res.data?.comments;
         const pixelsData = res.data.pixels;
         const templateData = res.data.template;
         const citiesData = Array.isArray(res.data.cities) ? res.data.cities : [];

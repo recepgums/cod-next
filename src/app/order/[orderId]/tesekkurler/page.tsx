@@ -68,9 +68,10 @@ export default function ThankYouPage() {
           const lastSent = new Date(data.timestamp);
           const now = new Date();
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
           
-          if (lastSent > oneDayAgo && data.order_id === order.id) {
-            console.log('Purchase event already sent within 24 hours for this order, skipping...');
+          if (lastSent > oneDayAgo && data.order_id === order.id && data.host === host) {
+            console.log('🔒 TY:Purchase skipped (cached for order)', { order_id: order.id, lastSent: data.timestamp });
             return; // 1 gün içinde aynı sipariş için gönderilmiş
           }
         }
@@ -80,6 +81,7 @@ export default function ThankYouPage() {
         const pname = order.products || '';
         const qty = parseInt(order.quantity?.toString() || '1') || 1;
 
+        let sent = false;
         // Facebook Pixel Purchase Event
         if (typeof window !== 'undefined' && (window as any).fbq) {
           (window as any).fbq('track', 'Purchase', {
@@ -90,6 +92,21 @@ export default function ThankYouPage() {
             content_name: pname,
             num_items: qty
           });
+          console.log('💰 TY:FB Purchase sent', { pid, value, qty });
+          try {
+            (window as any).fbq('trackCustom', 'SatinAlindi', {
+              value,
+              currency: 'TRY',
+              content_ids: [pid],
+              content_type: 'product',
+              content_name: pname,
+              num_items: qty,
+              order_id: order.id,
+              host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+            });
+            console.log('📤 TY:FB trackCustom SatinAlindi sent');
+          } catch {}
+          sent = true;
         }
 
         // TikTok Pixel Purchase Event
@@ -102,6 +119,7 @@ export default function ThankYouPage() {
             content_name: pname,
             quantity: qty
           });
+          console.log('💰 TY:TT CompletePayment sent', { pid, value, qty });
 
           (window as any).ttq.track('PlaceAnOrder', {
             value,
@@ -111,22 +129,29 @@ export default function ThankYouPage() {
             content_name: pname,
             quantity: qty
           });
+          console.log('💰 TY:TT PlaceAnOrder sent', { pid, value, qty });
+          sent = true;
         }
 
-        // Cache'e kaydet (timestamp ile)
-        localStorage.setItem('purchase_event', JSON.stringify({
-          timestamp: new Date().toISOString(),
-          event: 'Purchase',
-          order_id: order.id
-        }));
+        // Cache'e kaydet (timestamp ile) — yalnızca en az bir gönderim denendiyse
+        if (sent) {
+          localStorage.setItem('purchase_event', JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'Purchase',
+            order_id: order.id,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+          }));
+        } else {
+          console.warn('⏳ TY:Purchase not cached (no pixel available)');
+        }
 
-        console.log('Purchase events sent:', {
+        console.log('TY:Purchase events sent:', {
           facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
           tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
           order_id: order.id
         });
       } catch (error) {
-        console.error('Error sending Purchase events:', error);
+        console.error('❌ TY:Purchase error', error);
       }
     };
 
@@ -136,6 +161,7 @@ export default function ThankYouPage() {
         sendPurchaseEvent();
       } else {
         // 2 saniye sonra tekrar kontrol et
+        console.warn('⏳ TY:Pixels not ready, retrying in 2s');
         setTimeout(checkPixelsLoaded, 2000);
       }
     };

@@ -20,6 +20,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [refUrlData, setRefUrlData] = useState<any>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<string>('1');
   const formRef = useRef<HTMLFormElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const quantityImages = useMemo(() => {
     try {
       const settings = apiProduct?.settings;
@@ -123,6 +124,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   // Fire AddToCart when order page is visited (once per day)
   useEffect(() => {
     const sendAddToCartEvent = () => {
+      console.log("🧪 OrderTemplate:sendAddToCartEvent:attempt");
       try {
         // Check if already sent within 24 hours
         const cached = localStorage.getItem('add_to_cart_event');
@@ -131,9 +133,10 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           const lastSent = new Date(data.timestamp);
           const now = new Date();
           const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
           
-          if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString()) {
-            console.log('OrderTemplate: AddToCart event already sent within 24 hours, skipping...');
+          if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString() && data.host === host) {
+            console.log('🔒 OrderTemplate:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
             return;
           }
         }
@@ -146,7 +149,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         // Send immediately if pixels are ready
         const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
         const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
+        console.log('🧪 OrderTemplate:AddToCart:precheck', { hasFbq, hasTtq, pid, pname, value, qty });
 
+        let sent = false;
         if (hasFbq) {
           (window as any).fbq('track', 'AddToCart', {
             value,
@@ -156,7 +161,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             num_items: qty
           });
-          console.log('✅ Facebook AddToCart event sent');
+          console.log('✅ FB AddToCart sent', { pid, value });
+          try {
+            (window as any).fbq('trackCustom', 'KartaEklendi', {
+              value,
+              currency: 'TRY',
+              content_ids: [pid],
+              content_type: 'product',
+              content_name: pname,
+              num_items: qty,
+              host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+            });
+            console.log('📤 FB trackCustom KartaEklendi sent');
+          } catch {}
+          sent = true;
         }
 
         if (hasTtq) {
@@ -168,22 +186,24 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             quantity: qty
           });
-          console.log('✅ TikTok AddToCart event sent');
+          console.log('✅ TT AddToCart sent', { pid, value });
+          sent = true;
         }
 
-        if (hasFbq || hasTtq) {
+        if (sent) {
           // Cache the event with timestamp
           localStorage.setItem('add_to_cart_event', JSON.stringify({
             timestamp: new Date().toISOString(),
             event: 'AddToCart',
-            product_id: pid
+            product_id: pid,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           }));
-          console.log('📦 AddToCart event cached for 24 hours');
+          console.log('📦 AddToCart cached', { pid });
         } else {
-          console.log('⏳ Pixels not ready yet, will retry...');
+          console.warn('⏳ Pixels not ready yet, will retry...', { pid });
         }
       } catch (error) {
-        console.error('❌ Error sending AddToCart event:', error);
+        console.error('❌ AddToCart error', error);
       }
     };
 
@@ -275,6 +295,19 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     let remaining = val.slice(2);
 
     const newValue = prefix + areaCode + (areaCode.length === 2 ? ") " : "") + formatPhoneNumber(remaining);
+    if(newValue.length == 17){
+       axios.post('/api/added-to-cart', {
+        name: nameRef.current.value,
+        phone: newValue?.replace(/\D/g, ""),
+        address: null,
+        quantity: selectedQuantity,
+        total_price: totalPrice,
+        product_id: apiProduct?.id,
+        products: apiProduct?.name,
+        ref_url: refUrlData?.fullUrl,
+        order_id:  null,
+      });
+    }
     setPhoneValue(newValue);
     
     setTimeout(() => {
@@ -346,19 +379,54 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         product_id: apiProduct?.id,
         products: apiProduct?.name,
         ref_url: refUrlData?.fullUrl,
-        
       });
 
-      if (response.data.success) {
+ 
+
+      if (response?.data?.success) {
         setOrderId(response.data.order_id);
         setOrderSuccess(true);
-        
+        await axios.post('/api/order-log', {
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          address: formData.get('address'),
+          quantity: selectedQuantity,
+          total_price: totalPrice,
+          product_id: apiProduct?.id,
+          products: apiProduct.name,
+          ref_url: refUrlData?.fullUrl,
+          order_id: response.data.order_id,
+        });
         // Try to send purchase event immediately, then retry after a delay
+        console.log('🧪 OrderTemplate:submit:success', { order_id: response.data.order_id, totalPrice, product_id: apiProduct?.id });
         firePurchaseEvent(response.data);
         setTimeout(() => firePurchaseEvent(response.data), 1000);
+
+
+        axios.delete('/api/added-to-cart', {
+          data: {
+            ref_url: refUrlData?.fullUrl,
+          },
+        });
+
       }
+      else{
+        await axios.post('/api/order-log', {
+          name: formData.get('name'),
+          phone: formData.get('phone'),
+          address: formData.get('address'),
+          quantity: selectedQuantity,
+          total_price: totalPrice,
+          product_id: apiProduct?.id,
+          products: apiProduct?.name,
+          ref_url: refUrlData?.fullUrl,
+          order_id: response?.data?.order_id || null,
+        });
+
+      }
+
     } catch (error: any) {
-      console.error('Order submission failed:', error);
+      console.error('❌ Order submission failed:', error);
       alert(error.response?.data?.message || 'Sipariş gönderilirken bir hata oluştu.');
     }
   };
@@ -366,16 +434,22 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   
   const firePurchaseEvent = (orderData: any) => {
     try {
-      // Check if already sent within 24 hours
+      // Check if already sent within 24 hours for the same order
       const purchaseEvent = localStorage.getItem('purchase_event');
       if (purchaseEvent) {
         const purchaseEventData = JSON.parse(purchaseEvent);
         const lastSent = new Date(purchaseEventData.timestamp);
         const now = new Date();
         const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        
-        if (lastSent > oneDayAgo) {
-          console.log('🔒 Purchase event already sent within 24 hours, skipping...');
+        const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
+        if (
+          lastSent > oneDayAgo &&
+          purchaseEventData.order_id &&
+          orderData?.order_id &&
+          purchaseEventData.order_id === orderData.order_id &&
+          purchaseEventData.host === host
+        ) {
+          console.log('🔒 Purchase skipped (cached for order)', { order_id: orderData.order_id, lastSent: purchaseEventData.timestamp });
           return;
         }
       }
@@ -385,6 +459,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       const pname = apiProduct?.name || '';
       const qty = Number(selectedQuantity) || 1;
 
+      let purchaseSent = false;
       // Facebook Pixel Purchase Event
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'Purchase', {
@@ -395,7 +470,21 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           num_items: qty
         });
-        console.log('💰 Facebook Purchase event sent!');
+        console.log('💰 FB Purchase sent', { pid, value, qty });
+        try {
+          (window as any).fbq('trackCustom', 'SatinAlindi', {
+            value,
+            currency: 'TRY',
+            content_ids: [pid],
+            content_type: 'product',
+            content_name: pname,
+            num_items: qty,
+            order_id: orderData?.order_id || null,
+            host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+          });
+          console.log('📤 FB trackCustom SatinAlindi sent');
+        } catch {}
+        purchaseSent = true;
       }
 
       // TikTok Pixel Purchase Event
@@ -408,7 +497,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           quantity: qty
         });
-        console.log('💰 TikTok CompletePayment event sent!');
+        console.log('💰 TT CompletePayment sent', { pid, value, qty });
 
         (window as any).ttq.track('PlaceAnOrder', {
           value,
@@ -418,17 +507,25 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           quantity: qty
         });
-        console.log('💰 TikTok PlaceAnOrder event sent!');
+        console.log('💰 TT PlaceAnOrder sent', { pid, value, qty });
+        purchaseSent = true;
       }
 
-      // Cache with timestamp
-      localStorage.setItem('purchase_event', JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'Purchase'
-      }));
-      console.log('📦 Purchase event cached for 24 hours');
+      // Cache only if at least one send attempted
+      if (purchaseSent) {
+        localStorage.setItem('purchase_event', JSON.stringify({
+          timestamp: new Date().toISOString(),
+          event: 'Purchase',
+          order_id: orderData?.order_id || null,
+          product_id: pid,
+          host: typeof window !== 'undefined' ? window.location.host : 'ssr'
+        }));
+        console.log('📦 Purchase cached', { order_id: orderData?.order_id, pid });
+      } else {
+        console.warn('⏳ Purchase not cached (no pixel available)');
+      }
     } catch (error) {
-      console.error('❌ Error sending purchase events:', error);
+      console.error('❌ Purchase error', error);
     }
   };
 
@@ -598,7 +695,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
               <div className="form-group mb-3">
                 <label className="mb-1">Ad Soyad</label>
-                <input type="text" className="form-control" name="name" required />
+                <input type="text" className="form-control" ref={nameRef} name="name" required />
               </div>
 
               <div className="form-group mb-3">

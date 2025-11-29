@@ -61,3 +61,144 @@ body {
 .ml-3 {
   margin-left: 16px !important;
 }
+.row.product-grid-3 a{
+  text-decoration: none;
+}
+
+/* Notification Card */
+.notification-card {
+  /* Gradient background similar to reference */
+  background: linear-gradient(135deg, #3a0f10 0%, #5a1b1e 50%, #7a2740 100%);
+  border-radius: 16px;
+  padding: clamp(9px, 2.25vw, 15px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  width: min(69vw, 420px);
+  border-left: 6px solid #00b894;
+  /* animation-name: slideIn;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards; */
+}
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 3vw, 16px);
+  margin-bottom: clamp(7.5px, 2.25vw, 12px);
+}
+.notification-card .icon-circle {
+  width: clamp(33px, 9vw, 48px);
+  height: clamp(33px, 9vw, 48px);
+  background: linear-gradient(135deg, #4a1a1a 0%, #2d0a0a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+.notification-card .shopping-icon {
+  font-size: clamp(15px, 5.25vw, 21px);
+}
+.notification-card .header-content { flex: 1; }
+.notification-card .header-title {
+  color: #ffffff;
+  font-size: clamp(10.5px, 3.75vw, 13.5 px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.notification-card .order-message {
+  color: #f7f9fb;
+  font-size: clamp(13px, 4.5vw, 16px);
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 7px;
+}
+.notification-card .time-badge {
+  display: inline-block;
+  color: #e7eef4;
+  font-size: clamp(11px, 3.5vw, 14px);
+  font-weight: 500;
+  padding: clamp(4px, 1.2vw, 6px) clamp(8px, 2vw, 12px);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+}
+.notification-card .customer-highlight {
+  color: #00d3a8;
+  font-weight: 700;
+}
+
+/* Floating/transition container for notification */
+.notification-float {
+  position: fixed;
+  bottom: -200px; /* hidden above */
+  left: -100%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  /* transition: all 1.5s ease-in-out;  temporarily disabled animation */
+  padding: 8px;
+}
+.notification-float.show {
+  bottom: 80px;
+  left: 40%;
+}
+
+/* Extra fine-tuning for very small screens */
+@media (max-width: 360px) {
+  .notification-card { border-radius: 10px; }
+  .notification-card .order-message { line-height: 1.35; }
+}
+
+@keyframes slideIn {
+10% {
+  background: rgb(245, 245, 220);
+}
+20% {
+  background: rgb(240, 240, 215);
+}
+30% {
+  background: rgb(235, 235, 205);
+}
+40% {
+  background: rgb(230, 230, 200); 
+}
+50% {
+  background: rgb(225, 225, 195);
+}
+60% {
+  background: rgb(215, 215, 190);
+}
+70% {
+  background: rgb(210, 210, 185);
+}
+80% {
+  background: rgb(205, 205, 180);
+}
+90% {
+  background: rgb(200, 200, 175);
+}
+100% {
+  background: rgb(195, 195, 170);
+}
+}
+
+.modal-content.bottom{
+  box-shadow: initial !important;
+  border-radius: 0 !important;
+  box-shadow: initial !important;
+}
+
+.form-bottom{
+  z-index: 1100;
+  position: relative;
+}
+.form-bottom .modal-content{
+  border: 0;
+  margin-top :22px;
+}
+.form-bottom .fixed-bottom-button{
+  position: static;
+  box-shadow: none;
+  background-color: white;
+  animation: none;
+}

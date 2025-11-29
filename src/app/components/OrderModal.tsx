@@ -16,6 +16,7 @@ interface ProductOption {
   displayText?: string;
   finalDiscount?: number;
   title?: string;
+  stock?: number;
 }
 
 interface ProductImage {
@@ -93,13 +94,15 @@ export default function OrderModal({
   const [deliveryDates, setDeliveryDates] = useState({ start: '', end: '' });
   const [variants, setVariants] = useState<any>({});
   // selectedVariants artık prop olarak geliyor
-  const [selectedShippingCode, setSelectedShippingCode] = useState<string>("");
+  const [selectedShippingCode, setSelectedShippingCode] = useState<string>("360");
   const [showShippingError, setShowShippingError] = useState<boolean>(false);
   const shippingSectionRef = useRef<HTMLDivElement>(null);
 
   const PROTECTED_SHIPPING_AVAILABLE = false;
   const PROTECTED_SHIPPING_PRICE = 89.00;
   const [isProtectedShippingEnabled, setIsProtectedShippingEnabled] = useState<boolean>(false);
+
+  const nameRef = useRef<HTMLInputElement>(null);
 
   // Use cities from product prop
   const cities = product.cities || [];
@@ -203,6 +206,21 @@ export default function OrderModal({
     if ((phone?.[0] == "0" && phone.length < 2) || phone?.[1] == "5") {
       setInputPhone(phone);
     }
+
+    if (isValid) {
+       axios.post('/api/added-to-cart', {
+        name: nameRef.current.value,
+        phone: phone,
+        address: null,
+        quantity: selectedOption?.quantity || 1,
+        total_price: totalPrice,
+        product_id: product.id,
+        products: product.name,
+        ref_url: window.location.href,
+        order_id: null,
+      });
+    }
+
   };
 
   // Safely read card payment cost from settings
@@ -319,13 +337,17 @@ export default function OrderModal({
       // If variants is an array like [{ name, type, stock, alias }, ...],
       // group by type to build select options per type.
       if (Array.isArray(rawVariants)) {
-        const grouped: Record<string, { title: string; options: string[] }> = {};
+        const grouped: Record<string, { title: string; options: string[]; stock: Record<string, string> }> = {};
         rawVariants.forEach((v: any) => {
           const typeKey = (v?.type || 'Seçenek').toString();
           const optionName = (v?.name || '').toString();
-          if (!grouped[typeKey]) grouped[typeKey] = { title: typeKey, options: [] };
+          const stockValue = (v?.stock || '0').toString();
+          if (!grouped[typeKey]) {
+            grouped[typeKey] = { title: typeKey, options: [], stock: {} };
+          }
           if (optionName && !grouped[typeKey].options.includes(optionName)) {
             grouped[typeKey].options.push(optionName);
+            grouped[typeKey].stock[optionName] = stockValue;
           }
         });
         setVariants(grouped);
@@ -340,6 +362,24 @@ export default function OrderModal({
       console.error('Error parsing variants:', error);
     }
   }, [product]);
+
+  // Initialize selectedVariants when selectedOption changes
+  // Only update if the length doesn't match exactly - don't include selectedVariants in deps to avoid loops
+  useEffect(() => {
+    if (showModal && selectedOption && Object.keys(variants).length > 0) {
+      const quantity = selectedOption.quantity;
+      // Only update if length doesn't match exactly
+      // Use a ref or check current length without including it in deps
+      if (selectedVariants.length !== quantity) {
+        // Create array of empty objects for each product - exactly quantity items (0-indexed, so quantity items)
+        const newSelectedVariants = Array(quantity).fill(null).map(() => ({}));
+        if (onVariantChange) {
+          onVariantChange(newSelectedVariants);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showModal, selectedOption?.quantity, Object.keys(variants).length]);
 
   // Auto-select first product option when modal opens
   useEffect(() => {
@@ -386,6 +426,21 @@ export default function OrderModal({
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
+    
+    // Format variants according to API requirements
+    // Backend expects array of variant objects like [{ "Beden": "M", "Renk": "Kırmızı" }, ...]
+    let formattedVariants = null;
+    if (selectedVariants && selectedVariants.length > 0) {
+      // Filter out empty variant objects and keep only filled ones
+      const validVariants = selectedVariants.filter(v => v && Object.keys(v).length > 0);
+      
+      if (validVariants.length > 0) {
+        // Convert to array format that backend expects: array of objects
+        // Each object represents one product's variant selections: { "Beden": "M", "Renk": "Kırmızı" }
+        formattedVariants = validVariants;
+      }
+    }
+    
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
@@ -402,7 +457,8 @@ export default function OrderModal({
         ref_url: window.location.href,
         protected_shipping: isProtectedShippingEnabled,
         protected_shipping_cost: isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0,
-        shipping_code: selectedShippingCode || null
+        shipping_code: selectedShippingCode || null,
+        ...(formattedVariants && { variants: formattedVariants })
       });
 
       if (response.data.success) {
@@ -420,11 +476,27 @@ export default function OrderModal({
             order_id: response.data.order_id,
           });
         } catch { }
+
+        axios.delete('/api/added-to-cart', {
+          data: {
+            ref_url: window.location.href          },
+        });
         // Redirect to promotion page
         sendPurchaseEvent(response.data);
         window.location.href = `/order/${response.data.order_id}/promosyon`;
       } else {
         setSubmitError(response.data.message || "Sipariş gönderilirken bir hata oluştu.");
+        await axios.post('/api/order-log', {
+          name: formData.get('name') ?? null,
+          phone: formData.get('phone') ?? null,
+          address: formData.get('address') ?? null,
+          quantity: selectedOption?.quantity ?? null,
+          total_price: typeof totalPrice !== 'undefined' ? totalPrice : null,
+          product_id: product?.id ?? null,
+          products: product?.name ?? null,
+          ref_url: typeof window !== 'undefined' && window.location ? window.location.href : null,
+          order_id: "sipariş oluşmadı",
+        });
       }
     } catch (error: any) {
 
@@ -463,7 +535,7 @@ export default function OrderModal({
   // Prevent body scroll when modal is open
   useEffect(() => {
     if(process.env.NEXT_IS_LOCAL = "true"){
-      product.is_modal = true
+      // product.is_modal = true
     }
 
     if (showModal && product?.is_modal) {
@@ -498,7 +570,7 @@ export default function OrderModal({
 
       {/* Order Modal */}
       <div
-        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : ''}
+        className={product?.is_modal ? `modal fade${showModal ? ' show' : ''}` : 'form-bottom'}
         id={product?.is_modal ? `fullScreenModal` : ''}
         tabIndex={product?.is_modal ? -1 : undefined}
         role="dialog"
@@ -508,10 +580,10 @@ export default function OrderModal({
         onClick={product?.is_modal ? onClose : undefined}
       >
         <div className={product?.is_modal ? `modal-dialog modal-dialog-centered modal-fullscreen` : ''} role="document" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-content p-0" onClick={(e) => e.stopPropagation()}>
-            <div className={product?.is_modal ? `modal-header py-2` : 'd-none'}>
+          <div className={`modal-content p-0 ${product?.is_modal ?'':'bottom'}`} onClick={(e) => e.stopPropagation()}>
+            <div className={product?.is_modal ? `modal-header py-2` : ''}>
               <h5 className="modal-title text-center" id="fullScreenModalLabel">Sipariş Formu</h5>
-              <button type="button" className="close" onClick={onClose} aria-label="Close">
+              <button type="button" className={product?.is_modal ? 'close' : 'd-none'} onClick={onClose} aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -587,11 +659,15 @@ export default function OrderModal({
                                     onChange={(e) => handleVariantChange(index, type, e.target.value)}
                                   >
                                     <option value="">{variantData?.title || type} Seçin</option>
-                                    {(variantData?.options ?? []).map((option: string) => (
-                                      <option key={option} value={option}>
-                                        {option}
-                                      </option>
-                                    ))}
+                                    {(variantData?.options ?? []).map((option: string) => {
+                                      const stock = variantData?.stock?.[option];
+                                      const isDisabled = stock === '0' || stock === 0;
+                                      return (
+                                        <option key={option} value={option} disabled={isDisabled}>
+                                          {option} {isDisabled ? '(Tükendi)' : ''}
+                                        </option>
+                                      );
+                                    })}
                                   </select>
                                 ))}
                               </div>
@@ -635,7 +711,7 @@ export default function OrderModal({
                   {/* Shipping Company Selection */}
                   {Array.isArray(product?.shipping) && product?.shipping?.length > 0 && (
                     <div className="mb-3" ref={shippingSectionRef}>
-                      <span className="mb-2 fw-bold">Kargo Bilgileri</span>
+                      <span className="mb-2 fw-bold">Kargo Seçiniz</span>
                       {showShippingError && (
                         <span className="text-danger mt-2 ms-2" style={{ fontWeight: 'bold' }} role="alert">Lütfen bir kargo firması seçiniz.</span>
                       )}
@@ -808,7 +884,7 @@ export default function OrderModal({
                   <div className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text"><i className="fas fa-user"></i></span>
-                      <input name="name" type="text" required className="form-control" placeholder="Adınız Soyadınız" />
+                      <input name="name" ref={nameRef} type="text" required className="form-control" placeholder="Adınız Soyadınız" />
                     </div>
                   </div>
                   <div className="mb-3">
@@ -899,11 +975,6 @@ export default function OrderModal({
                       {submitError}
                     </div>
                   )}
-
-                  <div className="pb-5 text-center">
-                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
-                  </div>
-
                   <div className="product-extra-link2 fixed-bottom-button">
                     <button
                       type="submit"
@@ -920,6 +991,11 @@ export default function OrderModal({
                       )}
                     </button>
                   </div>
+
+                  <div className="pb-5 text-center">
+                    Lütfen teslim almayacağınız siparişleri VERMEYİN!
+                  </div>
+
 
                 </div>
               </form>
