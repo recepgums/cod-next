@@ -147,6 +147,15 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
   };
 
   const randomCounts = () => {
+    // Server-side'da localStorage yok, default değerler döndür
+    if (typeof window === 'undefined') {
+      return {
+        son24saat: "1,7B",
+        sevilen: "9,6B",
+        sepetinde: "1,4B"
+      };
+    }
+
     const dateString = localStorage.getItem('date');
     const dateObject = JSON.parse(dateString);
     if (dateString) {
