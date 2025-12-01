@@ -112,9 +112,7 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      //  ...(process.env.NEXT_IS_LOCAL === 'local'
-      //    ? { cache: 'no-store' as const }
-      //    : { next: { revalidate: 300 as const } }),
+      next: { revalidate: 3600 }, // 1 saat cache
     });
 
     if (!response.ok) {
@@ -191,6 +189,7 @@ export async function generateMetadata({
   const protocol = h.get('x-forwarded-proto') || 'https';
   const origin = `${protocol}://${host}`;
   
+  // Cache'den oku - fetchProductData zaten cache'li
   const { product } = await fetchProductData(slug);
 
   if (!product) {
@@ -201,7 +200,7 @@ export async function generateMetadata({
         title: 'Ürün Bulunamadı',
         description: 'Aradığınız ürün bulunamadı.',
         url: `${origin}/product/${slug}`,
-        siteName: product?.merchant?.name ,
+        siteName: 'Site',
         locale: 'tr_TR',
         type: 'website',
       },

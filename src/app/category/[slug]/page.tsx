@@ -21,9 +21,7 @@ async function fetchCategories() {
         'Referer': baseUrl,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
-      ...(process.env.NEXT_IS_LOCAL === 'local'
-        ? { cache: 'no-store' as const }
-        : { next: { revalidate: 300 as const } }),
+      next: { revalidate: 3600 }, // 1 saat cache
     });
 
     if (!response.ok) {
