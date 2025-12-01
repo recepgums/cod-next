@@ -61,7 +61,6 @@ interface ProductComment {
 }
 
 export default function NovaTemplate({ product }: { product: Product }) {
-    console.log('🎨 NovaTemplate rendering with product:', product);
     const [showModal, setShowModal] = useState(false);
     const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -94,7 +93,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
         try {
             const settings = product?.settings;
             const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
-            console.log('⚙️ Parsed settings:', parsed);
             return parsed || {};
         } catch (error) {
             console.error('❌ Error parsing settings:', error);
@@ -192,7 +190,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
                     }
                 });
                 setVariants(grouped);
-                console.log('🎨 Variants grouped:', grouped);
                 return;
             }
 
@@ -211,7 +208,6 @@ export default function NovaTemplate({ product }: { product: Product }) {
             const quantity = selectedOption.quantity;
             const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
             setSelectedVariants(newSelectedVariants);
-            console.log('🛍️ Updated selected variants for quantity:', quantity, newSelectedVariants);
         }
     }, [selectedOption, variants]);
 
@@ -219,12 +215,10 @@ export default function NovaTemplate({ product }: { product: Product }) {
         const newSelectedVariants = [...selectedVariants];
         newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
         setSelectedVariants(newSelectedVariants);
-        console.log('🔄 NovaTemplate variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
     };
 
     const handleOrderModalVariantChange = (newVariants: any[]) => {
         setSelectedVariants(newVariants);
-        console.log('🔄 OrderModal variant change received:', newVariants);
     };
 
     useEffect(() => {

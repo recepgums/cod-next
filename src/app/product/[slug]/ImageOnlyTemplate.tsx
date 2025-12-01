@@ -240,7 +240,6 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
           }
         });
         setVariants(grouped);
-        console.log('🎨 ImageOnlyTemplate: Variants grouped:', grouped);
         return;
       }
 
@@ -259,7 +258,6 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
       const quantity = selectedOption.quantity;
       const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
       setSelectedVariants(newSelectedVariants);
-      console.log('🛍️ ImageOnlyTemplate: Updated selected variants for quantity:', quantity, newSelectedVariants);
     }
   }, [selectedOption, variants]);
 
@@ -313,22 +311,6 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
         });
       }
 
-      console.log('AddToCart events sent:', {
-        facebook: {
-          event: 'AddToCart',
-          value: selectedOption?.price || product.price,
-          currency: 'TRY',
-          content_ids: [product.id.toString()],
-          content_name: product.name
-        },
-        tiktok: {
-          event: 'AddToCart',
-          value: selectedOption?.price || product.price,
-          currency: 'TRY',
-          content_id: product.id.toString(),
-          content_name: product.name
-        }
-      });
     } catch (error) {
       console.error('Error sending AddToCart events:', error);
     }
@@ -359,12 +341,10 @@ export default function ImageOnlyTemplate({ product }: ImageOnlyTemplateProps) {
     const newSelectedVariants = [...selectedVariants];
     newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
     setSelectedVariants(newSelectedVariants);
-    console.log('🔄 ImageOnlyTemplate: variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
   };
 
   const handleOrderModalVariantChange = (newVariants: any[]) => {
     setSelectedVariants(newVariants);
-    console.log('🔄 ImageOnlyTemplate: OrderModal variant change received:', newVariants);
   };
 
   return (

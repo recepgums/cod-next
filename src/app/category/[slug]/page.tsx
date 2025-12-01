@@ -32,7 +32,6 @@ async function fetchCategories() {
     }
 
     const data = await response.json();
-    console.log("asdasd",data)
     return data || [];
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -63,12 +62,10 @@ async function fetchCategoryProducts(slug: string) {
     });
 
     if (!response.ok) {
-      console.warn('⚠️ Category API failed:', response.status, response.statusText);
       throw new Error(`Category API failed: ${response.status}`);
     }
 
     const payload = await response.json();
-    console.log('✅ Category API success:', payload);
     const logoUrl = payload?.merchant?.logo_url;
     // Response robust mapping
     const categoryName = payload?.name || payload?.category?.name || slug;
@@ -80,7 +77,6 @@ async function fetchCategoryProducts(slug: string) {
         ? payload.data
         : [];
 
-    console.log('Kategori ürünleri:', rawProducts);
 
     const mappedProducts = rawProducts.map((item: any, index: number) => {
       // Media array'inden ilk resmi al
@@ -101,7 +97,7 @@ async function fetchCategoryProducts(slug: string) {
 
     return { categoryName, products: mappedProducts, logoUrl };
   } catch (error: any) {
-    console.warn('⚠️ Category fetch failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.log('Category fetch failed:', error instanceof Error ? error.message : 'Unknown error');
     return { 
       categoryName: slug, 
       products: [] 
@@ -111,13 +107,11 @@ async function fetchCategoryProducts(slug: string) {
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  console.log('📂 Category page rendering...', resolvedParams.slug);
   
   // Server-side'da veri çek
   const { categoryName, products, logoUrl } = await fetchCategoryProducts(resolvedParams.slug);
   const categories = await fetchCategories();
   
-  console.log('📊 Final products for render:', products.length);
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">

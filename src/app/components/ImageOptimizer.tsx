@@ -68,7 +68,6 @@ export default function OptimizedImage({
       blurDataURL={blurDataURL || defaultBlurDataURL}
       loading={priority ? 'eager' : 'lazy'}
       onError={(e) => {
-        console.warn('Image failed to load:', src);
         // Fallback to placeholder
         const target = e.target as HTMLImageElement;
         target.src = '/images/placeholder.svg';

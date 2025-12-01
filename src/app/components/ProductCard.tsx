@@ -66,11 +66,6 @@ export default function ProductCard({
   
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     // Daha temiz error logging - sadece gerekli bilgileri göster
-    console.warn('Image failed to load:', {
-      src: e.currentTarget.src,
-      alt: e.currentTarget.alt,
-      productTitle: title
-    });
     
     // Fallback image göster
     const target = e.target as HTMLImageElement;

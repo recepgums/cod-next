@@ -51,7 +51,6 @@ export async function isBotRequest(): Promise<boolean> {
   // Bot pattern'lerinden herhangi birini içeriyorsa bot olarak işaretle
   const isBot = botPatterns.some(pattern => lowerUserAgent.includes(pattern));
   
-  console.log(`🤖 Bot Detection - User-Agent: ${userAgent}, Is Bot: ${isBot}`);
   
   return isBot;
 }

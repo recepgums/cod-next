@@ -98,7 +98,6 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     try {
       const settings = product?.settings;
       const parsed = settings && typeof settings === 'string' ? JSON.parse(settings) : settings;
-      console.log('⚙️ Parsed settings:', parsed);
       return parsed || {};
     } catch (error) {
       console.error('❌ Error parsing settings:', error);
@@ -141,12 +140,10 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
     const newSelectedVariants = [...selectedVariants];
     newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
     setSelectedVariants(newSelectedVariants);
-    console.log('🔄 ReviewTemplate: variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
   };
 
   const handleOrderModalVariantChange = (newVariants: any[]) => {
     setSelectedVariants(newVariants);
-    console.log('🔄 ReviewTemplate: OrderModal variant change received:', newVariants);
   };
 
   const randomCounts = () => {
@@ -386,7 +383,6 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           }
         });
         setVariants(grouped);
-        console.log('🎨 ReviewTemplate: Variants grouped:', grouped);
         return;
       }
 
@@ -405,7 +401,6 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       const quantity = selectedOption.quantity;
       const newSelectedVariants = Array(quantity).fill(null)?.map(() => ({}));
       setSelectedVariants(newSelectedVariants);
-      console.log('🛍️ ReviewTemplate: Updated selected variants for quantity:', quantity, newSelectedVariants);
     }
   }, [selectedOption, variants]);
 

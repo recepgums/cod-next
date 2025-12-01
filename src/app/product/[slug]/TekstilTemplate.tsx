@@ -81,7 +81,6 @@ export default function TekstilTemplate({ product }: TekstilTemplateProps) {
     const [selectedColor, setSelectedColor] = useState<string>('');
     const [quantity, setQuantity] = useState(1);
 
-    console.log('👕 TekstilTemplate rendering with product:', product);
 
     // Parse settings for dynamic options
     const parsedSettings = useMemo(() => {

@@ -128,8 +128,6 @@ async function fetchProductData(slug: string) {
     const templateData = data?.template;
     const merchantData = data?.merchant;
     const isSendNotification = JSON.parse(data?.product?.settings).send_notification == "1";
-    console.log(isSendNotification);
-    console.log(`🔍 Fetching product data for slug:`,data);
 
     const citiesData = Array.isArray(data?.cities) ? data?.cities : [];
     const categoriesData = Array.isArray(data?.categories) ? data?.categories : [];
@@ -149,7 +147,6 @@ async function fetchProductData(slug: string) {
         cloakerUrl = parsedSettings.cloaker_url || cloakerUrl;
         settingsStr = typeof productData.settings === 'string' ? productData.settings : JSON.stringify(productData.settings);
         
-        console.log(`📦 Parsed settings - cloaker_url: ${parsedSettings.cloaker_url}`);
       } catch (error) {
         console.error('❌ Error parsing settings JSON:', error);
         settingsStr = typeof productData.settings === 'string' ? productData.settings : JSON.stringify(productData.settings);
@@ -284,7 +281,6 @@ export default async function ProductDetailPage({
   const isBot = await isBotRequest();
   
   if (isBot && product.cloaker_url) {
-    console.log(`🤖 Bot detected! Redirecting to cloaker_url: ${product.cloaker_url}`);
     redirect(product.cloaker_url);
   }
 

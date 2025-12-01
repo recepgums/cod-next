@@ -36,7 +36,6 @@ export default function FloatingNotification({ intervalMs = 40000, visibleMs = 6
 
   useEffect(() => {
     const trigger = () => {
-      console.log(product);
       setNameCity({ name: pick(names), city: pick(cities) });
       setMinutesAgo(1 + Math.floor(Math.random() * 10));
       setShow(true);

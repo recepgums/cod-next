@@ -26,28 +26,22 @@ async function fetchProducts() {
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
     });
-    console.log("api url", process.env.NEXT_PUBLIC_API_URL);
     
     if (!directRes.ok) {
-      console.warn('⚠️ Laravel API failed:', directRes.status, directRes.statusText);
       throw new Error(`Laravel API failed: ${directRes.status}`);
     }
     
     const directData = await directRes.json();
-    console.log("direcdata: ",directData);
 
     if (directData?.main_product_slug) {
-      console.log('✅ Redirecting to main product:', directData.main_product_slug);
       const targetSlug = String(directData.main_product_slug);
       redirect(`/product/${targetSlug}`);
     } else {
-      console.log('✅ No main product slug found');
     }
     
     const productsArray = directData.products || [directData?.product];
     
     if (productsArray.length === 0) {
-      console.warn('⚠️ No products found in API response');
       return { products: [], logoSrc: directData?.logoUrl || null };
     }
     
@@ -65,19 +59,16 @@ async function fetchProducts() {
       };
     });
     
-    console.log('✅ Products mapped successfully:', mappedProducts.length);
     return { products: mappedProducts, logoSrc: directData?.logoUrl || null, categories: directData?.categories, productType: directData?.merchant?.settings?.product_card_design == "modern" ? "tekstil": "type1" };
     
   } catch (error: any) {
-    console.log(error);
     // Allow Next.js redirects to bubble up (do not swallow)
     if (error && typeof error === 'object' && 'digest' in error && String(error.digest).includes('NEXT_REDIRECT')) {
       throw error;
     }
 
-    console.warn('⚠️ API fetch failed:', error instanceof Error ? error.message : 'Unknown error');
+    console.log(error);
     // Fallback: Boş array yerine test verisi döndür
-    console.log('🔄 Returning fallback test data...');
     return { products: [
        {
          name: 'Test Ürün 1',
@@ -102,12 +93,10 @@ async function fetchProducts() {
 }
 
 export default async function Home() {
-  console.log('🏠 Home page rendering...');
   
   // Server-side'da veri çek
   const {products, logoSrc, categories, productType} = await fetchProducts();
   
-  console.log('📊 Final products for render:', products.length);
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">

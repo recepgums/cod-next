@@ -71,7 +71,6 @@ export default function ThankYouPage() {
           const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
           
           if (lastSent > oneDayAgo && data.order_id === order.id && data.host === host) {
-            console.log('🔒 TY:Purchase skipped (cached for order)', { order_id: order.id, lastSent: data.timestamp });
             return; // 1 gün içinde aynı sipariş için gönderilmiş
           }
         }
@@ -92,7 +91,6 @@ export default function ThankYouPage() {
             content_name: pname,
             num_items: qty
           });
-          console.log('💰 TY:FB Purchase sent', { pid, value, qty });
           try {
             (window as any).fbq('trackCustom', 'SatinAlindi', {
               value,
@@ -104,7 +102,6 @@ export default function ThankYouPage() {
               order_id: order.id,
               host: typeof window !== 'undefined' ? window.location.host : 'ssr'
             });
-            console.log('📤 TY:FB trackCustom SatinAlindi sent');
           } catch {}
           sent = true;
         }
@@ -119,7 +116,6 @@ export default function ThankYouPage() {
             content_name: pname,
             quantity: qty
           });
-          console.log('💰 TY:TT CompletePayment sent', { pid, value, qty });
 
           (window as any).ttq.track('PlaceAnOrder', {
             value,
@@ -129,7 +125,6 @@ export default function ThankYouPage() {
             content_name: pname,
             quantity: qty
           });
-          console.log('💰 TY:TT PlaceAnOrder sent', { pid, value, qty });
           sent = true;
         }
 
@@ -142,14 +137,8 @@ export default function ThankYouPage() {
             host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           }));
         } else {
-          console.warn('⏳ TY:Purchase not cached (no pixel available)');
         }
 
-        console.log('TY:Purchase events sent:', {
-          facebook: { event: 'Purchase', value, content_ids: [pid], content_name: pname },
-          tiktok: { event: 'CompletePayment', value, content_id: pid, content_name: pname },
-          order_id: order.id
-        });
       } catch (error) {
         console.error('❌ TY:Purchase error', error);
       }
@@ -161,7 +150,6 @@ export default function ThankYouPage() {
         sendPurchaseEvent();
       } else {
         // 2 saniye sonra tekrar kontrol et
-        console.warn('⏳ TY:Pixels not ready, retrying in 2s');
         setTimeout(checkPixelsLoaded, 2000);
       }
     };

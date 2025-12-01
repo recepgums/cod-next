@@ -124,7 +124,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   // Fire AddToCart when order page is visited (once per day)
   useEffect(() => {
     const sendAddToCartEvent = () => {
-      console.log("🧪 OrderTemplate:sendAddToCartEvent:attempt");
       try {
         // Check if already sent within 24 hours
         const cached = localStorage.getItem('add_to_cart_event');
@@ -136,7 +135,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
           
           if (lastSent > oneDayAgo && data.product_id === apiProduct?.id?.toString() && data.host === host) {
-            console.log('🔒 OrderTemplate:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
             return;
           }
         }
@@ -149,7 +147,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         // Send immediately if pixels are ready
         const hasFbq = typeof window !== 'undefined' && !!(window as any).fbq;
         const hasTtq = typeof window !== 'undefined' && !!(window as any).ttq;
-        console.log('🧪 OrderTemplate:AddToCart:precheck', { hasFbq, hasTtq, pid, pname, value, qty });
 
         let sent = false;
         if (hasFbq) {
@@ -161,7 +158,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             num_items: qty
           });
-          console.log('✅ FB AddToCart sent', { pid, value });
           try {
             (window as any).fbq('trackCustom', 'KartaEklendi', {
               value,
@@ -172,7 +168,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
               num_items: qty,
               host: typeof window !== 'undefined' ? window.location.host : 'ssr'
             });
-            console.log('📤 FB trackCustom KartaEklendi sent');
           } catch {}
           sent = true;
         }
@@ -186,7 +181,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             content_name: pname,
             quantity: qty
           });
-          console.log('✅ TT AddToCart sent', { pid, value });
           sent = true;
         }
 
@@ -198,9 +192,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             product_id: pid,
             host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           }));
-          console.log('📦 AddToCart cached', { pid });
         } else {
-          console.warn('⏳ Pixels not ready yet, will retry...', { pid });
         }
       } catch (error) {
         console.error('❌ AddToCart error', error);
@@ -361,13 +353,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
-    console.log(formData.get('name'));
-    console.log(formData.get('phone'));
-    console.log(formData.get('address'));
-    console.log(selectedPackage);
-    console.log(totalPrice);
-    console.log(apiProduct?.id);
-    console.log(apiProduct?.name);
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
@@ -398,7 +383,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           order_id: response.data.order_id,
         });
         // Try to send purchase event immediately, then retry after a delay
-        console.log('🧪 OrderTemplate:submit:success', { order_id: response.data.order_id, totalPrice, product_id: apiProduct?.id });
         firePurchaseEvent(response.data);
         setTimeout(() => firePurchaseEvent(response.data), 1000);
 
@@ -449,7 +433,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           purchaseEventData.order_id === orderData.order_id &&
           purchaseEventData.host === host
         ) {
-          console.log('🔒 Purchase skipped (cached for order)', { order_id: orderData.order_id, lastSent: purchaseEventData.timestamp });
           return;
         }
       }
@@ -470,7 +453,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           num_items: qty
         });
-        console.log('💰 FB Purchase sent', { pid, value, qty });
         try {
           (window as any).fbq('trackCustom', 'SatinAlindi', {
             value,
@@ -482,7 +464,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             order_id: orderData?.order_id || null,
             host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           });
-          console.log('📤 FB trackCustom SatinAlindi sent');
         } catch {}
         purchaseSent = true;
       }
@@ -497,7 +478,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           quantity: qty
         });
-        console.log('💰 TT CompletePayment sent', { pid, value, qty });
 
         (window as any).ttq.track('PlaceAnOrder', {
           value,
@@ -507,7 +487,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           content_name: pname,
           quantity: qty
         });
-        console.log('💰 TT PlaceAnOrder sent', { pid, value, qty });
         purchaseSent = true;
       }
 
@@ -520,9 +499,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
           product_id: pid,
           host: typeof window !== 'undefined' ? window.location.host : 'ssr'
         }));
-        console.log('📦 Purchase cached', { order_id: orderData?.order_id, pid });
       } else {
-        console.warn('⏳ Purchase not cached (no pixel available)');
       }
     } catch (error) {
       console.error('❌ Purchase error', error);
@@ -554,8 +531,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       {/* Header Image */}
       <div style={{ width: '100%' }} 
       onClick={()=>{
-        console.log(apiProduct);
-        console.log(formRef.current);
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }}
       >

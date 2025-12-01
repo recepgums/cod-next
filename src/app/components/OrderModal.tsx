@@ -199,7 +199,6 @@ export default function OrderModal({
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phone = e.target.value;
-    console.log(phone);
     const isValid = validatePhone(phone);
     setIsPhoneValid(isValid);
     setPhoneError(isValid ? "" : "Geçerli bir telefon numarası giriniz (05XXXXXXXXX)");
@@ -292,22 +291,6 @@ export default function OrderModal({
         });
       }
 
-      console.log('Purchase events sent:', {
-        facebook: {
-          event: 'Purchase',
-          value: selectedOption?.price || product.price,
-          currency: 'TRY',
-          content_ids: [product.id.toString()],
-          content_name: product.name
-        },
-        tiktok: {
-          event: 'CompletePayment',
-          value: selectedOption?.price || product.price,
-          currency: 'TRY',
-          content_id: product.id.toString(),
-          content_name: product.name
-        }
-      });
       localStorage.setItem('purchase_event', JSON.stringify({
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
         event: 'Purchase'
@@ -394,7 +377,6 @@ export default function OrderModal({
     const newSelectedVariants = [...selectedVariants];
     newSelectedVariants[index] = { ...newSelectedVariants[index], [type]: value };
     onVariantChange(newSelectedVariants);
-    console.log('🔄 OrderModal variant changed:', { index, type, value, selectedVariants: newSelectedVariants });
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {

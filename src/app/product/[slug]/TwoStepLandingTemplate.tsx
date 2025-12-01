@@ -54,7 +54,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
 
   const redirectToOrder = () => {
     // Order sayfasında AddToCart eventi gönderilecek, burada sadece yönlendir
-    try { console.log('🧪 TwoStep:redirectToOrder', { productId: product?.id, host: typeof window !== 'undefined' ? window.location.host : 'ssr' }); } catch {}
     sendAddToCartEvent();
     window.location.href = orderHref;
   };
@@ -71,7 +70,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
         const host = typeof window !== 'undefined' ? window.location.host : 'ssr';
         
         if (lastSent > oneDayAgo && data.product_id === product?.id?.toString() && data.host === host) {
-          console.log('🔒 TwoStep:AddToCart skipped (cached)', { lastSent: data.timestamp, product_id: data.product_id });
           return; // 1 gün içinde aynı ürün için gönderilmiş
         }
       }
@@ -83,7 +81,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
       // Facebook Pixel AddToCart Event
       const hasFbq = typeof window !== 'undefined' && (window as any).fbq;
       const hasTtq = typeof window !== 'undefined' && (window as any).ttq;
-      console.log('🧪 TwoStep:AddToCart:precheck', { hasFbq, hasTtq, pid, pname, value });
       if (hasFbq) {
         (window as any).fbq('track', 'AddToCart', {
           value,
@@ -93,7 +90,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           content_name: pname,
           num_items: 1
         });
-        console.log('✅ TwoStep:FB AddToCart sent', { pid, value });
         try {
           (window as any).fbq('trackCustom', 'KartaEklendi', {
             value,
@@ -104,7 +100,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
             num_items: 1,
             host: typeof window !== 'undefined' ? window.location.host : 'ssr'
           });
-          console.log('📤 TwoStep:FB trackCustom KartaEklendi sent');
         } catch {}
       }
 
@@ -118,7 +113,6 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           content_name: pname,
           quantity: 1
         });
-        console.log('✅ TwoStep:TT AddToCart sent', { pid, value });
       }
 
       // Cache'e kaydet — yalnızca en az bir gönderim denendiyse
@@ -130,13 +124,8 @@ export default function TwoStepLandingTemplate({ product }: TwoStepLandingTempla
           host: typeof window !== 'undefined' ? window.location.host : 'ssr'
         }));
       } else {
-        console.warn('⏳ TwoStep:AddToCart not cached (no pixel available)');
       }
 
-      console.log('TwoStep AddToCart events sent:', {
-        facebook: { event: 'AddToCart', value, content_ids: [pid], content_name: pname },
-        tiktok: { event: 'AddToCart', value, content_id: pid, content_name: pname }
-      });
     } catch (error) {
       console.error('Error sending TwoStep AddToCart events:', error);
     }

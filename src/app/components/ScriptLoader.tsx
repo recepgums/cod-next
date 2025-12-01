@@ -5,14 +5,12 @@ import { useEffect } from 'react';
 // PixelScripts fonksiyonunu ScriptLoader içine taşıyalım
 const loadPixelScripts = (pixels: any[], product: any) => {
   if (!pixels || !Array.isArray(pixels)) return;
-  try { console.log('🧩 loadPixelScripts:init', { pixelCount: pixels.length, productId: product?.id, host: typeof window !== 'undefined' ? window.location.host : 'ssr' }); } catch {}
   
   const facebookPixels = pixels.filter(p => p.platform === 'facebook');
   const tiktokPixels = pixels.filter(p => p.platform === 'tiktok');
 
   // Facebook Pixels
   facebookPixels.forEach((pixel, idx) => {
-    try { console.log('⚙️ FB pixel attach', { index: idx, pixel_id: pixel.pixel_id }); } catch {}
     const fbScript = document.createElement('script');
     fbScript.innerHTML = `
       !function(f,b,e,v,n,t,s) {
@@ -27,7 +25,6 @@ const loadPixelScripts = (pixels: any[], product: any) => {
         fbq('track', 'PageView');
     `;
     document.head.appendChild(fbScript);
-    try { console.log('✅ FB script appended', { index: idx, pixel_id: pixel.pixel_id }); } catch {}
 
     // Noscript tag
     const noscript = document.createElement('noscript');
@@ -42,7 +39,6 @@ const loadPixelScripts = (pixels: any[], product: any) => {
 
   // TikTok Pixels - Tek script ile tüm pixel'leri yükle
   if (tiktokPixels.length > 0) {
-    try { console.log('⚙️ TikTok pixels attach', { count: tiktokPixels.length, ids: tiktokPixels.map(p => p.pixel_id) }); } catch {}
     const tiktokScript = document.createElement('script');
     tiktokScript.innerHTML = `
       
@@ -65,7 +61,7 @@ const loadPixelScripts = (pixels: any[], product: any) => {
           s${idx}.src = 'https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=${pixel.pixel_id}';
           s${idx}.async = true;
           s${idx}.onload = function() {
-            try { console.log('✅ TikTok SDK loaded', { index: ${idx}, pixel_id: '${pixel.pixel_id}' }); } catch(e){}
+            try {} catch(e){}
             ttq.page();
             ttq.track('ViewContent', {
               content_id: '${product.id}',
@@ -83,18 +79,16 @@ const loadPixelScripts = (pixels: any[], product: any) => {
       }(window, document, 'ttq');
     `;
     document.head.appendChild(tiktokScript);
-    try { console.log('✅ TikTok loader appended'); } catch {}
   }
 };
 
 // Global CSS and JS imports
 const addGlobalScripts = () => {
-  try { console.log('🧩 addGlobalScripts:init'); } catch {}
   // Google Analytics
   const gaScript = document.createElement('script');
   gaScript.async = true;
   gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-6WZY6VLXMF';
-  gaScript.onload = () => { try { console.log('✅ GA gtag.js loaded'); } catch {} };
+  gaScript.onload = () => { try {} catch {} };
   gaScript.onerror = () => { try { console.error('❌ GA gtag.js failed'); } catch {} };
   document.head.appendChild(gaScript);
 
@@ -117,7 +111,7 @@ const addGlobalScripts = () => {
   // jQuery and other libraries
   const jquery = document.createElement('script');
   jquery.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js';
-  jquery.onload = () => { try { console.log('✅ jQuery loaded'); } catch {} };
+  jquery.onload = () => { try {} catch {} };
   jquery.onerror = () => { try { console.error('❌ jQuery failed'); } catch {} };
   document.head.appendChild(jquery);
 
@@ -172,7 +166,6 @@ export default function ScriptLoader() {
   useEffect(() => {
     addGlobalScripts();
     addGlobalStyles();
-    try { console.log('🚀 ScriptLoader mounted', { host: typeof window !== 'undefined' ? window.location.host : 'ssr' }); } catch {}
 
     // Lightweight production diagnostics (safe for live)
     try {
@@ -180,7 +173,6 @@ export default function ScriptLoader() {
       if (!w.__pixelDiag) {
         w.__pixelDiag = true;
         const host = window.location.host;
-        console.log('🩺 Pixel diag start', { host });
 
         // Script load errors (CSP/network)
         const onScriptError = (e: any) => {
@@ -200,7 +192,6 @@ export default function ScriptLoader() {
           polls++;
           const fbq = (window as any).fbq;
           const ttq = (window as any).ttq;
-          console.log('🔎 Pixel poll', { polls, hasFbq: !!fbq, hasTtq: !!ttq, host });
           if (polls < 5 && (!fbq || !ttq)) setTimeout(poll, 1000);
         };
         setTimeout(poll, 400);

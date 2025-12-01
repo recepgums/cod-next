@@ -6,13 +6,6 @@ export default function PixelScripts({ pixels, product }: { pixels: any[]; produ
   React.useEffect(() => {
     // ScriptLoader'dan loadPixelScripts fonksiyonunu çağır
     try {
-      console.log('🧩 PixelScripts:effect', {
-        host: typeof window !== 'undefined' ? window.location.host : 'ssr',
-        pixelsCount: Array.isArray(pixels) ? pixels.length : 0,
-        platforms: Array.isArray(pixels) ? pixels.map((p: any) => p.platform) : [],
-        productId: product?.id,
-        productName: product?.name
-      });
     } catch {}
     loadPixelScripts(pixels, product);
   }, [pixels, product]);

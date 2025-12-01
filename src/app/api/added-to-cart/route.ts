@@ -8,7 +8,6 @@ export async function POST(request:Request) {
     const headers = request.headers;
     const forwarded = headers.get('x-forwarded-for');
     const userIP = forwarded ? forwarded.split(',')[0].trim() : 'N/A';
-    console.log(userIP);
     // Ensure logs directory exists at project root
     const logsDir = path.join(process.cwd(), 'added-to-carts');
     await fs.promises.mkdir(logsDir, { recursive: true });
@@ -52,9 +51,6 @@ export async function DELETE(request: Request) {
         const headers = request.headers;
         const forwarded = headers.get('x-forwarded-for');
         const userIP = forwarded ? forwarded.split(',')[0].trim() : 'N/A';
-        console.log(userIP);
-
-        console.log(body);
   
 
         // Dosya yolunu oluşturma (POST ile aynı mantıkla)

@@ -129,18 +129,13 @@ export default function PromosyonPage() {
       });
 
       // Console log the response
-      console.log('Add to cart API response status:', response.status);
-      console.log('Add to cart API response headers:', Object.fromEntries(response.headers.entries()));
-      
       const responseText = await response.text();
-      console.log('Add to cart API response body:', responseText);
       
       let result;
       try {
         result = JSON.parse(responseText);
-        console.log('Add to cart API parsed response:', result);
       } catch (e) {
-        console.log('Add to cart API response is not JSON:', responseText);
+        // Response is not JSON
       }
 
       if (response.ok) {

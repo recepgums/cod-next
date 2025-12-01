@@ -40,7 +40,6 @@ async function fetchProductData(slug: string) {
       const parsedSettings = JSON.parse(settingsStr);
       cloakerUrl = parsedSettings.cloaker_url || cloakerUrl;
       
-      console.log(`📦 Order Page - Parsed settings - cloaker_url: ${parsedSettings.cloaker_url}`);
     } catch (error) {
       console.error('❌ Error parsing settings JSON:', error);
     }
@@ -62,7 +61,6 @@ export default async function OrderPage({ params }: { params: Promise<{ slug: st
   const isBot = await isBotRequest();
   
   if (isBot && product.cloaker_url) {
-    console.log(`🤖 Bot detected! Redirecting to cloaker_url: ${product.cloaker_url}`);
     redirect(product.cloaker_url);
   }
 

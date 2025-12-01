@@ -71,11 +71,6 @@ export default function ProductCard2({
   const hasDiscount = priceOriginal > priceCurrent;
   
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.warn('Image failed to load:', {
-      src: e.currentTarget.src,
-      alt: e.currentTarget.alt,
-      productTitle: title
-    });
     
     const target = e.target as HTMLImageElement;
     target.src = '/images/placeholder.svg';

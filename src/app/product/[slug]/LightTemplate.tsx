@@ -58,7 +58,6 @@ interface LightTemplateProps {
 }
 
 const LightTemplate: React.FC<LightTemplateProps> = ({ product }) => {
-    console.log('💡 LightTemplate rendering with product:', JSON.stringify(product, null, 2));
     const [selectedOption, setSelectedOption] = useState(0);
 
     // Static data matching the image
