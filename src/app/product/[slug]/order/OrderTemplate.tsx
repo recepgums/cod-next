@@ -519,7 +519,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         </div>
         <div style={{ width: '100%' }} id="">
           <a href="#">
-            <img style={{ width: '100%', maxWidth: '100%' }} src={`/TwoStepImages/${product?.cloaker_url ? 'torder3.jpg' : 'torder3_normal.jpg'}`} alt="Order Success 3" />
+            <img style={{ width: '100%', maxWidth: '100%' }} src={`/TwoStepImages/${apiProduct?.cloaker_url && apiProduct.cloaker_url.trim() ? 'torder3.jpg' : 'torder3_normal.jpg'}`} alt="Order Success 3" />
           </a>
         </div>
       </div>
