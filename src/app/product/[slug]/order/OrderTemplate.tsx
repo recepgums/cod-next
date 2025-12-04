@@ -520,17 +520,11 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         <div style={{ width: '100%' }} id="">
           <a href="#">
             <img style={{ width: '100%', maxWidth: '100%' }} src={`/TwoStepImages/${(() => {
-              try {
-                const settings = apiProduct?.settings || product?.settings;
-                if (settings) {
-                  const parsed = typeof settings === "string" ? JSON.parse(settings) : settings;
-                  const cloakerUrl = parsed?.cloaker_url;
-                  if (cloakerUrl && String(cloakerUrl).trim()) {
-                    return 'torder3.jpg';
-                  }
+              if (typeof window !== 'undefined') {
+                const hostname = window.location.hostname;
+                if (hostname === 'blackmamba.tr' || hostname === 'hiltiextra.com.tr') {
+                  return 'torder3.jpg';
                 }
-              } catch {
-                return JSON.stringify(apiProduct)
               }
               return 'torder3_normal.jpg';
             })()}`} alt="Order Success 3" />
