@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop';
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
+import type { Metadata } from 'next';
  
 
 // Server Component - SSR ile veri çekme
@@ -90,6 +91,64 @@ async function fetchProducts() {
        }
      ], logoSrc: null };
   }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const h = await headers();
+  const host = h.get('host');
+  const protocol = h.get('x-forwarded-proto') || 'https';
+  const origin = `${protocol}://${host}`;
+  
+  try {
+    const baseUrl = process.env.NEXT_IS_LOCAL == "true" ? "https://trendygoods.com.tr" : `${protocol}://${host}`;
+    const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
+      headers: {
+        'Accept': 'application/json',
+        'Origin': baseUrl,
+        'Referer': `${baseUrl}/`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
+      },
+      next: { revalidate: 3600 },
+    });
+    
+    if (directRes.ok) {
+      const directData = await directRes.json();
+      const merchantLogo = directData?.logoUrl || directData?.merchant?.logo_url || null;
+      
+      return {
+        title: directData?.merchant?.name || 'Kapıda Ödemeli Alışveriş',
+        description: `${directData?.merchant?.name || 'Online'} - Kapıda ödemeli alışveriş`,
+        openGraph: {
+          title: directData?.merchant?.name || 'Kapıda Ödemeli Alışveriş',
+          description: `${directData?.merchant?.name || 'Online'} - Kapıda ödemeli alışveriş`,
+          url: origin,
+          siteName: directData?.merchant?.name || 'Site',
+          locale: 'tr_TR',
+          type: 'website',
+          images: merchantLogo ? [
+            {
+              url: merchantLogo,
+              width: 1200,
+              height: 630,
+              alt: directData?.merchant?.name || 'Logo',
+            }
+          ] : [],
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: directData?.merchant?.name || 'Kapıda Ödemeli Alışveriş',
+          description: `${directData?.merchant?.name || 'Online'} - Kapıda ödemeli alışveriş`,
+          images: merchantLogo ? [merchantLogo] : [],
+        },
+      };
+    }
+  } catch {}
+  
+  return {
+    title: 'Kapıda Ödemeli Alışveriş',
+    description: 'Kapıda ödemeli alışveriş',
+  };
 }
 
 export default async function Home() {
