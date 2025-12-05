@@ -12,15 +12,16 @@ export async function GET(request: NextRequest) {
         'Accept': 'application/json',
         'User-Agent': 'NextJS-API-Proxy/1.0',
       },
-      // Cache stratejisi
-      next: { revalidate: 60 }, // 1 dakika cache
+      cache: 'no-store', // Next.js 15 cache bug'ı nedeniyle kapalı
     });
 
     if (!response.ok) {
       throw new Error(`Laravel API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    // Next.js 15 cache bug'ı nedeniyle text olarak alıp parse ediyoruz
+    const text = await response.text();
+    const data = JSON.parse(text);
 
     // Cache headers ekle
     const headers = new Headers({

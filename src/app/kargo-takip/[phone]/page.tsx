@@ -24,7 +24,9 @@ async function fetchOrderByPhone(phone: string) {
     );
 
     if (!res.ok) return { error: 'Sipariş bulunamadı' };
-    const data = await res.json();
+    // Next.js 15 cache bug'ı nedeniyle text olarak alıp parse ediyoruz
+    const text = await res.text();
+    const data = JSON.parse(text);
     if (!data?.success || !data?.order) return { error: 'Sipariş bulunamadı' };
     return { order: data.order };
   } catch {

@@ -112,7 +112,7 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
+      next: { revalidate: 3600 }, // 1 saat cache
     });
 
     if (!response.ok) {
