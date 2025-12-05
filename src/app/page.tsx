@@ -18,7 +18,6 @@ async function fetchProducts() {
     const baseUrl =  process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
     const directRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
-      // next: { revalidate: 60 },
       headers: {
         'Accept': 'application/json',
         'Origin': baseUrl,
@@ -26,13 +25,16 @@ async function fetchProducts() {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)', // Daha gerçekçi user-agent
       },
+      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
     });
     
     if (!directRes.ok) {
       throw new Error(`Laravel API failed: ${directRes.status}`);
     }
     
-    const directData = await directRes.json();
+    // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
+    const text = await directRes.text();
+    const directData = JSON.parse(text);
 
     if (directData?.main_product_slug) {
       const targetSlug = String(directData.main_product_slug);
@@ -109,11 +111,13 @@ export async function generateMetadata(): Promise<Metadata> {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      next: { revalidate: 3600 },
+      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
     });
     
     if (directRes.ok) {
-      const directData = await directRes.json();
+      // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
+      const text = await directRes.text();
+      const directData = JSON.parse(text);
       const merchantLogo = directData?.logoUrl || directData?.merchant?.logo_url || null;
       
       return {

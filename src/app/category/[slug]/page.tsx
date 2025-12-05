@@ -21,7 +21,7 @@ async function fetchCategories() {
         'Referer': baseUrl,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
-      next: { revalidate: 3600 }, // 1 saat cache
+      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
     });
 
     if (!response.ok) {
@@ -29,7 +29,9 @@ async function fetchCategories() {
       return [];
     }
 
-    const data = await response.json();
+    // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
+    const text = await response.text();
+    const data = JSON.parse(text);
     return data || [];
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -54,16 +56,16 @@ async function fetchCategoryProducts(slug: string) {
         'Referer': `${baseUrl}/category/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
-      ...(process.env.NEXT_IS_LOCAL === 'local'
-        ? { cache: 'no-store' as const }
-        : { next: { revalidate: 300 as const } }),
+      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
     });
 
     if (!response.ok) {
       throw new Error(`Category API failed: ${response.status}`);
     }
 
-    const payload = await response.json();
+    // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
+    const text = await response.text();
+    const payload = JSON.parse(text);
     const logoUrl = payload?.merchant?.logo_url;
     // Response robust mapping
     const categoryName = payload?.name || payload?.category?.name || slug;

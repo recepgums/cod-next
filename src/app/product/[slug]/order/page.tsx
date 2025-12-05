@@ -20,13 +20,13 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}/order`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)'
       },
-      ...(process.env.NEXT_IS_LOCAL === 'local'
-        ? { cache: 'no-store' as const }
-        : { next: { revalidate: 300 as const } }),
+      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
     }
   );
   if (!response.ok) throw new Error('Failed to fetch product');
-  const data = await response.json();
+  // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
+  const text = await response.text();
+  const data = JSON.parse(text);
   
   // Parse settings JSON to extract cloaker_url
   let cloakerUrl = data.cloaker_url || data.product?.cloaker_url;

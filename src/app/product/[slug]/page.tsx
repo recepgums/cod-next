@@ -112,14 +112,16 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      next: { revalidate: 3600 }, // 1 saat cache
+      cache: 'no-store', // Türkçe karakter sorunu nedeniyle cache kapalı
     });
 
     if (!response.ok) {
       throw new Error(`Product API failed: ${response.status}`);
     }
 
-    const data = await response.json();
+    // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
+    const text = await response.text();
+    const data = JSON.parse(text);
     const productData = data?.product;
     const commentsData = data?.comments?.data;
     const pixelsData = data?.pixels;
