@@ -536,7 +536,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     const merchantPhone = apiProduct?.merchant?.contact_phone || '';
     if (!merchantPhone || !orderSummary) return '#';
     
-    const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: Kapıda Ödeme %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
+    const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aAdres: ${orderSummary.customerAddress} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: Kapıda Ödeme %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
     
     // Clean phone number (remove +, spaces and all non-digits, keep country code as-is)
     const cleanPhone = merchantPhone.replace(/\D/g, '');
