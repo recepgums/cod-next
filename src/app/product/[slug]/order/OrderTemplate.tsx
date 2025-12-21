@@ -538,12 +538,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     
     const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: Kapıda Ödeme %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
     
-    let cleanPhone = merchantPhone.replace(/\D/g, '');
-    if (cleanPhone.startsWith('0')) {
-      cleanPhone = '90' + cleanPhone.substring(1);
-    } else if (!cleanPhone.startsWith('90')) {
-      cleanPhone = '90' + cleanPhone;
-    }
+    // Clean phone number (remove +, spaces and all non-digits, keep country code as-is)
+    const cleanPhone = merchantPhone.replace(/\D/g, '');
     
     return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${message}`;
   };
