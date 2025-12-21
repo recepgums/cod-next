@@ -19,6 +19,15 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [refUrlData, setRefUrlData] = useState<any>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<string>('1');
+  const [orderSummary, setOrderSummary] = useState<{
+    customerName: string;
+    customerPhone: string;
+    customerAddress: string;
+    productName: string;
+    totalPrice: number;
+    quantity: string;
+    orderDate: string;
+  } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const quantityImages = useMemo(() => {
@@ -370,6 +379,22 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
       if (response?.data?.success) {
         setOrderId(response.data.order_id);
+        // Save order summary for success screen
+        setOrderSummary({
+          customerName: formData.get('name') as string,
+          customerPhone: formData.get('phone') as string,
+          customerAddress: formData.get('address') as string,
+          productName: apiProduct?.name || '',
+          totalPrice: totalPrice,
+          quantity: selectedQuantity,
+          orderDate: new Date().toLocaleString('tr-TR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        });
         setOrderSuccess(true);
         await axios.post('/api/order-log', {
           name: formData.get('name'),
@@ -506,30 +531,188 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
   };
 
+  // Generate WhatsApp message URL
+  const generateWhatsAppUrl = () => {
+    const merchantPhone = apiProduct?.merchant_phone || apiProduct?.merchant?.phone || '';
+    if (!merchantPhone || !orderSummary) return '#';
+    
+    const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: Kapıda Ödeme %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
+    
+    // Clean phone number (remove non-digits, ensure it starts with 90 for Turkey)
+    let cleanPhone = merchantPhone.replace(/\D/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '90' + cleanPhone.substring(1);
+    } else if (!cleanPhone.startsWith('90')) {
+      cleanPhone = '90' + cleanPhone;
+    }
+    
+    return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${message}`;
+  };
+
   if (orderSuccess) {
     return (
-      <div>
-        <div style={{ width: '100%' }} id="">
-          <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder1.jpg" alt="Order Success 1" />
-        </div>
-        <div style={{ width: '100%' }} id="">
-          <a href={`/product/${slug}`}>
-            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder2.jpg" alt="Order Success 2" />
-          </a>
-        </div>
-        <div style={{ width: '100%' }} id="">
-          <a href="#">
-            <img style={{ width: '100%', maxWidth: '100%' }} src={`/TwoStepImages/${(() => {
-              if (typeof window !== 'undefined') {
-                const hostname = window.location.hostname;
-                if (hostname === 'blackmamba.tr' || hostname === 'hiltiextra.com.tr') {
-                  return 'torder3.jpg';
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: '#f5f5f5',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <div style={{
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          maxWidth: '500px',
+          width: '100%',
+          overflow: 'hidden'
+        }}>
+          {/* Header */}
+          <div style={{
+            backgroundColor: '#4CAF50',
+            color: '#fff',
+            padding: '15px 20px',
+            textAlign: 'center'
+          }}>
+            <h5 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>
+              Siparişiniz Başarıyla Alınmıştır.
+            </h5>
+          </div>
+
+          {/* Body */}
+          <div style={{ padding: '20px' }}>
+            {/* Success Icon */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <svg style={{ width: '50px', height: '50px' }} viewBox="0 0 130.2 130.2">
+                <circle 
+                  fill="none" 
+                  stroke="#4CAF50" 
+                  strokeWidth="6" 
+                  strokeMiterlimit="10" 
+                  cx="65.1" 
+                  cy="65.1" 
+                  r="62.1"
+                />
+                <polyline 
+                  fill="none" 
+                  stroke="#4CAF50" 
+                  strokeWidth="6" 
+                  strokeLinecap="round" 
+                  strokeMiterlimit="10" 
+                  points="100.2,40.2 51.5,88.8 29.8,67.5"
+                />
+              </svg>
+            </div>
+
+            {/* Customer Name */}
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+              <p style={{ margin: 0, fontSize: '16px' }}>
+                Sayın: <strong>{orderSummary?.customerName}</strong>
+                <br />
+                Siparişiniz Başarıyla Alınmıştır.
+              </p>
+            </div>
+
+            {/* Success Image */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <img src="/images/success.png" width="50" alt="Success" />
+            </div>
+
+            {/* Order Details */}
+            <div style={{
+              backgroundColor: '#f9f9f9',
+              borderRadius: '5px',
+              padding: '15px',
+              marginBottom: '15px',
+              lineHeight: '28px'
+            }}>
+              <p style={{ margin: 0, fontWeight: 700, marginBottom: '10px', fontSize: '16px' }}>
+                Sipariş Detayları
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Sipariş No:</strong> #{orderId}
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Ürün:</strong> {orderSummary?.productName}
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Adet:</strong> {orderSummary?.quantity}
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Fiyat:</strong> Kdv Dahil {orderSummary?.totalPrice} TL
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Ödeme Şekli:</strong> Kapıda Ödeme
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Tarih:</strong> {orderSummary?.orderDate}
+              </p>
+            </div>
+
+            {/* WhatsApp CTA */}
+            <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+              <p style={{ margin: 0, lineHeight: '24px' }}>
+                Siparişinizi hemen işleme almamız için
+                <br />
+                <strong>Lütfen WhatsApp'dan Onaylayın.</strong>
+              </p>
+            </div>
+          </div>
+
+          {/* Footer - WhatsApp Button */}
+          <div style={{ padding: '0 20px 15px' }}>
+            <a
+              href={generateWhatsAppUrl()}
+              onClick={(e) => {
+                const url = generateWhatsAppUrl();
+                if (url !== '#') {
+                  window.open(url, '_blank');
                 }
-              }
-              return 'torder3_normal.jpg';
-            })()}`} alt="Order Success 3" />
-          </a>
+                e.preventDefault();
+              }}
+              style={{
+                display: 'block',
+                width: '100%',
+                backgroundColor: '#4CAF50',
+                color: '#fff',
+                padding: '15px 20px',
+                textAlign: 'center',
+                textDecoration: 'none',
+                borderRadius: '5px',
+                fontSize: '16px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                border: 'none'
+              }}
+            >
+              <span style={{ marginRight: '8px' }}>📱</span>
+              Siparişini Hemen Onayla
+            </a>
+          </div>
+
+          {/* Note */}
+          <div style={{
+            textAlign: 'center',
+            padding: '10px 20px 20px',
+            fontSize: '13px',
+            color: '#666'
+          }}>
+            Not: Bazı durumlarda Kargo yoğunluğundan dolayı teslim süresi 3 gün sürebilir.
+          </div>
         </div>
+
+        {/* Privacy Notice */}
+        <p style={{
+          position: 'fixed',
+          bottom: '10px',
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          fontSize: '10px',
+          color: '#ccc'
+        }}>
+          Bu siteyi ziyaret edenler <strong>Gizlilik ve Güvenlik Sözleşmesi</strong>'ni kabul etmiş sayılırlar.
+        </p>
       </div>
     );
   }
