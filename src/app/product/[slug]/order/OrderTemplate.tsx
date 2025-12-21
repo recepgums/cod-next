@@ -533,12 +533,11 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
   // Generate WhatsApp message URL
   const generateWhatsAppUrl = () => {
-    const merchantPhone = apiProduct?.merchant_phone || apiProduct?.merchant?.phone || '';
+    const merchantPhone = apiProduct?.merchant?.contact_phone || '';
     if (!merchantPhone || !orderSummary) return '#';
     
     const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: Kapıda Ödeme %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
     
-    // Clean phone number (remove non-digits, ensure it starts with 90 for Turkey)
     let cleanPhone = merchantPhone.replace(/\D/g, '');
     if (cleanPhone.startsWith('0')) {
       cleanPhone = '90' + cleanPhone.substring(1);

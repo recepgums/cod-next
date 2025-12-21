@@ -45,11 +45,12 @@ async function fetchProductData(slug: string) {
     }
   }
   
-  // Pixel bilgilerini product'a ekle
+  // Pixel bilgilerini ve merchant'ı product'a ekle
   return {
     ...data.product,
     pixels: data.pixels || [],
-    cloaker_url: cloakerUrl
+    cloaker_url: cloakerUrl,
+    merchant: data.merchant || null
   };
 }
 
