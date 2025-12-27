@@ -127,7 +127,16 @@ async function fetchProductData(slug: string) {
     const pixelsData = data?.pixels;
     const templateData = data?.template;
     const merchantData = data?.merchant;
-    const isSendNotification = JSON.parse(data?.product?.settings).send_notification == "1";
+    // Güvenli settings parse - eğer settings yoksa veya geçersizse hata fırlatmasın
+    let isSendNotification = false;
+    try {
+      if (data?.product?.settings) {
+        const parsedSettings = JSON.parse(data.product.settings);
+        isSendNotification = parsedSettings?.send_notification == "1";
+      }
+    } catch (e) {
+      console.error('❌ Error parsing settings for isSendNotification:', e);
+    }
 
     const citiesData = Array.isArray(data?.cities) ? data?.cities : [];
     const categoriesData = Array.isArray(data?.categories) ? data?.categories : [];
