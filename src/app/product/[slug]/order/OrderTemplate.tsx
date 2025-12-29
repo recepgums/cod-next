@@ -9,6 +9,8 @@ interface OrderTemplateProps {
   product: any;
 }
 
+const USE_WHATSAPP_SUCCESS = false;
+
 export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [timer, setTimer] = useState({ hours: '00', minutes: '14', seconds: '00' });
   const [selectedPackage, setSelectedPackage] = useState('374');
@@ -545,6 +547,23 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   };
 
   if (orderSuccess) {
+    if (!USE_WHATSAPP_SUCCESS) {
+      return (
+        <div>
+          <div style={{ width: '100%' }}>
+            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder1.jpg" alt="Order Success 1" />
+          </div>
+          <div style={{ width: '100%' }}>
+            <a href={`/product/${slug}`}>
+              <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder2.jpg" alt="Order Success 2" />
+            </a>
+          </div>
+          <div style={{ width: '100%' }}>
+            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder3_normal.jpg" alt="Order Success 3" />
+          </div>
+        </div>
+      );
+    }
     return (
       <div style={{
         minHeight: '100vh',
