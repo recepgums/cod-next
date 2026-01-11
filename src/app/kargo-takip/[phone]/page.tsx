@@ -1,6 +1,8 @@
 import Footer from "../../components/Footer";
+import Header from "../../components/Header";
 import React from "react";
 import { headers } from 'next/headers';
+import { fetchMerchantLogo } from '../../utils/merchantUtils';
 
 async function fetchOrderByPhone(phone: string) {
   try {
@@ -59,10 +61,12 @@ function getStatusText(isDone: number) {
 export default async function CargoTrackingByPhone({ params }: { params: Promise<{ phone: string }> }) {
   const { phone } = await params;
   const { order, error } = await fetchOrderByPhone(phone);
+  const logoSrc = await fetchMerchantLogo();
 
   if (error) {
     return (
       <div className="min-vh-100 bg-white d-flex flex-column">
+        <Header logoSrc={logoSrc || undefined} />
         <main className="flex-fill d-flex align-items-center justify-content-center">
           <div className="text-center">
             <div className="alert alert-danger" role="alert">{error}</div>
@@ -75,6 +79,7 @@ export default async function CargoTrackingByPhone({ params }: { params: Promise
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
+      <Header logoSrc={logoSrc || undefined} />
       <main className="flex-fill mt-4 pb-4">
         <div className="container">
           <div className="row justify-content-center">

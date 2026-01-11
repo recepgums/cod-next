@@ -3,13 +3,42 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function CargoTrackingPage() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [trackingResult, setTrackingResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [logoSrc, setLogoSrc] = useState<string | undefined>(undefined);
+
+  // Fetch merchant logo on component mount
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/homepage`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+        });
+
+        if (response.ok) {
+          const text = await response.text();
+          const data = JSON.parse(text);
+          const logoUrl = data?.logoUrl || data?.merchant?.logo_url || null;
+          if (logoUrl) {
+            setLogoSrc(logoUrl);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching merchant logo:', err);
+      }
+    };
+
+    fetchLogo();
+  }, []);
 
   const handleTrackingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +97,7 @@ export default function CargoTrackingPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
+      <Header logoSrc={logoSrc} />
       <main className="flex-fill mt-4 pb-4">
         <div className="container">
           <div className="row justify-content-center">
@@ -101,9 +130,13 @@ export default function CargoTrackingPage() {
                            type="tel"
                            className="form-control form-control-lg"
                            id="trackingNumber"
-                           placeholder="Örn: 05555555555"
+                           placeholder="053123456"
                            value={trackingNumber}
-                           onChange={(e) => setTrackingNumber(e.target.value)}
+                           onChange={(e) => {
+                             // Sadece sayısal karakterleri kabul et
+                             const value = e.target.value.replace(/\D/g, '');
+                             setTrackingNumber(value);
+                           }}
                            style={{ borderRadius: '10px 0 0 10px', border: '2px solid #e9ecef' }}
                          />
                         <button
