@@ -548,6 +548,11 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
   if (orderSuccess) {
     if (!USE_WHATSAPP_SUCCESS) {
+      // Domain kontrolü için hostname al
+      const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+      const isSpecialDomain = hostname === 'blackmamba.com.tr' || hostname === 'hiltiextra.com.tr';
+      const torder3Image = isSpecialDomain ? '/TwoStepImages/torder3.jpg' : '/TwoStepImages/torder3_normal.jpg';
+      
       return (
         <div>
           <div style={{ width: '100%' }}>
@@ -559,7 +564,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             </a>
           </div>
           <div style={{ width: '100%' }}>
-            <img style={{ width: '100%', maxWidth: '100%' }} src="/TwoStepImages/torder3_normal.jpg" alt="Order Success 3" />
+            <img style={{ width: '100%', maxWidth: '100%' }} src={torder3Image} alt="Order Success 3" />
           </div>
         </div>
       );
