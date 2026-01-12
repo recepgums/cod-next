@@ -364,11 +364,15 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     }
 
     const formData = new FormData(e.target as HTMLFormElement);
+    
+    // Telefon numarasını temizle - sadece rakamları bırak
+    const rawPhone = formData.get('phone') as string;
+    const cleanPhone = rawPhone ? rawPhone.replace(/\D/g, '') : '';
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
-        phone: formData.get('phone'),
+        phone: cleanPhone,
         address: formData.get('address'),
         quantity: selectedQuantity,
         total_price: totalPrice,
@@ -384,7 +388,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         // Save order summary for success screen
         setOrderSummary({
           customerName: formData.get('name') as string,
-          customerPhone: formData.get('phone') as string,
+          customerPhone: cleanPhone,
           customerAddress: formData.get('address') as string,
           productName: apiProduct?.name || '',
           totalPrice: totalPrice,
@@ -400,7 +404,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         setOrderSuccess(true);
         await axios.post('/api/order-log', {
           name: formData.get('name'),
-          phone: formData.get('phone'),
+          phone: cleanPhone,
           address: formData.get('address'),
           quantity: selectedQuantity,
           total_price: totalPrice,
@@ -424,7 +428,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       else{
         await axios.post('/api/order-log', {
           name: formData.get('name'),
-          phone: formData.get('phone'),
+          phone: cleanPhone,
           address: formData.get('address'),
           quantity: selectedQuantity,
           total_price: totalPrice,
