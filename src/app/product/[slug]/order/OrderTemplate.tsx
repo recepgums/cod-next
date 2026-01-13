@@ -30,8 +30,16 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     quantity: string;
     orderDate: string;
   } | null>(null);
+  const [hostname, setHostname] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
+  
+  // Hostname'i component mount olduğunda al
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(window.location.hostname);
+    }
+  }, []);
   const quantityImages = useMemo(() => {
     try {
       const settings = apiProduct?.settings;
@@ -43,6 +51,13 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       return {} as Record<string, { selected_url?: string; unselected_url?: string }>;
     }
   }, [apiProduct?.settings]);
+
+  // Torder3 resmi için domain kontrolü
+  const torder3Image = useMemo(() => {
+    const currentHostname = typeof window !== 'undefined' ? window.location.hostname : hostname;
+    const isSpecialDomain = currentHostname.includes('blackmamba') || currentHostname === 'hiltiextra.com.tr' || currentHostname === 'blackmamba.tr' || currentHostname === 'blackmamba.com.tr';
+    return isSpecialDomain ? '/TwoStepImages/torder3.jpg' : '/TwoStepImages/torder3_normal.jpg';
+  }, [hostname]);
 
   const quantityDisplayTexts = useMemo(() => {
     try {
@@ -552,11 +567,6 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
 
   if (orderSuccess) {
     if (!USE_WHATSAPP_SUCCESS) {
-      // Domain kontrolü için hostname al
-      const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-      const isSpecialDomain = hostname.includes('blackmamba') || hostname === 'hiltiextra.com.tr';
-      const torder3Image = isSpecialDomain ? '/TwoStepImages/torder3.jpg' : '/TwoStepImages/torder3_normal.jpg';
-      
       return (
         <div>
           <div style={{ width: '100%' }}>
