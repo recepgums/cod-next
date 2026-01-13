@@ -554,7 +554,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     if (!USE_WHATSAPP_SUCCESS) {
       // Domain kontrolü için hostname al
       const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
-      const isSpecialDomain = hostname === 'blackmamba.tr' || hostname === 'hiltiextra.com.tr';
+      const isSpecialDomain = hostname == 'blackmamba.tr' || hostname == 'hiltiextra.com.tr';
       const torder3Image = isSpecialDomain ? '/TwoStepImages/torder3.jpg' : '/TwoStepImages/torder3_normal.jpg';
       
       return (
