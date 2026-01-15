@@ -699,7 +699,7 @@ strong {
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 10px;
+    gap: 0;
     /* Thumbnails arasında daha fazla boşluk */
 }
 
@@ -751,7 +751,7 @@ strong {
     font-size: 2em;
     /* Daha büyük oklar */
     user-select: none;
-    padding: 0 10px;
+    padding: 0 1px;
     color: #333;
     /* Daha belirgin ok rengi */
     transition: color 0.3s ease;
