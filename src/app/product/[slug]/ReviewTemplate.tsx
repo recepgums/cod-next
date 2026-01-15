@@ -455,7 +455,7 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
           <a href="/"><img style={{ height: 50 }} src={product.logoUrl || "/images/logo.png"} alt="Logo" /></a>
         </div>
         <div className="main-image-container">
-          <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg]?.large || product.images[0]?.large) : '/images/default-product.png'} height={400} alt="product image" loading="lazy" />
+          <img id="mainImage" src={product.images && product.images.length > 0 ? (product.images[mainImg]?.large || product.images[0]?.large) : '/images/default-product.png'} alt="product image" loading="lazy" />
         </div>
         <div className="thumbnail-wrapper">
           <span className="arrow" onClick={() => scrollThumbnails('left')}>&#10094;</span>

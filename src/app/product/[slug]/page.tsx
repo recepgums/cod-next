@@ -112,7 +112,7 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      next: { revalidate: 3600 }, // 1 saat cache
+      cache: 'no-store', // Cache kapalı
     });
 
     if (!response.ok) {
@@ -200,7 +200,7 @@ export async function generateMetadata({
   const protocol = h.get('x-forwarded-proto') || 'https';
   const origin = `${protocol}://${host}`;
   
-  // Cache'den oku - fetchProductData zaten cache'li
+  // Her zaman fresh data çek - cache kapalı
   const { product } = await fetchProductData(slug);
 
   if (!product) {
