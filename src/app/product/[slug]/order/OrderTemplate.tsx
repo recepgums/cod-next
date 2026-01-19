@@ -29,10 +29,20 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     totalPrice: number;
     quantity: string;
     orderDate: string;
+    paymentType?: string;
   } | null>(null);
   const [hostname, setHostname] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
+  
+  // İl-İlçe-Mahalle state'leri (sadece ayiboganmacun.com.tr için)
+  const [cities, setCities] = useState<any[]>([]);
+  const [districts, setDistricts] = useState<any[]>([]);
+  const [neighborhoods, setNeighborhoods] = useState<any[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
+  const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
   
   // Hostname'i component mount olduğunda al
   useEffect(() => {
@@ -40,6 +50,63 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
       setHostname(window.location.hostname);
     }
   }, []);
+  
+  // Domain kontrolü: ayiboganmacun.com.tr için özel özellikler
+  const isSpecialDomain = useMemo(() => {
+    return hostname === 'ayiboganmacun.com.tr' || hostname.includes('ayiboganmacun.com.tr');
+  }, [hostname]);
+  
+  // Cities'i API'den çek (sadece özel domain için)
+  useEffect(() => {
+    if (isSpecialDomain && cities.length === 0) {
+      const fetchCities = async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cities`);
+          const data = await response.json();
+          setCities(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Error loading cities:', error);
+        }
+      };
+      fetchCities();
+    }
+  }, [isSpecialDomain, cities.length]);
+  
+  // İl değiştiğinde ilçeleri çek
+  const handleCityChange = async (cityId: string) => {
+    setSelectedCity(cityId);
+    setSelectedDistrict("");
+    setSelectedNeighborhood("");
+    setDistricts([]);
+    setNeighborhoods([]);
+
+    if (cityId) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cities/${cityId}/districts`);
+        const data = await response.json();
+        setDistricts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error loading districts:', error);
+      }
+    }
+  };
+  
+  // İlçe değiştiğinde mahalleleri çek
+  const handleDistrictChange = async (districtId: string) => {
+    setSelectedDistrict(districtId);
+    setSelectedNeighborhood("");
+    setNeighborhoods([]);
+
+    if (districtId) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/districts/${districtId}/neighborhoods`);
+        const data = await response.json();
+        setNeighborhoods(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Error loading neighborhoods:', error);
+      }
+    }
+  };
   const quantityImages = useMemo(() => {
     try {
       const settings = apiProduct?.settings;
@@ -385,7 +452,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     const cleanPhone = rawPhone ? rawPhone.replace(/\D/g, '') : '';
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
+      const orderData: any = {
         name: formData.get('name'),
         phone: cleanPhone,
         address: formData.get('address'),
@@ -394,7 +461,17 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         product_id: apiProduct?.id,
         products: apiProduct?.name,
         ref_url: refUrlData?.fullUrl,
-      });
+      };
+      
+      // Özel domain için il-ilçe-mahalle ve ödeme şekli ekle
+      if (isSpecialDomain) {
+        if (selectedCity) orderData.city_id = selectedCity;
+        if (selectedDistrict) orderData.district_id = selectedDistrict;
+        if (selectedNeighborhood) orderData.neighborhood_id = selectedNeighborhood;
+        orderData.amount_type = selectedPaymentType;
+      }
+      
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, orderData);
 
  
 
@@ -414,7 +491,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-          })
+          }),
+          paymentType: isSpecialDomain ? selectedPaymentType : undefined
         });
         setOrderSuccess(true);
         await axios.post('/api/order-log', {
@@ -557,7 +635,8 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     const merchantPhone = apiProduct?.merchant?.contact_phone || '';
     if (!merchantPhone || !orderSummary) return '#';
     
-    const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aAdres: ${orderSummary.customerAddress} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: Kapıda Ödeme %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
+    const paymentText = orderSummary.paymentType === 'kart' ? 'Kapıda Kartlı Ödeme' : 'Kapıda Nakit Ödeme';
+    const message = `Merhaba ${orderSummary.orderDate} tarihinde vermiş olduğum sipariş %0aAd soyad: ${orderSummary.customerName} %0aTelefon: ${orderSummary.customerPhone} %0aAdres: ${orderSummary.customerAddress} %0aÜrün: ${orderSummary.productName} %0aAdet: ${orderSummary.quantity} %0aÖdeme şekli: ${paymentText} %0aKargo dahil toplam: ${orderSummary.totalPrice}TL olarak kargoya verilmesini istiyorum.`;
     
     // Clean phone number (remove +, spaces and all non-digits, keep country code as-is)
     const cleanPhone = merchantPhone.replace(/\D/g, '');
@@ -675,7 +754,7 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
                 <strong>Fiyat:</strong> Kdv Dahil {orderSummary?.totalPrice} TL
               </p>
               <p style={{ margin: 0 }}>
-                <strong>Ödeme Şekli:</strong> Kapıda Ödeme
+                <strong>Ödeme Şekli:</strong> {orderSummary?.paymentType === 'kart' ? 'Kapıda Kartlı Ödeme' : 'Kapıda Nakit Ödeme'}
               </p>
               <p style={{ margin: 0 }}>
                 <strong>Tarih:</strong> {orderSummary?.orderDate}
@@ -919,10 +998,106 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
                 />
               </div>
 
+              {/* İl-İlçe-Mahalle seçimleri (sadece ayiboganmacun.com.tr için) */}
+              {isSpecialDomain && (
+                <>
+                  <div className="form-group mb-3">
+                    <label className="mb-1">İl</label>
+                    <select
+                      required
+                      name="city_id"
+                      className="form-control"
+                      value={selectedCity}
+                      onChange={e => handleCityChange(e.target.value)}
+                    >
+                      <option value="">İl Seçiniz</option>
+                      {cities?.map((city: any) => (
+                        <option key={city.id} value={city.id}>{city.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group mb-3">
+                    <label className="mb-1">İlçe</label>
+                    <select
+                      required
+                      name="district_id"
+                      className="form-control"
+                      value={selectedDistrict}
+                      onChange={e => handleDistrictChange(e.target.value)}
+                      disabled={!selectedCity}
+                    >
+                      <option value="">İlçe Seçiniz</option>
+                      {districts?.map((district: any) => (
+                        <option key={district.id || district.fest_id} value={district.id || district.fest_id}>{district.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group mb-3">
+                    <label className="mb-1">Mahalle</label>
+                    <select
+                      name="neighborhood_id"
+                      className="form-control"
+                      value={selectedNeighborhood}
+                      onChange={e => setSelectedNeighborhood(e.target.value)}
+                      disabled={!selectedDistrict}
+                    >
+                      <option value="">Mahalle Seçiniz</option>
+                      {neighborhoods?.map((neighborhood: any) => (
+                        <option key={neighborhood.id || neighborhood.fest_id} value={neighborhood.id || neighborhood.fest_id}>{neighborhood.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
               <div className="form-group mb-3">
                 <label className="mb-1">Adres</label>
+                {isSpecialDomain && (
+                  <small className="text-info d-block mb-1">Örn: Silahtarağa mah örnek sok no:1/20</small>
+                )}
                 <textarea className="form-control" name="address" rows={3} required />
               </div>
+
+              {/* Ödeme Şekli Seçimi (sadece ayiboganmacun.com.tr için) */}
+              {isSpecialDomain && (
+                <div className="form-group mb-3">
+                  <label className="mb-1">Ödeme Şekli</label>
+                  <div className="d-flex flex-column gap-2">
+                    <div className={`form-check p-3 rounded ${selectedPaymentType === "nakit" ? "active" : ""}`} style={{ background: selectedPaymentType === "nakit" ? '#f0f8ff' : '#f7f7f9' }}>
+                      <label className="form-check-label d-flex align-items-center justify-content-between w-100" style={{ cursor: 'pointer' }}>
+                        <div className="d-flex align-items-center">
+                          <input
+                            type="radio"
+                            className="form-check-input me-2"
+                            value="nakit"
+                            name="paymentType"
+                            checked={selectedPaymentType === "nakit"}
+                            onChange={() => setSelectedPaymentType("nakit")}
+                          />
+                          <span>Kapıda Nakit Ödeme</span>
+                        </div>
+                      </label>
+                    </div>
+                    <div className={`form-check p-3 rounded ${selectedPaymentType === "kart" ? "active" : ""}`} style={{ background: selectedPaymentType === "kart" ? '#f0f8ff' : '#f7f7f9' }}>
+                      <label className="form-check-label d-flex align-items-center justify-content-between w-100" style={{ cursor: 'pointer' }}>
+                        <div className="d-flex align-items-center">
+                          <input
+                            type="radio"
+                            className="form-check-input me-2"
+                            value="kart"
+                            name="paymentType"
+                            checked={selectedPaymentType === "kart"}
+                            onChange={() => setSelectedPaymentType("kart")}
+                          />
+                          <span>Kapıda Kartlı Ödeme</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <button type="submit" className="btn btn-success w-100 py-3" style={{ fontWeight: 600, fontSize: '17px' }}>
                 <i className="fas fa-shopping-cart mx-2"></i>
