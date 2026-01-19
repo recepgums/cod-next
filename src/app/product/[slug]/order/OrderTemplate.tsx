@@ -1064,38 +1064,16 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
               {isSpecialDomain && (
                 <div className="form-group mb-3">
                   <label className="mb-1">Ödeme Şekli</label>
-                  <div className="d-flex flex-column gap-2">
-                    <div className={`form-check p-3 rounded ${selectedPaymentType === "nakit" ? "active" : ""}`} style={{ background: selectedPaymentType === "nakit" ? '#f0f8ff' : '#f7f7f9' }}>
-                      <label className="form-check-label d-flex align-items-center justify-content-between w-100" style={{ cursor: 'pointer' }}>
-                        <div className="d-flex align-items-center">
-                          <input
-                            type="radio"
-                            className="form-check-input me-2"
-                            value="nakit"
-                            name="paymentType"
-                            checked={selectedPaymentType === "nakit"}
-                            onChange={() => setSelectedPaymentType("nakit")}
-                          />
-                          <span>Kapıda Nakit Ödeme</span>
-                        </div>
-                      </label>
-                    </div>
-                    <div className={`form-check p-3 rounded ${selectedPaymentType === "kart" ? "active" : ""}`} style={{ background: selectedPaymentType === "kart" ? '#f0f8ff' : '#f7f7f9' }}>
-                      <label className="form-check-label d-flex align-items-center justify-content-between w-100" style={{ cursor: 'pointer' }}>
-                        <div className="d-flex align-items-center">
-                          <input
-                            type="radio"
-                            className="form-check-input me-2"
-                            value="kart"
-                            name="paymentType"
-                            checked={selectedPaymentType === "kart"}
-                            onChange={() => setSelectedPaymentType("kart")}
-                          />
-                          <span>Kapıda Kartlı Ödeme</span>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
+                  <select
+                    required
+                    name="paymentType"
+                    className="form-control"
+                    value={selectedPaymentType}
+                    onChange={e => setSelectedPaymentType(e.target.value)}
+                  >
+                    <option value="nakit">Kapıda Nakit Ödeme</option>
+                    <option value="kart">Kapıda Kartlı Ödeme</option>
+                  </select>
                 </div>
               )}
 
