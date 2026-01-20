@@ -44,6 +44,7 @@ export default function Header({ logoSrc, categories: categoriesProp }: HeaderPr
           <nav className="navbar navbar-expand-lg navbar-light">
             <Link href="/" className="navbar-brand">
               <Image
+                key={resolvedLogoSrc || "default-logo"}
                 src={resolvedLogoSrc || "/images/logo.png"}
                 alt="logo"
                 width={185}

@@ -52,6 +52,7 @@ export default function PromosyonPage() {
   const [addingToCart, setAddingToCart] = useState<{[productId: number]: boolean}>({});
   const [addedToCart, setAddedToCart] = useState<{[productId: number]: boolean}>({});
   const [finishingOrder, setFinishingOrder] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     loadUpsellData();
@@ -64,6 +65,8 @@ export default function PromosyonPage() {
         const data = await response.json();
         setOrder(data.order);
         setProducts(data.products || []);
+        // Set logo URL from API response
+        setLogoUrl(data.logoUrl || data.merchant?.logo_url || null);
         
       } else {
         setError("Sipariş bilgileri yüklenemedi.");
@@ -252,7 +255,7 @@ export default function PromosyonPage() {
 
   return (
     <div className="min-vh-100 bg-white d-flex flex-column">
-      <Header />
+      <Header logoSrc={logoUrl || undefined} />
       <main className="flex-fill mt-3 pb-4">
         <div className="container">
           <div className="row">
