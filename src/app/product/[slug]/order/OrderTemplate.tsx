@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import { initSession, getSessionDuration, resetSession, getUserAgent } from '@/app/utils/sessionTracker';
 
 interface OrderTemplateProps {
   slug: string;
@@ -44,6 +45,11 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<string>("");
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>("nakit");
   
+  // Initialize session tracking
+  useEffect(() => {
+    initSession();
+  }, []);
+
   // Hostname'i component mount olduğunda al
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -452,6 +458,13 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
     const cleanPhone = rawPhone ? rawPhone.replace(/\D/g, '') : '';
 
     try {
+      // Get client IP for tracking
+      let clientIp = '';
+      try {
+        const ipRes = await axios.get('/api/client-info');
+        clientIp = ipRes.data?.ip || '';
+      } catch {}
+
       const orderData: any = {
         name: formData.get('name'),
         phone: cleanPhone,
@@ -461,6 +474,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
         product_id: apiProduct?.id,
         products: apiProduct?.name,
         ref_url: refUrlData?.fullUrl,
+        time_on_site: getSessionDuration(),
+        user_agent: getUserAgent(),
+        client_ip: clientIp,
       };
       
       // Özel domain için il-ilçe-mahalle ve ödeme şekli ekle
@@ -476,6 +492,9 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
  
 
       if (response?.data?.success) {
+        // Reset session timer for next order tracking
+        resetSession();
+        
         setOrderId(response.data.order_id);
         // Save order summary for success screen
         setOrderSummary({

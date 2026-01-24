@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faClock } from '@fortawesome/free-solid-svg-icons';
+import { initSession, getSessionDuration, resetSession, getUserAgent } from '@/app/utils/sessionTracker';
 
 interface ProductOption {
   quantity: number;
@@ -300,6 +301,10 @@ export default function OrderModal({
     }
   };
 
+  // Initialize session tracking
+  useEffect(() => {
+    initSession();
+  }, []);
 
   // Load variants from product settings (supports array or object structures)
   useEffect(() => {
@@ -424,6 +429,13 @@ export default function OrderModal({
     }
     
     try {
+      // Get client IP for tracking
+      let clientIp = '';
+      try {
+        const ipRes = await axios.get('/api/client-info');
+        clientIp = ipRes.data?.ip || '';
+      } catch {}
+
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
         name: formData.get('name'),
         phone: formData.get('phone'),
@@ -440,10 +452,15 @@ export default function OrderModal({
         protected_shipping: isProtectedShippingEnabled,
         protected_shipping_cost: isProtectedShippingEnabled ? PROTECTED_SHIPPING_PRICE : 0,
         shipping_code: selectedShippingCode || null,
+        time_on_site: getSessionDuration(),
+        user_agent: getUserAgent(),
+        client_ip: clientIp,
         ...(formattedVariants && { variants: formattedVariants })
       });
 
       if (response.data.success) {
+        // Reset session timer for next order tracking
+        resetSession();
 
         try {
           await axios.post('/api/order-log', {
