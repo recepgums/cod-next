@@ -116,7 +116,10 @@ async function fetchProductData(slug: string) {
     });
 
     if (!response.ok) {
-      throw new Error(`Product API failed: ${response.status}`);
+      // Log for analytics - kullanıcıların yanlış linklere tıkladığını görmek için
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`;
+      console.error(`❌ Product API failed: ${response.status} - Slug: ${slug} - Domain: ${baseUrl} - API: ${apiUrl}`);
+      return { product: null, shouldRedirect: false };
     }
 
     // Türkçe karakter sorununu önlemek için text olarak alıp parse ediyoruz
@@ -178,11 +181,12 @@ async function fetchProductData(slug: string) {
           isSendNotification: isSendNotification
     };
 
-    return { product };
+    return { product, shouldRedirect: false };
     
   } catch (error) {
+    // Network veya parse hatalarını logla
     console.error('❌ Error fetching product:', error);
-    return { product: null };
+    return { product: null, shouldRedirect: false };
   }
 }
 
@@ -293,6 +297,7 @@ export default async function ProductDetailPage({
   const { slug } = await params;
   const { product } = await fetchProductData(slug);
 
+  // Ürün bulunamadıysa kullanıcıya mesaj göster (loglar analytics için tutuluyor)
   if (!product) {
     return (
       <div className="container text-center py-5">
