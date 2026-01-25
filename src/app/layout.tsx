@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import ScriptLoader from "./components/ScriptLoader";
 import ErrorHandler from "./components/ErrorHandler";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap", // Font display optimization
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap", // Font display optimization
+// Tek font kullan - self-hosted, render-blocking degil
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {
@@ -29,30 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Preconnect to external domains for faster loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="preconnect" href="https://cdn-uicons.flaticon.com" />
+        {/* Preconnect to API server */}
         <link rel="preconnect" href="https://codpanel.com.tr" />
-        
-        {/* Critical CSS - Load with simple preload */}
-        <link 
-          rel="preload" 
-          href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css" 
-          as="style" 
-        />
-        <link 
-          rel="stylesheet" 
-          href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css" 
-        />
-        
-        {/* Optimize Google Fonts loading - Combine multiple font families */}
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spartan:wght@400;500;600;700&display=swap" 
-          rel="stylesheet" 
-        />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={poppins.variable} style={{ fontFamily: 'var(--font-poppins), system-ui, sans-serif' }}>
         <ScriptLoader />
         <ErrorHandler />
         {children}

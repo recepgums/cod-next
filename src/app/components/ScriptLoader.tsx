@@ -82,7 +82,7 @@ const loadPixelScripts = (pixels: any[], product: any) => {
   }
 };
 
-// Global CSS and JS imports
+// Global JS imports - sadece gerekli olanlar
 const addGlobalScripts = () => {
   // Google Analytics
   const gaScript = document.createElement('script');
@@ -108,64 +108,41 @@ const addGlobalScripts = () => {
   `;
   document.head.appendChild(tiktokScript);
 
-  // jQuery and other libraries
-  const jquery = document.createElement('script');
-  jquery.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js';
-  jquery.onload = () => { try {} catch {} };
-  jquery.onerror = () => { try { console.error('❌ jQuery failed'); } catch {} };
-  document.head.appendChild(jquery);
-
-  const maskedInput = document.createElement('script');
-  maskedInput.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js';
-  document.head.appendChild(maskedInput);
-
-  const inputMask = document.createElement('script');
-  inputMask.src = 'https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.7/jquery.inputmask.min.js';
-  document.head.appendChild(inputMask);
-
-  const masonry = document.createElement('script');
-  masonry.src = 'https://cdnjs.cloudflare.com/ajax/libs/masonry/4.2.2/masonry.pkgd.min.js';
-  document.head.appendChild(masonry);
-
   // Bootstrap JS (version 5 - no jQuery required)
   const bootstrapJS = document.createElement('script');
   bootstrapJS.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js';
-  // Integrity hash'i kaldırdık
   bootstrapJS.crossOrigin = 'anonymous';
   bootstrapJS.defer = true;
   document.head.appendChild(bootstrapJS);
 };
 
-// Add CSS links
-const addGlobalStyles = () => {
-  // Google Fonts
-  const robotoFont = document.createElement('link');
-  robotoFont.rel = 'stylesheet';
-  robotoFont.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap';
-  document.head.appendChild(robotoFont);
-
-  const spartanFont = document.createElement('link');
-  spartanFont.rel = 'preload';
-  spartanFont.href = 'https://fonts.googleapis.com/css2?family=Spartan:wght@400;700&display=swap';
-  spartanFont.setAttribute('as', 'style');
-  spartanFont.onload = function() {
-    const link = this as HTMLLinkElement;
-    link.onload = null;
-    link.rel = 'stylesheet';
-  };
-  document.head.appendChild(spartanFont);
-
-  // Font Awesome
+// Icon CSS'lerini lazy load et (render-blocking degil)
+const addIconStyles = () => {
+  // Font Awesome - lazy load
   const fontAwesome = document.createElement('link');
   fontAwesome.rel = 'stylesheet';
   fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+  fontAwesome.media = 'print'; // Baslangicta print olarak yukle
+  fontAwesome.onload = function() {
+    (this as HTMLLinkElement).media = 'all'; // Yuklendikten sonra all yap
+  };
   document.head.appendChild(fontAwesome);
+
+  // Flaticon - lazy load
+  const flaticon = document.createElement('link');
+  flaticon.rel = 'stylesheet';
+  flaticon.href = 'https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css';
+  flaticon.media = 'print';
+  flaticon.onload = function() {
+    (this as HTMLLinkElement).media = 'all';
+  };
+  document.head.appendChild(flaticon);
 };
 
 export default function ScriptLoader() {
   useEffect(() => {
     addGlobalScripts();
-    addGlobalStyles();
+    addIconStyles(); // Icon CSS'lerini lazy load et
 
     // Lightweight production diagnostics (safe for live)
     try {

@@ -435,7 +435,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Spartan", sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
     font-weight: 700;
     margin: 0 0 15px 0;
 }
@@ -448,7 +448,7 @@ td,
 th,
 input,
 button {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
     font-weight: 400;
     margin: 0;
     padding: 0;
@@ -512,7 +512,7 @@ strong {
 }
 
 .product-details-container {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
     line-height: 1.6;
     padding: 0;
     box-sizing: border-box;
@@ -1232,7 +1232,7 @@ button.close {
 }
 
 .price-container {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
 
 }
 
@@ -1242,7 +1242,7 @@ button.close {
     line-height: 28.6px;
     font-size: 22px;
     letter-spacing: 0.6px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
 
 }
 
@@ -1261,9 +1261,8 @@ button.close {
     background-color: #E73B3B;
     border-radius: 10px;
     padding: 7px;
-    font-family: ui-sans-serif;
     font-size: 12px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
     font-weight: 700;
 
 }
@@ -1327,7 +1326,7 @@ button.close {
     color: rgb(0, 0, 0);
     font-size: 22px;
     font-weight: bold;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font-poppins), "Poppins", sans-serif;
     letter-spacing: 0.6px;
     line-height: 25px;
 }
