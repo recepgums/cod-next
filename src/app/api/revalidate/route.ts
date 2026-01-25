@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tag is required' }, { status: 400 });
     }
     
-    // Cache'i temizle
-    revalidateTag(tag);
+    // Cache'i temizle - Next.js 15'te ikinci argüman zorunlu
+    revalidateTag(tag, 'max');
     
     console.log(`✅ Cache revalidated for tag: ${tag}`);
     
