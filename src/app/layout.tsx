@@ -33,6 +33,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://cdn.dsmcdn.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn-uicons.flaticon.com" crossOrigin="anonymous" />
         
         {/* DNS prefetch for analytics (lower priority) */}
         <link rel="dns-prefetch" href="https://connect.facebook.net" />

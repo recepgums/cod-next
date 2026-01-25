@@ -687,6 +687,8 @@ strong {
     width: 100%;
     overflow: hidden;
     position: relative;
+    min-height: 400px;
+    aspect-ratio: 1/1.5;
 }
 
 .main-image-container img {
