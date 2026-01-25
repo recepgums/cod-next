@@ -104,6 +104,9 @@ async function fetchProductData(slug: string) {
     const protocol = h.get('x-forwarded-proto') || 'https';
     const baseUrl = process.env.NEXT_IS_LOCAL == "true" ?  "https://trendygoods.com.tr" : `${protocol}://${host}`;
 
+    // Cache tag: domain bazlı ayrım için host kullanıyoruz
+    const cacheTag = `product-${host}-${slug}`;
+    
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/${slug}`, {
       headers: {
         'Accept': 'application/json',
@@ -112,7 +115,10 @@ async function fetchProductData(slug: string) {
         'Referer': `${baseUrl}/product/${slug}`,
         'User-Agent': 'Mozilla/5.0 (compatible; NextJS-SSR/1.0)',
       },
-      cache: 'no-store', // Cache kapalı
+      next: { 
+        tags: [cacheTag],
+        revalidate: 3600 // 1 saat fallback (webhook çalışmazsa)
+      }
     });
 
     if (!response.ok) {
