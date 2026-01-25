@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { Splide, SplideSlide } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 
@@ -16,6 +17,12 @@ interface NovaSliderProps {
     images: ProductImage[];
     productName: string;
 }
+
+// Resim boyutları - CLS önleme için
+const MAIN_IMAGE_WIDTH = 600;
+const MAIN_IMAGE_HEIGHT = 600;
+const THUMB_WIDTH = 124;
+const THUMB_HEIGHT = 124;
 
 export default function NovaSlider({ images, productName }: NovaSliderProps) {
     const mainRef = useRef<any>(null);
@@ -70,7 +77,25 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                 >
                     {images.map((img: ProductImage, i: number) => (
                         <SplideSlide key={img.medium + i}>
-                            <img src={img.medium} alt={`${productName} - ${i + 1}`} style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '8px' }} />
+                            <div 
+                                style={{ 
+                                    position: 'relative', 
+                                    width: '100%', 
+                                    aspectRatio: '1/1',
+                                    borderRadius: '8px',
+                                    overflow: 'hidden'
+                                }}
+                            >
+                                <Image
+                                    src={img.medium}
+                                    alt={`${productName} - ${i + 1}`}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                                    style={{ objectFit: 'contain' }}
+                                    priority={i === 0} // İlk resim için priority (LCP için)
+                                    quality={85}
+                                />
+                            </div>
                         </SplideSlide>
                     ))}
                 </Splide>
@@ -85,8 +110,8 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                         drag: 'free',
                         focus: 'center',
                         gap: '1.1px',
-                        fixedWidth: 124,    // 5'li kare
-                        fixedHeight: 124,
+                        fixedWidth: THUMB_WIDTH,
+                        fixedHeight: THUMB_HEIGHT,
                         rewind: true,
                         breakpoints: {
                             992: { fixedWidth: 110, fixedHeight: 110 },
@@ -98,7 +123,17 @@ export default function NovaSlider({ images, productName }: NovaSliderProps) {
                 >
                     {images.map((img: ProductImage, i: number) => (
                         <SplideSlide key={'thumb-' + img.medium + i}>
-                            <img src={img.thumbnail} alt={`Thumb ${i + 1}`} />
+                            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                                <Image
+                                    src={img.thumbnail}
+                                    alt={`${productName} thumbnail ${i + 1}`}
+                                    fill
+                                    sizes="124px"
+                                    style={{ objectFit: 'cover' }}
+                                    loading="lazy"
+                                    quality={60}
+                                />
+                            </div>
                         </SplideSlide>
                     ))}
                 </Splide>

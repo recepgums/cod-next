@@ -478,7 +478,14 @@ export default function ReviewTemplate({ product }: ReviewTemplateProps) {
       <div className="flash-urunler">
         <div className="flash-header">
           <div className="icon">
-            <img src="/images/assets/flash.png" alt="Flash Icon" />
+            <Image 
+              src="/images/assets/flash.png" 
+              alt="Flash Icon" 
+              width={60} 
+              height={60}
+              loading="lazy"
+              quality={75}
+            />
           </div>
           <div className="title-timer">
             <div className="title">Flaş İndirim</div>

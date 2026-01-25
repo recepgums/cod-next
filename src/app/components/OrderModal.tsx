@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -756,7 +757,15 @@ export default function OrderModal({
                                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#20c997' }} />
                                   )}
                                 </span>
-                                <img src={getShippingLogo(opt.company)} alt={`${opt.company} logo`} style={{ width: 58, height: 'auto' }} />
+                                <Image 
+                                  src={getShippingLogo(opt.company)} 
+                                  alt={`${opt.company} logo`} 
+                                  width={58} 
+                                  height={58}
+                                  style={{ width: 58, height: 'auto' }}
+                                  loading="lazy"
+                                  quality={75}
+                                />
                                 <div>
                                   <div className="fw-semibold" style={{ lineHeight: 1.1 }}>{opt.company}</div>
                                   <div

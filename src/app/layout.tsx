@@ -27,6 +27,17 @@ export default function RootLayout({
       <head>
         {/* Preconnect to API server */}
         <link rel="preconnect" href="https://codpanel.com.tr" />
+        <link rel="dns-prefetch" href="https://codpanel.com.tr" />
+        
+        {/* Preconnect to CDNs for faster resource loading */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.dsmcdn.com" crossOrigin="anonymous" />
+        
+        {/* DNS prefetch for analytics (lower priority) */}
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://analytics.tiktok.com" />
       </head>
       <body className={poppins.variable} style={{ fontFamily: 'var(--font-poppins), system-ui, sans-serif' }}>
         <ScriptLoader />
