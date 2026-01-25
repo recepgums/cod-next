@@ -116,19 +116,9 @@ const addGlobalScripts = () => {
   document.head.appendChild(bootstrapJS);
 };
 
-// Icon CSS'lerini ve Bootstrap'ı lazy load et (render-blocking degil)
+// Icon CSS'lerini lazy load et (render-blocking degil)
 const addIconStyles = () => {
-  // Bootstrap CSS - lazy load (non-render-blocking)
-  const bootstrapCSS = document.createElement('link');
-  bootstrapCSS.rel = 'stylesheet';
-  bootstrapCSS.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css';
-  bootstrapCSS.media = 'print'; // Başlangıçta print olarak yükle
-  bootstrapCSS.onload = function() {
-    (this as HTMLLinkElement).media = 'all'; // Yüklendikten sonra all yap
-  };
-  document.head.appendChild(bootstrapCSS);
-
-  // Font Awesome - lazy load with font-display swap
+  // Font Awesome - lazy load
   const fontAwesome = document.createElement('link');
   fontAwesome.rel = 'stylesheet';
   fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
@@ -147,20 +137,6 @@ const addIconStyles = () => {
     (this as HTMLLinkElement).media = 'all';
   };
   document.head.appendChild(flaticon);
-
-  // Font Awesome font-display: swap için custom style ekle
-  const fontDisplayStyle = document.createElement('style');
-  fontDisplayStyle.textContent = `
-    @font-face {
-      font-family: 'Font Awesome 5 Free';
-      font-display: swap;
-    }
-    @font-face {
-      font-family: 'Font Awesome 5 Brands';
-      font-display: swap;
-    }
-  `;
-  document.head.appendChild(fontDisplayStyle);
 };
 
 export default function ScriptLoader() {
