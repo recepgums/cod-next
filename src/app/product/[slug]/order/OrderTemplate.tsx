@@ -128,7 +128,12 @@ export default function OrderTemplate({ slug, product }: OrderTemplateProps) {
   // Torder3 resmi için domain kontrolü
   const torder3Image = useMemo(() => {
     const currentHostname = typeof window !== 'undefined' ? window.location.hostname : hostname;
-    const isSpecialDomain = currentHostname.includes('blackmamba') || currentHostname === 'hiltiextra.com.tr' || currentHostname === 'blackmamba.tr' || currentHostname === 'blackmamba.com.tr';
+    const isSpecialDomain =
+      currentHostname.includes('blackmamba') ||
+      currentHostname === 'hiltiextra.com.tr' ||
+      currentHostname === 'blackmamba.tr' ||
+      currentHostname === 'blackmamba.com.tr' ||
+      currentHostname === 'ayiboganmacun.com.tr';
     return isSpecialDomain ? '/TwoStepImages/torder3.jpg' : '/TwoStepImages/torder3_normal.jpg';
   }, [hostname]);
 
